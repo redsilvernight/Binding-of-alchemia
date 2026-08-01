@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://bu0b7rpwxlbhq"]
+
+[ext_resource type="Script" uid="uid://7kxxxbbei5ww" path="res://scripts/multiplayer/multiplayer_menu.gd" id="1_yqeox"]
+
+[node name="Menu" type="Control" unique_id=1534157202]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="." unique_id=1096495195]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MultiplayerVBox" type="VBoxContainer" parent="Panel" unique_id=1071455480]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 28
+alignment = 1
+script = ExtResource("1_yqeox")
+
+[node name="Host" type="Button" parent="Panel/MultiplayerVBox" unique_id=1155785423]
+layout_mode = 2
+text = "Host"
+
+[node name="Join" type="Button" parent="Panel/MultiplayerVBox" unique_id=839718542]
+layout_mode = 2
+text = "Join"
+
+[connection signal="pressed" from="Panel/MultiplayerVBox/Host" to="Panel/MultiplayerVBox" method="_on_host_pressed"]
+[connection signal="pressed" from="Panel/MultiplayerVBox/Join" to="Panel/MultiplayerVBox" method="_on_join_pressed"]
