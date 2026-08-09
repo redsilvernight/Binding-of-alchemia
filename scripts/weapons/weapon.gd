@@ -34,6 +34,13 @@ func _ready() -> void:
 	_recalculate_stats()
 
 func _process(delta: float) -> void:
+	# Chaque client instancie une copie de CHAQUE arme (la sienne et celles des
+	# autres joueurs, voir game.gd). Seule la copie de l'hôte doit faire autorité
+	# sur les munitions, sinon chaque client régénère ses munitions localement
+	# sans jamais voir la vraie consommation décidée côté hôte (désync du HUD).
+	if not multiplayer.is_server():
+		return
+
 	water_cooldown_accum += delta
 	mixture_cooldown_accum += delta
 
@@ -46,7 +53,7 @@ func _process(delta: float) -> void:
 		var previous_ammo = current_mixture_ammo
 		current_mixture_ammo = min(current_mixture_ammo + mixture_regen_rate * delta, mixture_max_capacity)
 		if current_mixture_ammo != previous_ammo:
-			ammo_changed.emit(current_mixture_ammo, mixture_max_capacity)
+			_broadcast_ammo()
 
 func equip(piece) -> void:
 	if piece is GunBarrelWater:
@@ -104,6 +111,9 @@ func _recalculate_stats():
 		_initialized = true
 	else:
 		current_mixture_ammo = min(current_mixture_ammo, mixture_max_capacity)
+	# Emit local uniquement : cette valeur initiale est identique sur tous les
+	# pairs (même Resource exportée), pas besoin de RPC ici. Les changements
+	# ultérieurs (tir, regen) passent par _broadcast_ammo().
 	ammo_changed.emit(current_mixture_ammo, mixture_max_capacity)
 
 func try_fire_water(direction: Vector2) -> bool:
@@ -117,6 +127,10 @@ func try_fire_water(direction: Vector2) -> bool:
 	return true
 
 func try_fire_mixture(direction: Vector2) -> bool:
+	# Défensif : ne devrait être appelé que depuis player.gd::request_fire,
+	# qui est déjà gardé côté hôte, mais on documente l'invariant ici aussi.
+	if not multiplayer.is_server():
+		return false
 	if not can_fire_mixture:
 		return false
 	if mixture_cooldown_accum < 1.0 / mixture_fire_rate:
@@ -127,10 +141,24 @@ func try_fire_mixture(direction: Vector2) -> bool:
 	mixture_cooldown_accum = 0.0
 	current_mixture_ammo -= tank.mixture_cost_per_shot
 	time_since_last_mixture_fire = 0.0
-	ammo_changed.emit(current_mixture_ammo, mixture_max_capacity)
+	_broadcast_ammo()
 
 	_fire_bullet(mixture_damage_multiplier, mixture_projectile_speed, direction, mixture_trajectory, mixture_impact_effect)
 	return true
+
+func _broadcast_ammo() -> void:
+	# Les scripts debug (weapon_test.gd) instancient un Weapon hors de l'arbre
+	# de scène : pas de RPC possible dans ce cas, on retombe sur un emit local.
+	if is_inside_tree():
+		_update_ammo.rpc(current_mixture_ammo, mixture_max_capacity)
+	else:
+		ammo_changed.emit(current_mixture_ammo, mixture_max_capacity)
+
+@rpc("any_peer", "call_local", "reliable")
+func _update_ammo(current: float, max_ammo: float) -> void:
+	current_mixture_ammo = current
+	mixture_max_capacity = max_ammo
+	ammo_changed.emit(current_mixture_ammo, mixture_max_capacity)
 
 func _fire_bullet(damage: float, speed: float, direction: Vector2, trajectory: Bullet.TrajectoryType, effect: ImpactEffect) -> void:
 	var data: Dictionary = {
@@ -142,5 +170,9 @@ func _fire_bullet(damage: float, speed: float, direction: Vector2, trajectory: B
 		"direction": direction,
 	}
 	if effect != null:
-		data["impact_effect_path"] = effect.resource_path
+		# On sérialise les données de l'effet plutôt que son resource_path :
+		# un effet pré-fabriqué en .tres a un chemin valide, mais un effet
+		# généré à la volée (ex: MixtureToEffect, Phase 4.4) a resource_path
+		# vide -> load("") plantait. to_dict()/from_dict() marche dans les deux cas.
+		data["impact_effect_data"] = effect.to_dict()
 	projectile_requested.emit(data)

@@ -6,3 +6,6 @@ class_name ImpactDamage
 func apply(target: Node, _source_position: Vector2) -> void:
 	if target.has_method("take_damage"):
 		target.take_damage(damage)
+
+func to_dict() -> Dictionary:
+	return {"type": "damage", "damage": damage}

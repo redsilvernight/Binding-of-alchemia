@@ -3,6 +3,7 @@ extends Character
 signal instance_hud(hud: Node)
 signal instance_projectile(data: Dictionary)
 @export var speed: float = 300.0
+@export var invulnerability_duration: float = 1.0
 @export var hud_scene: PackedScene = preload("res://scenes/HUD/hud.tscn")
 @onready var player_camera: Camera2D = $Camera2D
 @onready var damage_timer: Timer = $DamageTimer
@@ -18,6 +19,7 @@ var mouse_position_initialized: bool = false
 func _ready() -> void:
 	super()
 	add_to_group("Players")
+	damage_timer.wait_time = invulnerability_duration
 	weapon.projectile_requested.connect(_on_projectile_requested)
 	if is_multiplayer_authority():
 		player_camera.enabled = true
@@ -88,3 +90,10 @@ func _on_projectile_requested(data: Dictionary) -> void:
 
 func _on_damage_timer_timeout() -> void:
 	can_take_damage = true
+
+func _start_invulnerability() -> void:
+	# Avant ce fix, can_take_damage passait bien à true au timeout, mais
+	# rien ne le passait jamais à false ni ne démarrait le timer : le joueur
+	# n'était en pratique jamais invulnérable.
+	can_take_damage = false
+	damage_timer.start()

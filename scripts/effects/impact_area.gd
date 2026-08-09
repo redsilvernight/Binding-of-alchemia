@@ -13,3 +13,6 @@ func apply(target: Node, source_position: Vector2) -> void:
 		if enemy.global_position.distance_to(source_position) <= radius:
 			if enemy.has_method("take_damage"):
 				enemy.take_damage(damage)
+
+func to_dict() -> Dictionary:
+	return {"type": "area", "damage": damage, "radius": radius}

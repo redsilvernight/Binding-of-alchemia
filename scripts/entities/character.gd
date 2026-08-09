@@ -26,6 +26,13 @@ func take_damage(degat: float) -> void:
 	if lifepoint <= 0:
 		is_dead = true
 		kill()
+	else:
+		_start_invulnerability()
+
+## Point d'extension : ne fait rien par défaut. Les sous-classes qui veulent
+## des i-frames (ex: Player, via son DamageTimer) surchargent cette méthode.
+func _start_invulnerability() -> void:
+	pass
 
 @rpc("any_peer", "call_local", "reliable")
 func _update_health(p_max_lifepoint: float, p_lifepoint: float) -> void:
