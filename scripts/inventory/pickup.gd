@@ -12,7 +12,6 @@ func _ready() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if not multiplayer.is_server():
 		return
-
 	if not body.is_in_group("Players"):
 		return
 
@@ -30,7 +29,6 @@ func _on_body_entered(body: Node2D) -> void:
 			push_error("Pickup: item_type inconnu '%s'" % item_type)
 			return
 
-	_despawn.rpc()
 	queue_free()
 
 

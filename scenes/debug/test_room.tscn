@@ -1,13 +1,5 @@
 [gd_scene format=3 uid="uid://bixcev8a5fsmf"]
 
-[ext_resource type="PackedScene" uid="uid://b5ohm5usu2u13" path="res://scenes/debug/ingredient_pickup.tscn" id="1_4b67i"]
-[ext_resource type="Resource" uid="uid://dhyfrdgwe6p3a" path="res://resources/Ingredients/braise.tres" id="2_myuxa"]
-[ext_resource type="PackedScene" uid="uid://c2qq76cavmp6r" path="res://scenes/debug/weapon_part_pickup.tscn" id="3_wygli"]
-[ext_resource type="Resource" uid="uid://bymni02kbmgtn" path="res://resources/GunParts/water_barel_fast.tres" id="4_h88s1"]
-[ext_resource type="Resource" uid="uid://doe4xdbp6v482" path="res://resources/GunParts/core_basic.tres" id="5_w5c17"]
-[ext_resource type="Resource" uid="uid://c5kfc6v4kdgef" path="res://resources/Ingredients/cristal_givre.tres" id="6_koo2w"]
-[ext_resource type="Resource" uid="uid://coejpfq6frinj" path="res://resources/Ingredients/bave_toxique.tres" id="7_tdkvq"]
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6w3oj"]
 size = Vector2(20, 664)
 
@@ -75,23 +67,3 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="IngredientPickup1" parent="." unique_id=2054345971 instance=ExtResource("1_4b67i")]
-position = Vector2(200, 150)
-item_resource = ExtResource("2_myuxa")
-
-[node name="WeaponPartPickup1" parent="." unique_id=1403427894 instance=ExtResource("3_wygli")]
-position = Vector2(950, 500)
-item_resource = ExtResource("4_h88s1")
-
-[node name="WeaponPartPickup2" parent="." unique_id=569284121 instance=ExtResource("3_wygli")]
-position = Vector2(585, 550)
-item_resource = ExtResource("5_w5c17")
-
-[node name="IngredientPickup2" parent="." unique_id=896934295 instance=ExtResource("1_4b67i")]
-position = Vector2(950, 150)
-item_resource = ExtResource("6_koo2w")
-
-[node name="IngredientPickup3" parent="." unique_id=707286381 instance=ExtResource("1_4b67i")]
-position = Vector2(200, 500)
-item_resource = ExtResource("7_tdkvq")

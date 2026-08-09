@@ -31,15 +31,11 @@ func _ready() -> void:
 		weapon.ammo_changed.connect(mixture_bar._on_ammo_changed)
 		mixture_bar._on_ammo_changed(weapon.mixture_max_capacity, weapon.current_mixture_ammo)
 		instance_hud.emit(hud)
-
 		var inventory_screen = inventory_screen_scene.instantiate()
-		# Rattaché directement au joueur plutôt que via instance_hud/Game.HUD :
-		# une CanvasLayer s'affiche correctement quel que soit son parent dans
-		# l'arbre (indépendant de la transform 2D), et ça évite de dépendre du
-		# routage de game.gd — donc ça marche aussi dans les scènes de debug
-		# (inventory_test.tscn) qui instancient Player sans passer par Game.
 		add_child(inventory_screen)
 		inventory_screen.bind_inventory(inventory)
+	else:
+		player_camera.enabled = false
 
 func _physics_process(_delta: float) -> void:
 	if not is_multiplayer_authority():
@@ -103,8 +99,5 @@ func _on_damage_timer_timeout() -> void:
 	can_take_damage = true
 
 func _start_invulnerability() -> void:
-	# Avant ce fix, can_take_damage passait bien à true au timeout, mais
-	# rien ne le passait jamais à false ni ne démarrait le timer : le joueur
-	# n'était en pratique jamais invulnérable.
 	can_take_damage = false
 	damage_timer.start()

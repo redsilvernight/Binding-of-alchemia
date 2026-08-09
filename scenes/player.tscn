@@ -33,6 +33,7 @@ shape = SubResource("RectangleShape2D_3vyb7")
 replication_config = SubResource("SceneReplicationConfig_g2els")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1851000848]
+enabled = false
 
 [node name="DamageTimer" type="Timer" parent="." unique_id=407273931]
 one_shot = true
