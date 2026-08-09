@@ -1,16 +1,64 @@
 [gd_scene format=3 uid="uid://bc0pi4yquh7kh"]
 
-[ext_resource type="Script" uid="uid://edrpkwr3krrk" path="res://scripts/debug/inventory_test.gd" id="1_skelj"]
-[ext_resource type="Script" uid="uid://2jlnyyd5liv1" path="res://scripts/inventory/inventory.gd" id="2_0sle1"]
+[ext_resource type="Script" uid="uid://edrpkwr3krrk" path="res://scripts/debug/inventory_test.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://bixcev8a5fsmf" path="res://scenes/debug/test_room.tscn" id="2_room"]
+[ext_resource type="PackedScene" uid="uid://dpmrxpsqvhlqr" path="res://scenes/player.tscn" id="3_player"]
+[ext_resource type="PackedScene" uid="uid://b5ohm5usu2u13" path="res://scenes/debug/ingredient_pickup.tscn" id="4_ingr_pickup"]
+[ext_resource type="PackedScene" uid="uid://c2qq76cavmp6r" path="res://scenes/debug/weapon_part_pickup.tscn" id="5_part_pickup"]
+[ext_resource type="Resource" uid="uid://dhyfrdgwe6p3a" path="res://resources/Ingredients/braise.tres" id="6_braise"]
+[ext_resource type="Resource" uid="uid://c5kfc6v4kdgef" path="res://resources/Ingredients/cristal_givre.tres" id="7_givre"]
+[ext_resource type="Resource" uid="uid://coejpfq6frinj" path="res://resources/Ingredients/bave_toxique.tres" id="8_toxique"]
+[ext_resource type="Resource" uid="uid://bymni02kbmgtn" path="res://resources/GunParts/water_barel_fast.tres" id="9_water_fast"]
+[ext_resource type="Resource" uid="uid://doe4xdbp6v482" path="res://resources/GunParts/core_basic.tres" id="10_core_basic"]
 
-[node name="InventoryTest" type="Control" unique_id=1098578397]
+[node name="InventoryTest" type="Control" unique_id=17741665]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_skelj")
+script = ExtResource("1_script")
 
-[node name="1" type="Node" parent="." unique_id=1711450824]
-script = ExtResource("2_0sle1")
+[node name="TestRoom" parent="." unique_id=188462685 instance=ExtResource("2_room")]
+layout_mode = 1
+
+[node name="Player" parent="." unique_id=1788408180 instance=ExtResource("3_player")]
+position = Vector2(585, 320)
+
+[node name="IngredientPickup1" parent="." unique_id=1886368708 instance=ExtResource("4_ingr_pickup")]
+position = Vector2(200, 150)
+item_resource = ExtResource("6_braise")
+
+[node name="IngredientPickup2" parent="." unique_id=1248763564 instance=ExtResource("4_ingr_pickup")]
+position = Vector2(950, 150)
+item_resource = ExtResource("7_givre")
+
+[node name="IngredientPickup3" parent="." unique_id=707908337 instance=ExtResource("4_ingr_pickup")]
+position = Vector2(200, 500)
+item_resource = ExtResource("8_toxique")
+
+[node name="WeaponPartPickup1" parent="." unique_id=1597389821 instance=ExtResource("5_part_pickup")]
+position = Vector2(950, 500)
+item_resource = ExtResource("9_water_fast")
+
+[node name="WeaponPartPickup2" parent="." unique_id=687737928 instance=ExtResource("5_part_pickup")]
+position = Vector2(585, 550)
+item_resource = ExtResource("10_core_basic")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1690537809]
+
+[node name="Panel" type="Panel" parent="UI" unique_id=1349419278]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 380.0
+offset_bottom = 220.0
+
+[node name="StatusLabel" type="Label" parent="UI/Panel" unique_id=1613870298]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 352.0
+offset_bottom = 196.0
+text = "Chargement..."
+autowrap_mode = 3

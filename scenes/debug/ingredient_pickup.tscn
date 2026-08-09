@@ -1,3 +1,21 @@
 [gd_scene format=3 uid="uid://b5ohm5usu2u13"]
 
-[node name="IngredientPickup" type="Node2D" unique_id=1753524134]
+[ext_resource type="Script" uid="uid://ceg1x2j7ucjjs" path="res://scripts/inventory/pickup.gd" id="1_pickup"]
+[ext_resource type="Texture2D" uid="uid://dveo4pq2lg5l6" path="res://assets/test/mixture_bullet_test.png" id="2_tex"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ingr"]
+radius = 18.0
+
+[node name="IngredientPickup" type="Area2D"]
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("1_pickup")
+item_type = "ingredient"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ingr")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.4, 1, 0.5, 1)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_tex")

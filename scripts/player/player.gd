@@ -5,9 +5,11 @@ signal instance_projectile(data: Dictionary)
 @export var speed: float = 300.0
 @export var invulnerability_duration: float = 1.0
 @export var hud_scene: PackedScene = preload("res://scenes/HUD/hud.tscn")
+@export var inventory_screen_scene: PackedScene = preload("res://scenes/ui/inventory_screen.tscn")
 @onready var player_camera: Camera2D = $Camera2D
 @onready var damage_timer: Timer = $DamageTimer
 @onready var weapon: Weapon = $Weapon
+@onready var inventory: Inventory = $Inventory
 var was_water_pressed: bool = false
 var was_mixture_pressed: bool = false
 var last_aim_direction: Vector2 = Vector2.RIGHT
@@ -29,6 +31,15 @@ func _ready() -> void:
 		weapon.ammo_changed.connect(mixture_bar._on_ammo_changed)
 		mixture_bar._on_ammo_changed(weapon.mixture_max_capacity, weapon.current_mixture_ammo)
 		instance_hud.emit(hud)
+
+		var inventory_screen = inventory_screen_scene.instantiate()
+		# Rattaché directement au joueur plutôt que via instance_hud/Game.HUD :
+		# une CanvasLayer s'affiche correctement quel que soit son parent dans
+		# l'arbre (indépendant de la transform 2D), et ça évite de dépendre du
+		# routage de game.gd — donc ça marche aussi dans les scènes de debug
+		# (inventory_test.tscn) qui instancient Player sans passer par Game.
+		add_child(inventory_screen)
+		inventory_screen.bind_inventory(inventory)
 
 func _physics_process(_delta: float) -> void:
 	if not is_multiplayer_authority():

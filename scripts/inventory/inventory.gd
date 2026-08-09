@@ -20,11 +20,10 @@ func add_ingredient(ingredient: Ingredient, amount: int = 1) -> void:
 		push_error("Inventory.add_ingredient: ingredient sans resource_path (Resource non sauvegardée sur disque)")
 		return
 
-	ingredients[key] = ingredients.get(key, 0) + amount
-	ingredient_resources[key] = ingredient
+	var new_quantity: int = ingredients.get(key, 0) + amount
 
 	var owner_peer_id: int = _get_owner_peer_id()
-	_rpc_ingredient_updated.rpc_id(owner_peer_id, key, ingredients[key])
+	_rpc_ingredient_updated.rpc_id(owner_peer_id, key, new_quantity)
 
 
 func remove_ingredient(ingredient: Ingredient, amount: int = 1) -> bool:
@@ -36,10 +35,8 @@ func remove_ingredient(ingredient: Ingredient, amount: int = 1) -> bool:
 	if current < amount:
 		return false
 
-	ingredients[key] = current - amount
-
 	var owner_peer_id: int = _get_owner_peer_id()
-	_rpc_ingredient_updated.rpc_id(owner_peer_id, key, ingredients[key])
+	_rpc_ingredient_updated.rpc_id(owner_peer_id, key, current - amount)
 
 	return true
 
@@ -52,8 +49,6 @@ func add_weapon_part(part: Resource) -> void:
 	if not multiplayer.is_server():
 		return
 
-	weapon_parts.append(part)
-
 	var owner_peer_id: int = _get_owner_peer_id()
 	_rpc_weapon_part_added.rpc_id(owner_peer_id, part.resource_path)
 
@@ -65,8 +60,6 @@ func remove_weapon_part(part: Resource) -> bool:
 	var index: int = weapon_parts.find(part)
 	if index == -1:
 		return false
-
-	weapon_parts.remove_at(index)
 
 	var owner_peer_id: int = _get_owner_peer_id()
 	_rpc_weapon_part_removed.rpc_id(owner_peer_id, part.resource_path)

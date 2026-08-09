@@ -5,3 +5,4 @@ class_name GunBarrelWater
 @export var base_damage: float
 @export var projectile_speed: float
 @export var trajectory: Bullet.TrajectoryType = Bullet.TrajectoryType.HOMING
+@export var icon: Texture2D = null # Placeholder tant que l'art définitif n'existe pas (Phase 9.2)
