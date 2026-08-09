@@ -4,7 +4,6 @@ extends Node
 
 
 func _ready() -> void:
-	#multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	
 func hosting() -> void:
@@ -24,13 +23,6 @@ func get_peers() -> PackedInt32Array:
 	
 func get_unique_id() -> int:
 	return multiplayer.get_unique_id()
-
-#func _on_peer_connected(peer_id: int) -> void:
-	#print(peer_id)
-	##var new_player = preload("res://scenes/player.tscn").instantiate()
-	##new_player.set_multiplayer_authority(peer_id)
-	##
-	##Global.game_node.get_node("Players").add_child(new_player)
 	
 func _on_connection_failed() -> void:
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")

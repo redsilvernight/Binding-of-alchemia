@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://d058pph7t3kxa"]
+
+[ext_resource type="Script" uid="uid://bodovvrx7yss7" path="res://scripts/projectiles/bullet.gd" id="1_48g2p"]
+[ext_resource type="Texture2D" uid="uid://bm8yqhikb3283" path="res://assets/test/water_bullet_test.png" id="2_k5ji7"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_i2bxc"]
+radius = 32.0
+height = 110.0
+
+[node name="Bullet" type="Area2D" unique_id=1042800066]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_48g2p")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=745423852]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_k5ji7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=194560618]
+position = Vector2(0, 1)
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_i2bxc")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

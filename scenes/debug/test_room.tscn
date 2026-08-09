@@ -1,0 +1,69 @@
+[gd_scene format=3 uid="uid://bixcev8a5fsmf"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6w3oj"]
+size = Vector2(20, 664)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_im37l"]
+size = Vector2(1167, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4adyp"]
+size = Vector2(20, 664)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h8avn"]
+size = Vector2(1172, 20)
+
+[node name="TestRoom" type="Control" unique_id=1801714332]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Left" type="StaticBody2D" parent="." unique_id=1059559014]
+collision_layer = 8
+collision_mask = 0
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Left" unique_id=111473635]
+position = Vector2(0, 322)
+shape = SubResource("RectangleShape2D_6w3oj")
+disabled = true
+metadata/_edit_lock_ = true
+
+[node name="Top" type="StaticBody2D" parent="." unique_id=739946562]
+collision_layer = 8
+collision_mask = 0
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Top" unique_id=2109212642]
+position = Vector2(573.5, 0)
+shape = SubResource("RectangleShape2D_im37l")
+
+[node name="Right" type="StaticBody2D" parent="." unique_id=1807255162]
+position = Vector2(1152, 0)
+collision_layer = 8
+collision_mask = 0
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Right" unique_id=404250134]
+position = Vector2(0, 322)
+shape = SubResource("RectangleShape2D_4adyp")
+
+[node name="Bottom" type="StaticBody2D" parent="." unique_id=1739698393]
+position = Vector2(1152, 648)
+collision_layer = 8
+collision_mask = 0
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bottom" unique_id=1335371476]
+position = Vector2(-576, 0)
+shape = SubResource("RectangleShape2D_h8avn")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=259146614]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

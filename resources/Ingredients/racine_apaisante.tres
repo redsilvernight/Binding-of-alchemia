@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Ingredient" format=3 uid="uid://d3mbfhqltsvht"]
+
+[ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_ytyvu"]
+
+[resource]
+script = ExtResource("1_ytyvu")
+nom = "Racine Apaisante"
+type_alchimie = 4
+degats_base = -6.0
+metadata/_custom_type_script = "uid://bja0da4fhu872"

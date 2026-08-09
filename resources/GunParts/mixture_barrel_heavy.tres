@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="GunBarrelMixture" format=3 uid="uid://wfu3qvdkb4ok"]
+
+[ext_resource type="Script" uid="uid://djakeanr5q30h" path="res://scripts/weapons/resources/GunBarrelMixture.gd" id="1_fkjf5"]
+
+[resource]
+script = ExtResource("1_fkjf5")
+fire_rate = 0.5
+damage_multiplier = 3.0
+projectile_speed = 200.0
+metadata/_custom_type_script = "uid://djakeanr5q30h"

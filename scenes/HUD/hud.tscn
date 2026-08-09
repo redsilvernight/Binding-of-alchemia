@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://bwvr1sj6n53se"]
+
+[ext_resource type="Script" uid="uid://cgtlkupgtrgm0" path="res://scripts/HUD/life_bar.gd" id="1_c0cnr"]
+[ext_resource type="Script" uid="uid://c1e0yn1njhaj4" path="res://scripts/HUD/mixture_bar.gd" id="2_glunx"]
+
+[node name="HUD" type="CanvasLayer" unique_id=39818824]
+
+[node name="VBoxBar" type="VBoxContainer" parent="." unique_id=1048034969]
+custom_minimum_size = Vector2(300, 0)
+offset_left = 23.0
+offset_top = 20.0
+offset_right = 323.0
+offset_bottom = 78.0
+theme_override_constants/separation = 13
+
+[node name="LifeBar" type="ProgressBar" parent="VBoxBar" unique_id=1514857040]
+layout_mode = 2
+step = 1.0
+script = ExtResource("1_c0cnr")
+
+[node name="MixtureBar" type="ProgressBar" parent="VBoxBar" unique_id=2068122114]
+layout_mode = 2
+step = 1.0
+script = ExtResource("2_glunx")

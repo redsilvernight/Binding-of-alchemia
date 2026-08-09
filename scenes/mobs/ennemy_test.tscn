@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://dlgfk7pgj11bv"]
+
+[ext_resource type="Script" uid="uid://cdw5nd0stmqte" path="res://scripts/mobs/ennemi_test.gd" id="1_fg3o0"]
+[ext_resource type="Texture2D" uid="uid://bae7p21biki80" path="res://assets/test/mob_test.png" id="1_sxn2y"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_fg3o0"]
+radius = 102.01961
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_fg3o0"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[node name="EnnemyTest" type="CharacterBody2D" unique_id=853170682]
+scale = Vector2(0.5, 0.5)
+collision_layer = 2
+collision_mask = 12
+script = ExtResource("1_fg3o0")
+metadata/_edit_lock_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2024918144]
+texture = ExtResource("1_sxn2y")
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=565889002]
+position = Vector2(2, -12)
+shape = SubResource("CircleShape2D_fg3o0")
+
+[node name="CollisionArea" type="Area2D" parent="." unique_id=1324440627]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea" unique_id=570073454]
+position = Vector2(2, -12)
+shape = SubResource("CircleShape2D_fg3o0")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1993882365]
+replication_config = SubResource("SceneReplicationConfig_fg3o0")
+
+[connection signal="body_entered" from="CollisionArea" to="." method="_on_collision_area_body_entered"]

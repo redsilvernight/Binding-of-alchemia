@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ImpactDamage" format=3 uid="uid://bta5wmwxju6di"]
+
+[ext_resource type="Script" uid="uid://q2i4x0r2s1lr" path="res://scripts/effects/impact_damage.gd" id="1_ofc4v"]
+
+[resource]
+script = ExtResource("1_ofc4v")
+damage = 5.0
+metadata/_custom_type_script = "uid://q2i4x0r2s1lr"

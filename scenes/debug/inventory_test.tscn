@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://bc0pi4yquh7kh"]
+
+[ext_resource type="Script" uid="uid://edrpkwr3krrk" path="res://scripts/debug/inventory_test.gd" id="1_skelj"]
+[ext_resource type="Script" uid="uid://2jlnyyd5liv1" path="res://scripts/inventory/inventory.gd" id="2_0sle1"]
+
+[node name="InventoryTest" type="Control" unique_id=1098578397]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_skelj")
+
+[node name="1" type="Node" parent="." unique_id=1711450824]
+script = ExtResource("2_0sle1")

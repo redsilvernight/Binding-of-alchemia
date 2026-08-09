@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://conwu1ld28uqq"]
+
+[ext_resource type="Script" uid="uid://cpj0i0laciatc" path="res://scripts/debug/alchemy_test.gd" id="1_kaxmi"]
+
+[node name="AlchemyTest" type="Node2D" unique_id=390505013]
+script = ExtResource("1_kaxmi")
+
+[node name="UI" type="Control" parent="." unique_id=140165178]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="IngredientList" type="ItemList" parent="UI" unique_id=1052067043]
+layout_mode = 0
+offset_right = 273.0
+offset_bottom = 195.0
+select_mode = 1
+
+[node name="MixButton" type="Button" parent="UI" unique_id=916381319]
+layout_mode = 0
+offset_left = 86.0
+offset_top = 224.0
+offset_right = 139.0
+offset_bottom = 255.0
+text = "Mixer
+"
+
+[node name="ResultLabel" type="Label" parent="UI" unique_id=1717859406]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 300.0
+offset_right = 70.0
+offset_bottom = 323.0

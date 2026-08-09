@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Ingredient" format=3 uid="uid://d2tui7fuepvep"]
+
+[ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_n2hif"]
+
+[resource]
+script = ExtResource("1_n2hif")
+nom = "Centre Ardente"
+degats_base = 4.0
+duree_base = 1.5
+zone_base = 1.5
+metadata/_custom_type_script = "uid://bja0da4fhu872"
