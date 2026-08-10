@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/world/alchemy_station.gd" id="1_station"]
 [ext_resource type="Script" path="res://scripts/world/interactable.gd" id="2_interactable"]
+[ext_resource type="Script" path="res://scripts/world/weapon_station.gd" id="3_weapon_station"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_top"]
 size = Vector2(500, 20)
@@ -75,3 +76,26 @@ position = Vector2(-70, -90)
 size = Vector2(140, 30)
 horizontal_alignment = 1
 text = "Appuyer sur E pour l'alchimie"
+
+[node name="WeaponStation" type="Node2D" parent="."]
+position = Vector2(250, 150)
+script = ExtResource("3_weapon_station")
+
+[node name="BenchVisual" type="ColorRect" parent="WeaponStation"]
+position = Vector2(-25, -25)
+size = Vector2(50, 50)
+color = Color(0.3, 0.5, 0.7, 1)
+mouse_filter = 2
+
+[node name="Interactable" type="Area2D" parent="WeaponStation"]
+script = ExtResource("2_interactable")
+prompt_text = "Appuyer sur E pour l'atelier d'arme"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WeaponStation/Interactable"]
+shape = SubResource("CircleShape2D_station")
+
+[node name="PromptLabel" type="Label" parent="WeaponStation/Interactable"]
+position = Vector2(-70, -90)
+size = Vector2(140, 30)
+horizontal_alignment = 1
+text = "Appuyer sur E pour l'atelier d'arme"

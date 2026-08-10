@@ -67,6 +67,20 @@ func equip(piece) -> void:
 		core = piece
 	_recalculate_stats()
 
+func equip_networked(piece: Resource) -> void:
+	# Propage l'équipement à tous les pairs (même pattern que _broadcast_ammo) :
+	# chaque client possède sa propre copie du noeud Weapon (cf. commentaire
+	# _process), donc equip() en local ne suffit pas à garder les copies en
+	# phase. Seul l'hôte doit appeler ceci (cf. Player.request_equip_weapon_part).
+	if is_inside_tree():
+		_rpc_equip.rpc(piece.resource_path)
+	else:
+		equip(piece)
+
+@rpc("any_peer", "call_local", "reliable")
+func _rpc_equip(part_path: String) -> void:
+	equip(load(part_path))
+
 func _recalculate_stats():
 	var base_speed_water = 0.0
 	var base_speed_mixture = 0.0

@@ -1,0 +1,125 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/weapon_crafting.gd" id="1_craft"]
+
+[node name="WeaponCrafting" type="CanvasLayer"]
+layer = 5
+script = ExtResource("1_craft")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="Content" type="VBoxContainer" parent="Root"]
+layout_mode = 1
+anchor_left = 0.15
+anchor_top = 0.1
+anchor_right = 0.85
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Root/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Atelier d'arme"
+
+[node name="Hint" type="Label" parent="Root/Content"]
+layout_mode = 2
+text = "Clique sur une pièce pour l'équiper immédiatement."
+modulate = Color(0.8, 0.8, 0.8, 1)
+
+[node name="Columns" type="HBoxContainer" parent="Root/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="WaterColumn" type="VBoxContainer" parent="Root/Content/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Root/Content/Columns/WaterColumn"]
+layout_mode = 2
+text = "Canon eau"
+
+[node name="WaterList" type="ItemList" parent="Root/Content/Columns/WaterColumn"]
+custom_minimum_size = Vector2(0, 260)
+layout_mode = 2
+size_flags_vertical = 3
+select_mode = 0
+
+[node name="EquippedLabel" type="Label" parent="Root/Content/Columns/WaterColumn"]
+layout_mode = 2
+autowrap_mode = 2
+text = "Équipé : aucun"
+
+[node name="MixtureColumn" type="VBoxContainer" parent="Root/Content/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Root/Content/Columns/MixtureColumn"]
+layout_mode = 2
+text = "Canon mixture"
+
+[node name="MixtureList" type="ItemList" parent="Root/Content/Columns/MixtureColumn"]
+custom_minimum_size = Vector2(0, 260)
+layout_mode = 2
+size_flags_vertical = 3
+select_mode = 0
+
+[node name="EquippedLabel" type="Label" parent="Root/Content/Columns/MixtureColumn"]
+layout_mode = 2
+autowrap_mode = 2
+text = "Équipé : aucun"
+
+[node name="TankColumn" type="VBoxContainer" parent="Root/Content/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Root/Content/Columns/TankColumn"]
+layout_mode = 2
+text = "Réservoir"
+
+[node name="TankList" type="ItemList" parent="Root/Content/Columns/TankColumn"]
+custom_minimum_size = Vector2(0, 260)
+layout_mode = 2
+size_flags_vertical = 3
+select_mode = 0
+
+[node name="EquippedLabel" type="Label" parent="Root/Content/Columns/TankColumn"]
+layout_mode = 2
+autowrap_mode = 2
+text = "Équipé : aucun"
+
+[node name="CoreColumn" type="VBoxContainer" parent="Root/Content/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Root/Content/Columns/CoreColumn"]
+layout_mode = 2
+text = "Cœur"
+
+[node name="CoreList" type="ItemList" parent="Root/Content/Columns/CoreColumn"]
+custom_minimum_size = Vector2(0, 260)
+layout_mode = 2
+size_flags_vertical = 3
+select_mode = 0
+
+[node name="EquippedLabel" type="Label" parent="Root/Content/Columns/CoreColumn"]
+layout_mode = 2
+autowrap_mode = 2
+text = "Équipé : aucun"

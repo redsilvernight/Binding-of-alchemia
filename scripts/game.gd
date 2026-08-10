@@ -12,11 +12,31 @@ extends Control
 
 const TEST_PICKUPS: Array[Dictionary] = [
 	{"item_type": "ingredient", "item_resource_path": "res://resources/Ingredients/braise.tres", "position": Vector2(200, 150)},
-	{"item_type": "weapon_part", "item_resource_path": "res://resources/GunParts/water_barel_fast.tres", "position": Vector2(950, 500)},
-	{"item_type": "weapon_part", "item_resource_path": "res://resources/GunParts/core_basic.tres", "position": Vector2(585, 550)},
 	{"item_type": "ingredient", "item_resource_path": "res://resources/Ingredients/cristal_givre.tres", "position": Vector2(950, 150)},
 	{"item_type": "ingredient", "item_resource_path": "res://resources/Ingredients/bave_toxique.tres", "position": Vector2(200, 500)},
 ]
+
+# DEBUG / TEMPORAIRE : à retirer quand la Phase 6.3 (placement procédural
+# via spawn_table.gd) sera en place. Toutes les variantes de pièce d'arme
+# existantes (resources/GunParts/) apparaissent à chaque lancement pour
+# permettre de tester différentes combinaisons au labo, à une position
+# tirée au sort (cf. WEAPON_PART_SPAWN_MARGIN pour les bornes, calées à
+# l'intérieur des murs de test_room.tscn). Ce n'est pas un vrai système de
+# spawn (pas de table pondérée, pas de points de spawn en éditeur, aucune
+# rareté) : juste de quoi tester le crafting d'arme sans passer par le
+# weapon_switcher de debug.
+const WEAPON_PART_PATHS: Array[String] = [
+	"res://resources/GunParts/water_barel_basic.tres",
+	"res://resources/GunParts/water_barel_fast.tres",
+	"res://resources/GunParts/mixture_barrel_basic.tres",
+	"res://resources/GunParts/mixture_barrel_heavy.tres",
+	"res://resources/GunParts/tank_basic.tres",
+	"res://resources/GunParts/tank_large.tres",
+	"res://resources/GunParts/core_basic.tres",
+	"res://resources/GunParts/core_range.tres",
+]
+const WEAPON_PART_SPAWN_MARGIN: float = 80.0
+const WEAPON_PART_SPAWN_SIZE: Vector2 = Vector2(1152, 648)
 
 func _ready() -> void:
 	NetworkManager.multiplayer.peer_disconnected.connect(_on_peer_disconnected)
@@ -32,6 +52,25 @@ func _ready() -> void:
 			enemy_spawner.spawn({"position": Vector2(i * 40, 0)})
 		for pickup_data in TEST_PICKUPS:
 			pickup_spawner.spawn(pickup_data)
+		for pickup_data in _generate_weapon_part_pickups():
+			pickup_spawner.spawn(pickup_data)
+
+func _generate_weapon_part_pickups() -> Array[Dictionary]:
+	# DEBUG / TEMPORAIRE (cf. WEAPON_PART_PATHS) : à remplacer par la Phase
+	# 6.3 (spawn_table.gd, points de spawn Marker2D par salle). Décidé une
+	# seule fois côté hôte (autorité), puis répliqué aux clients via les
+	# données envoyées à pickup_spawner.spawn() : aucun tirage local côté
+	# client, cf. architecture_reseau.md.
+	var paths := WEAPON_PART_PATHS.duplicate()
+	paths.shuffle()
+	var pickups: Array[Dictionary] = []
+	for path in paths:
+		var pos := Vector2(
+			randf_range(WEAPON_PART_SPAWN_MARGIN, WEAPON_PART_SPAWN_SIZE.x - WEAPON_PART_SPAWN_MARGIN),
+			randf_range(WEAPON_PART_SPAWN_MARGIN, WEAPON_PART_SPAWN_SIZE.y - WEAPON_PART_SPAWN_MARGIN)
+		)
+		pickups.append({"item_type": "weapon_part", "item_resource_path": path, "position": pos})
+	return pickups
 
 func _spawn_pickup(data: Dictionary) -> Node:
 	var scene_path := "res://scenes/debug/ingredient_pickup.tscn" if data["item_type"] == "ingredient" else "res://scenes/debug/weapon_part_pickup.tscn"

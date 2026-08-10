@@ -7,6 +7,7 @@ signal instance_projectile(data: Dictionary)
 @export var hud_scene: PackedScene = preload("res://scenes/HUD/hud.tscn")
 @export var inventory_screen_scene: PackedScene = preload("res://scenes/ui/inventory_screen.tscn")
 @export var alchemy_crafting_scene: PackedScene = preload("res://scenes/ui/alchemy_crafting.tscn")
+@export var weapon_crafting_scene: PackedScene = preload("res://scenes/ui/weapon_crafting.tscn")
 @onready var player_camera: Camera2D = $Camera2D
 @onready var damage_timer: Timer = $DamageTimer
 @onready var weapon: Weapon = $Weapon
@@ -19,6 +20,7 @@ var last_mouse_activity_time: float = -INF
 var last_mouse_screen_position: Vector2 = Vector2.ZERO
 var mouse_position_initialized: bool = false
 var alchemy_crafting_screen: Node = null
+var weapon_crafting_screen: Node = null
 
 func _ready() -> void:
 	super()
@@ -40,6 +42,10 @@ func _ready() -> void:
 		add_child(alchemy_crafting)
 		alchemy_crafting.bind_inventory(inventory)
 		alchemy_crafting_screen = alchemy_crafting
+		var weapon_crafting = weapon_crafting_scene.instantiate()
+		add_child(weapon_crafting)
+		weapon_crafting.bind_inventory(inventory)
+		weapon_crafting_screen = weapon_crafting
 	else:
 		player_camera.enabled = false
 
@@ -101,6 +107,30 @@ func _get_aim_direction() -> Vector2:
 func open_alchemy_crafting() -> void:
 	if alchemy_crafting_screen:
 		alchemy_crafting_screen.open()
+
+func open_weapon_crafting() -> void:
+	if weapon_crafting_screen:
+		weapon_crafting_screen.open()
+
+@rpc("any_peer", "call_local", "reliable")
+func request_equip_weapon_part(part_path: String) -> void:
+	# Même garde que request_craft_mixture : seul l'hôte valide, et seulement
+	# pour le joueur qui a réellement envoyé la requête (anti-usurpation).
+	if not multiplayer.is_server():
+		return
+	var sender_id: int = multiplayer.get_remote_sender_id()
+	if sender_id != int(name):
+		return
+
+	var owned: bool = false
+	for part in inventory.weapon_parts:
+		if part.resource_path == part_path:
+			owned = true
+			break
+	if not owned:
+		return # désync UI/inventaire : on ignore plutôt que d'équiper une pièce non possédée
+
+	weapon.equip_networked(load(part_path))
 
 @rpc("any_peer", "call_local", "reliable")
 func request_craft_mixture(ingredient_paths: Array[String]) -> void:
