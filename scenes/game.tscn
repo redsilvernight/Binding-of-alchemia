@@ -1,8 +1,6 @@
 [gd_scene format=3 uid="uid://ctybprv15wl2q"]
 
 [ext_resource type="Script" uid="uid://jv7080oyssb" path="res://scripts/game.gd" id="1_uwrxv"]
-[ext_resource type="PackedScene" uid="uid://bixcev8a5fsmf" path="res://scenes/debug/test_room.tscn" id="2_yqjtg"]
-[ext_resource type="PackedScene" path="res://scenes/rooms/room_alchemy.tscn" id="3_alchemy"]
 
 [node name="Game" type="Control" unique_id=972414603]
 layout_mode = 3
@@ -13,11 +11,10 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_uwrxv")
 
-[node name="TestRoom" parent="." unique_id=1801714332 instance=ExtResource("2_yqjtg")]
-layout_mode = 1
+[node name="Rooms" type="Node2D" parent="."]
 
-[node name="RoomAlchemy" parent="." instance=ExtResource("3_alchemy")]
-position = Vector2(1152, 0)
+[node name="RoomSpawner" type="MultiplayerSpawner" parent="."]
+spawn_path = NodePath("../Rooms")
 
 [node name="Players" type="Node2D" parent="." unique_id=1234893558]
 

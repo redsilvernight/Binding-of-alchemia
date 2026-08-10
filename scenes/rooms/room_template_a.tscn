@@ -1,8 +1,6 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/dungeon/room.gd" id="1_room"]
-[ext_resource type="Script" path="res://scripts/world/alchemy_station.gd" id="2_station"]
-[ext_resource type="Script" path="res://scripts/world/interactable.gd" id="3_interactable"]
 
 [sub_resource type="RectangleShape2D" id="Closed_NS"]
 size = Vector2(500, 20)
@@ -16,21 +14,12 @@ size = Vector2(20, 648)
 [sub_resource type="RectangleShape2D" id="Open_EW_Segment"]
 size = Vector2(20, 244)
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_station"]
-radius = 80.0
-
-[node name="RoomAlchemy" type="Node2D"]
+[node name="RoomTemplateA" type="Node2D"]
 script = ExtResource("1_room")
-# Salle spéciale de donjon (type "treasure/shop room" à la Isaac), une des
-# salles générées par DungeonGenerator (Phase 6.1). Contient uniquement
-# l'établi d'alchimie — l'atelier d'arme vit dans room_weapon.tscn, une
-# salle distincte : le générateur choisit aléatoirement laquelle des deux
-# apparaît dans le donjon, jamais les deux ensemble (cf. game.gd,
-# SPECIAL_ROOM_TEMPLATE_PATHS).
 
 [node name="Background" type="ColorRect" parent="."]
 size = Vector2(500, 648)
-color = Color(0.5, 0.15, 0.5, 0.6)
+color = Color(0.15, 0.35, 0.55, 0.6)
 mouse_filter = 2
 
 [node name="North" type="Node2D" parent="."]
@@ -128,26 +117,3 @@ disabled = true
 position = Vector2(500, 526)
 shape = SubResource("Open_EW_Segment")
 disabled = true
-
-[node name="AlchemyStation" type="Node2D" parent="."]
-position = Vector2(250, 324)
-script = ExtResource("2_station")
-
-[node name="BenchVisual" type="ColorRect" parent="AlchemyStation"]
-position = Vector2(-50, -50)
-size = Vector2(100, 100)
-color = Color(0.85, 0.4, 1, 1)
-mouse_filter = 2
-
-[node name="Interactable" type="Area2D" parent="AlchemyStation"]
-script = ExtResource("3_interactable")
-prompt_text = "Appuyer sur E pour l'alchimie"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AlchemyStation/Interactable"]
-shape = SubResource("CircleShape2D_station")
-
-[node name="PromptLabel" type="Label" parent="AlchemyStation/Interactable"]
-position = Vector2(-70, -90)
-size = Vector2(140, 30)
-horizontal_alignment = 1
-text = "Appuyer sur E pour l'alchimie"
