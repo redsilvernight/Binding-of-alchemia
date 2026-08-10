@@ -19,6 +19,9 @@ size = Vector2(20, 244)
 [sub_resource type="CircleShape2D" id="CircleShape2D_station"]
 radius = 80.0
 
+[sub_resource type="RectangleShape2D" id="RoomTriggerShape"]
+size = Vector2(300, 448)
+
 [node name="RoomWeapon" type="Node2D"]
 script = ExtResource("1_room")
 # Salle spéciale de donjon (type "treasure/shop room" à la Isaac), une des
@@ -128,6 +131,46 @@ disabled = true
 position = Vector2(500, 526)
 shape = SubResource("Open_EW_Segment")
 disabled = true
+
+[node name="RoomTrigger" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RoomTrigger"]
+position = Vector2(250, 324)
+shape = SubResource("RoomTriggerShape")
+
+[node name="EnemyBoundaries" type="Node2D" parent="."]
+
+[node name="North" type="StaticBody2D" parent="EnemyBoundaries"]
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyBoundaries/North"]
+position = Vector2(250, 0)
+shape = SubResource("Closed_NS")
+
+[node name="South" type="StaticBody2D" parent="EnemyBoundaries"]
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyBoundaries/South"]
+position = Vector2(250, 648)
+shape = SubResource("Closed_NS")
+
+[node name="West" type="StaticBody2D" parent="EnemyBoundaries"]
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyBoundaries/West"]
+position = Vector2(0, 324)
+shape = SubResource("Closed_EW")
+
+[node name="East" type="StaticBody2D" parent="EnemyBoundaries"]
+collision_layer = 16
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyBoundaries/East"]
+position = Vector2(500, 324)
+shape = SubResource("Closed_EW")
 
 [node name="WeaponStation" type="Node2D" parent="."]
 position = Vector2(250, 324)

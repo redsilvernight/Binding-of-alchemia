@@ -14,7 +14,7 @@ properties/0/replication_mode = 1
 [node name="EnnemyTest" type="CharacterBody2D" unique_id=853170682]
 scale = Vector2(0.5, 0.5)
 collision_layer = 2
-collision_mask = 12
+collision_mask = 28
 script = ExtResource("1_fg3o0")
 metadata/_edit_lock_ = true
 

@@ -63,14 +63,24 @@ func _ready() -> void:
 
 	if multiplayer.is_server():
 		var dungeon_layout: Array[Dictionary] = DungeonGenerator.generate(DUNGEON_ROOM_COUNT, ROOM_TEMPLATE_PATHS, SPECIAL_ROOM_TEMPLATE_PATHS)
+		var room_nodes: Dictionary = {} # Vector2i (grid_position) -> Room
 		for room_data in dungeon_layout:
-			room_spawner.spawn(room_data)
+			var room: Room = room_spawner.spawn(room_data)
+			room_nodes[room_data["grid_position"]] = room
 
 		player_spawner.spawn(NetworkManager.get_unique_id())
-		for i in range(1):
-			var enemy_room: Dictionary = _random_explorable_room(dungeon_layout, true)
-			var enemy_rect: Rect2 = _room_world_rect(enemy_room)
-			enemy_spawner.spawn({"position": enemy_rect.position + ROOM_CELL_SIZE / 2})
+
+		# DEBUG / TEMPORAIRE (cf. WEAPON_PART_PATHS plus bas) : un ennemi par
+		# salle explorable, pour que le verrouillage de porte (Phase 6.2) ait
+		# quelque chose à tester. Densité/placement réels : Phase 6.3/7.
+		for room_data in dungeon_layout:
+			if room_data["is_special"] or room_data["is_start"]:
+				continue
+			var enemy_rect: Rect2 = _room_world_rect(room_data)
+			var enemy: Node = enemy_spawner.spawn({"position": enemy_rect.position + ROOM_CELL_SIZE / 2})
+			var room: Room = room_nodes[room_data["grid_position"]]
+			room.register_enemy(enemy)
+
 		for pickup_data in _generate_ingredient_pickups(dungeon_layout):
 			pickup_spawner.spawn(pickup_data)
 		for pickup_data in _generate_weapon_part_pickups(dungeon_layout):
@@ -89,12 +99,10 @@ func _spawn_room(data: Dictionary) -> Node:
 func _room_world_rect(room_data: Dictionary) -> Rect2:
 	return Rect2(Vector2(room_data["grid_position"]) * ROOM_CELL_SIZE, ROOM_CELL_SIZE)
 
-func _random_explorable_room(dungeon_layout: Array[Dictionary], exclude_start: bool = false) -> Dictionary:
+func _random_explorable_room(dungeon_layout: Array[Dictionary]) -> Dictionary:
 	var candidates: Array[Dictionary] = []
 	for room_data in dungeon_layout:
 		if room_data["is_special"]:
-			continue
-		if exclude_start and room_data["is_start"]:
 			continue
 		candidates.append(room_data)
 	if candidates.is_empty():
