@@ -27,3 +27,5 @@ Thumbs.db
 
 # Godot 4 specific: local editor settings that shouldn't be shared
 editor_layout.cfg
+
+infos/

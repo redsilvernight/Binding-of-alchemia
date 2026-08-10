@@ -6,6 +6,7 @@ signal instance_projectile(data: Dictionary)
 @export var invulnerability_duration: float = 1.0
 @export var hud_scene: PackedScene = preload("res://scenes/HUD/hud.tscn")
 @export var inventory_screen_scene: PackedScene = preload("res://scenes/ui/inventory_screen.tscn")
+@export var alchemy_crafting_scene: PackedScene = preload("res://scenes/ui/alchemy_crafting.tscn")
 @onready var player_camera: Camera2D = $Camera2D
 @onready var damage_timer: Timer = $DamageTimer
 @onready var weapon: Weapon = $Weapon
@@ -17,6 +18,7 @@ var last_stick_activity_time: float = -INF
 var last_mouse_activity_time: float = -INF
 var last_mouse_screen_position: Vector2 = Vector2.ZERO
 var mouse_position_initialized: bool = false
+var alchemy_crafting_screen: Node = null
 
 func _ready() -> void:
 	super()
@@ -34,6 +36,10 @@ func _ready() -> void:
 		var inventory_screen = inventory_screen_scene.instantiate()
 		add_child(inventory_screen)
 		inventory_screen.bind_inventory(inventory)
+		var alchemy_crafting = alchemy_crafting_scene.instantiate()
+		add_child(alchemy_crafting)
+		alchemy_crafting.bind_inventory(inventory)
+		alchemy_crafting_screen = alchemy_crafting
 	else:
 		player_camera.enabled = false
 
@@ -91,6 +97,57 @@ func _get_aim_direction() -> Vector2:
 		if mouse_delta.length() > 0.0:
 			last_aim_direction = mouse_delta.normalized()
 	return last_aim_direction
+
+func open_alchemy_crafting() -> void:
+	if alchemy_crafting_screen:
+		alchemy_crafting_screen.open()
+
+@rpc("any_peer", "call_local", "reliable")
+func request_craft_mixture(ingredient_paths: Array[String]) -> void:
+	# Même garde que request_fire : seul l'hôte résout, et seulement pour
+	# le joueur qui a réellement envoyé la requête (anti-usurpation).
+	if not multiplayer.is_server():
+		return
+	var sender_id: int = multiplayer.get_remote_sender_id()
+	if sender_id != int(name):
+		return
+	if ingredient_paths.is_empty():
+		return
+
+	# On compte d'abord tout ce qu'il faut et on vérifie le stock AVANT de
+	# retirer quoi que ce soit : un retrait partiel suivi d'un échec plus
+	# loin consommerait des ingrédients sans produire de mixture (perte
+	# silencieuse pour le joueur). L'opération doit rester atomique.
+	var required_counts: Dictionary = {} # String (resource_path) -> int
+	for path in ingredient_paths:
+		required_counts[path] = required_counts.get(path, 0) + 1
+
+	var ingredients_for_recipe: Array[Ingredient] = []
+	for path in required_counts.keys():
+		var ingredient: Ingredient = load(path) as Ingredient
+		if ingredient == null:
+			push_error("request_craft_mixture: ingrédient introuvable: %s" % path)
+			return
+		if inventory.get_ingredient_count(ingredient) < required_counts[path]:
+			return # stock insuffisant (désync UI/inventaire) : on abandonne sans rien consommer
+		for i in range(required_counts[path]):
+			ingredients_for_recipe.append(ingredient)
+
+	for path in required_counts.keys():
+		inventory.remove_ingredient(load(path) as Ingredient, required_counts[path])
+
+	# Résolution et conversion en effet : appelées uniquement depuis ce
+	# chemin autoritaire côté hôte (cf. architecture_reseau.md, 4.2).
+	var mixture: Mixture = AlchemyResolver.resoudre(ingredients_for_recipe)
+	var effect: ImpactEffect = MixtureToEffect.convertir(mixture)
+	# Limite connue : ceci écrase l'effet de la mixture active tant que
+	# l'inventaire ne stocke pas plusieurs mixtures en parallèle (5.5 ne
+	# prévoit qu'une mixture "chargée" à la fois pour l'instant). Un futur
+	# equip() sur l'arme (changement de pièce) réinitialise ce champ à
+	# barrel_mixture.impact_effect — dette acceptée, à traiter si le besoin
+	# de stockage multi-mixtures se confirme.
+	weapon.mixture_impact_effect = effect
+	print("Mixture appliquée pour %s: %s" % [name, effect])
 
 func _on_projectile_requested(data: Dictionary) -> void:
 	instance_projectile.emit(data)

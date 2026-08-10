@@ -6,8 +6,11 @@ size = Vector2(20, 664)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_im37l"]
 size = Vector2(1167, 20)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_4adyp"]
-size = Vector2(20, 664)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_right_top"]
+size = Vector2(19, 189)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_right_bottom"]
+size = Vector2(19, 164)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h8avn"]
 size = Vector2(1172, 20)
@@ -46,9 +49,13 @@ collision_layer = 8
 collision_mask = 0
 metadata/_edit_lock_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Right" unique_id=404250134]
-position = Vector2(0, 322)
-shape = SubResource("RectangleShape2D_4adyp")
+[node name="CollisionShapeTop" type="CollisionShape2D" parent="Right" unique_id=849254727]
+position = Vector2(-0.5, 84.5)
+shape = SubResource("RectangleShape2D_right_top")
+
+[node name="CollisionShapeBottom" type="CollisionShape2D" parent="Right" unique_id=1144551357]
+position = Vector2(-0.5, 572)
+shape = SubResource("RectangleShape2D_right_bottom")
 
 [node name="Bottom" type="StaticBody2D" parent="." unique_id=1739698393]
 position = Vector2(1152, 648)

@@ -21,9 +21,8 @@ func add_ingredient(ingredient: Ingredient, amount: int = 1) -> void:
 		return
 
 	var new_quantity: int = ingredients.get(key, 0) + amount
-
-	var owner_peer_id: int = _get_owner_peer_id()
-	_rpc_ingredient_updated.rpc_id(owner_peer_id, key, new_quantity)
+	_apply_ingredient_update(key, new_quantity)
+	_notify_owner_ingredient_update(key, new_quantity)
 
 
 func remove_ingredient(ingredient: Ingredient, amount: int = 1) -> bool:
@@ -35,10 +34,22 @@ func remove_ingredient(ingredient: Ingredient, amount: int = 1) -> bool:
 	if current < amount:
 		return false
 
-	var owner_peer_id: int = _get_owner_peer_id()
-	_rpc_ingredient_updated.rpc_id(owner_peer_id, key, current - amount)
+	var new_quantity: int = current - amount
+	_apply_ingredient_update(key, new_quantity)
+	_notify_owner_ingredient_update(key, new_quantity)
 
 	return true
+
+
+func _notify_owner_ingredient_update(key: String, new_quantity: int) -> void:
+	# rpc_id call_local ne s'exécute localement que si la cible est soi-même
+	# ou 0 (broadcast) ; comme owner_peer_id vise un pair précis (le client
+	# propriétaire), le serveur doit s'appliquer la mise à jour lui-même
+	# via _apply_ingredient_update (cf. bug crafting multi : ingrédients
+	# jamais consommés côté hôte-autoritaire).
+	var owner_peer_id: int = _get_owner_peer_id()
+	if owner_peer_id != multiplayer.get_unique_id():
+		_rpc_ingredient_updated.rpc_id(owner_peer_id, key, new_quantity)
 
 
 func get_ingredient_count(ingredient: Ingredient) -> int:
@@ -49,8 +60,8 @@ func add_weapon_part(part: Resource) -> void:
 	if not multiplayer.is_server():
 		return
 
-	var owner_peer_id: int = _get_owner_peer_id()
-	_rpc_weapon_part_added.rpc_id(owner_peer_id, part.resource_path)
+	_apply_weapon_part_added(part.resource_path)
+	_notify_owner_weapon_part_added(part.resource_path)
 
 
 func remove_weapon_part(part: Resource) -> bool:
@@ -61,10 +72,22 @@ func remove_weapon_part(part: Resource) -> bool:
 	if index == -1:
 		return false
 
-	var owner_peer_id: int = _get_owner_peer_id()
-	_rpc_weapon_part_removed.rpc_id(owner_peer_id, part.resource_path)
+	_apply_weapon_part_removed(part.resource_path)
+	_notify_owner_weapon_part_removed(part.resource_path)
 
 	return true
+
+
+func _notify_owner_weapon_part_added(part_path: String) -> void:
+	var owner_peer_id: int = _get_owner_peer_id()
+	if owner_peer_id != multiplayer.get_unique_id():
+		_rpc_weapon_part_added.rpc_id(owner_peer_id, part_path)
+
+
+func _notify_owner_weapon_part_removed(part_path: String) -> void:
+	var owner_peer_id: int = _get_owner_peer_id()
+	if owner_peer_id != multiplayer.get_unique_id():
+		_rpc_weapon_part_removed.rpc_id(owner_peer_id, part_path)
 
 
 func _get_owner_peer_id() -> int:
@@ -72,8 +95,7 @@ func _get_owner_peer_id() -> int:
 	return int(get_parent().name)
 
 
-@rpc("authority", "call_local", "reliable")
-func _rpc_ingredient_updated(ingredient_path: String, new_quantity: int) -> void:
+func _apply_ingredient_update(ingredient_path: String, new_quantity: int) -> void:
 	var ingredient: Ingredient = load(ingredient_path) as Ingredient
 	if new_quantity > ingredients.get(ingredient_path, 0):
 		ingredients[ingredient_path] = new_quantity
@@ -84,17 +106,30 @@ func _rpc_ingredient_updated(ingredient_path: String, new_quantity: int) -> void
 		ingredient_removed.emit(ingredient, new_quantity)
 
 
-@rpc("authority", "call_local", "reliable")
-func _rpc_weapon_part_added(part_path: String) -> void:
+func _apply_weapon_part_added(part_path: String) -> void:
 	var part: Resource = load(part_path)
 	weapon_parts.append(part)
 	weapon_part_added.emit(part)
 
 
-@rpc("authority", "call_local", "reliable")
-func _rpc_weapon_part_removed(part_path: String) -> void:
+func _apply_weapon_part_removed(part_path: String) -> void:
 	var part: Resource = load(part_path)
 	var index: int = weapon_parts.find(part)
 	if index != -1:
 		weapon_parts.remove_at(index)
 	weapon_part_removed.emit(part)
+
+
+@rpc("authority", "call_local", "reliable")
+func _rpc_ingredient_updated(ingredient_path: String, new_quantity: int) -> void:
+	_apply_ingredient_update(ingredient_path, new_quantity)
+
+
+@rpc("authority", "call_local", "reliable")
+func _rpc_weapon_part_added(part_path: String) -> void:
+	_apply_weapon_part_added(part_path)
+
+
+@rpc("authority", "call_local", "reliable")
+func _rpc_weapon_part_removed(part_path: String) -> void:
+	_apply_weapon_part_removed(part_path)
