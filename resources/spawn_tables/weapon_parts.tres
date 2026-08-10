@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="SpawnTable" load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon/spawn_table.gd" id="1_table"]
+[ext_resource type="Script" path="res://scripts/dungeon/spawn_table_entry.gd" id="2_entry"]
+
+[sub_resource type="Resource" id="Resource_water_barel_basic"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/water_barel_basic.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_water_barel_fast"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/water_barel_fast.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_mixture_barrel_basic"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/mixture_barrel_basic.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_mixture_barrel_heavy"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/mixture_barrel_heavy.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_tank_basic"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/tank_basic.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_tank_large"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/tank_large.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_core_basic"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/core_basic.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_core_range"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/core_range.tres"
+weight = 1.0
+
+[resource]
+script = ExtResource("1_table")
+entries = Array[ExtResource("2_entry")]([SubResource("Resource_water_barel_basic"), SubResource("Resource_water_barel_fast"), SubResource("Resource_mixture_barrel_basic"), SubResource("Resource_mixture_barrel_heavy"), SubResource("Resource_tank_basic"), SubResource("Resource_tank_large"), SubResource("Resource_core_basic"), SubResource("Resource_core_range")])
+min_count = 8
+max_count = 8

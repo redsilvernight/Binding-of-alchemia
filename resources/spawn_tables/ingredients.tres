@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="SpawnTable" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon/spawn_table.gd" id="1_table"]
+[ext_resource type="Script" path="res://scripts/dungeon/spawn_table_entry.gd" id="2_entry"]
+
+[sub_resource type="Resource" id="Resource_braise"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/braise.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_cristal_givre"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/cristal_givre.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_bave_toxique"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/bave_toxique.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_cendre_ardente"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/cendre_ardente.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_racine_apaisante"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/racine_apaisante.tres"
+weight = 1.0
+
+[resource]
+script = ExtResource("1_table")
+entries = Array[ExtResource("2_entry")]([SubResource("Resource_braise"), SubResource("Resource_cristal_givre"), SubResource("Resource_bave_toxique"), SubResource("Resource_cendre_ardente"), SubResource("Resource_racine_apaisante")])
+min_count = 4
+max_count = 6

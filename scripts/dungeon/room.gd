@@ -25,6 +25,10 @@ extends Node2D
 # salle précise) — les ennemis ne doivent jamais quitter leur salle.
 
 signal room_cleared
+## Émis uniquement côté hôte (cf. garde is_server() plus bas) quand un joueur
+## entre dans cette salle — utilisé par game.gd pour la mini-map (Phase 6.4),
+## indépendamment du verrouillage de porte.
+signal player_entered
 
 const SIDES: Array[String] = ["north", "south", "east", "west"]
 
@@ -79,6 +83,7 @@ func _on_trigger_body_entered(body: Node2D) -> void:
 		return
 	if not multiplayer.is_server():
 		return
+	player_entered.emit()
 	_activate_enemies_delayed()
 	if _locked or _alive_enemies.is_empty():
 		return

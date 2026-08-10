@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cgtlkupgtrgm0" path="res://scripts/HUD/life_bar.gd" id="1_c0cnr"]
 [ext_resource type="Script" uid="uid://c1e0yn1njhaj4" path="res://scripts/HUD/mixture_bar.gd" id="2_glunx"]
+[ext_resource type="PackedScene" path="res://scenes/ui/minimap.tscn" id="3_minimap"]
 
 [node name="HUD" type="CanvasLayer" unique_id=39818824]
 
@@ -22,3 +23,5 @@ script = ExtResource("1_c0cnr")
 layout_mode = 2
 step = 1.0
 script = ExtResource("2_glunx")
+
+[node name="Minimap" parent="." instance=ExtResource("3_minimap")]

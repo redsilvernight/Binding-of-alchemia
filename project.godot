@@ -20,7 +20,6 @@ config/icon="res://icon.svg"
 Global="*uid://c5asde2m5txr6"
 NetworkManager="*uid://6kp6mnbogy6y"
 PlayerManager="*uid://bs02lmt7nr33f"
-EnemyManager="*uid://cnit33077wsaq"
 
 [input]
 
