@@ -3,15 +3,18 @@ extends EnemyBase
 @export var damage: float = 5.0
 var target: Node2D = null
 
-func _physics_process(_delta: float) -> void:
+## Démarre en Idle : Room active l'ennemi via `active` (cf. EnemyBase), lu
+## par EnemyStateIdle qui transitionne vers Chase — voir scripts/enemies/states/.
+var state_machine: EnemyStateMachine
+
+func _ready() -> void:
+	super()
+	state_machine = EnemyStateMachine.new(EnemyStateIdle.new(self))
+
+func _physics_process(delta: float) -> void:
 	if not multiplayer.is_server():
 		return
-	if not active:
-		return
-	_update_target()
-	if target and is_instance_valid(target):
-		var direction: Vector2 = global_position.direction_to(target.global_position)
-		move(direction, speed)
+	state_machine.physics_process(delta)
 
 func _update_target() -> void:
 	var players = get_tree().get_nodes_in_group("Players")
