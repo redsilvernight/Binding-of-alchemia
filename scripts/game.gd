@@ -15,7 +15,7 @@ extends Control
 # Phase 6.1 : toutes les salles ont le même gabarit (modèle grille fixe,
 # cf. DungeonGenerator) — obligatoire pour que les portes de deux salles
 # voisines s'alignent toujours sans avoir à les valider au cas par cas.
-const ROOM_CELL_SIZE: Vector2 = Vector2(500, 648)
+const ROOM_CELL_SIZE: Vector2 = Vector2(1000, 1296)
 const DUNGEON_ROOM_COUNT: int = 6
 const ROOM_TEMPLATE_PATHS: Array[String] = [
 	"res://scenes/rooms/room_template_a.tscn",
@@ -27,6 +27,12 @@ const SPECIAL_ROOM_TEMPLATE_PATHS: Array[String] = [
 	"res://scenes/rooms/room_alchemy.tscn",
 	"res://scenes/rooms/room_weapon.tscn",
 ]
+# Phase 7.4 : salle de boss, jamais tirée au hasard (cf. DungeonGenerator —
+# toujours la cellule la plus éloignée du départ) — le boss lui-même est
+# spawné à part, hors de la spawn table pondérée des ennemis normaux.
+const BOSS_ROOM_TEMPLATE_PATH: String = "res://scenes/rooms/boss_room.tscn"
+const BOSS_SCENE_PATH: String = "res://scenes/enemies/boss_01.tscn"
+const BOSS_HEALTHBAR_SCENE_PATH: String = "res://scenes/ui/boss_healthbar.tscn"
 
 # Phase 6.3 : QUOI/COMBIEN spawn vient de ces tables pondérées (voir
 # scripts/dungeon/spawn_table.gd), le OÙ reste une position aléatoire dans
@@ -44,7 +50,13 @@ const ROOM_SPAWN_MARGIN: float = 80.0
 # après coup, et seul l'hôte décide quand — répliqué via _rpc_mark_room_visited,
 # même pattern que Room._rpc_set_locked.
 signal dungeon_map_changed
-var dungeon_map: Dictionary = {} # Vector2i (grid_position) -> {is_start, is_special, open_sides, visited}
+var dungeon_map: Dictionary = {} # Vector2i (grid_position) -> {is_start, is_special, is_boss, open_sides, visited}
+
+# Phase 7.4 : référence au boss courant, utilisée pour rattraper l'état de
+# vie d'un pair qui rejoint après le début du combat (cf. _on_peer_connected)
+# — sans ça sa boss_healthbar afficherait la vie max jusqu'au prochain coup
+# porté, puisque _update_health est un RPC one-shot jamais rejoué.
+var current_boss: Node = null
 
 func _ready() -> void:
 	add_to_group("Game")
@@ -57,7 +69,7 @@ func _ready() -> void:
 	pickup_spawner.spawn_function = _spawn_pickup
 
 	if multiplayer.is_server():
-		var dungeon_layout: Array[Dictionary] = DungeonGenerator.generate(DUNGEON_ROOM_COUNT, ROOM_TEMPLATE_PATHS, SPECIAL_ROOM_TEMPLATE_PATHS)
+		var dungeon_layout: Array[Dictionary] = DungeonGenerator.generate(DUNGEON_ROOM_COUNT, ROOM_TEMPLATE_PATHS, SPECIAL_ROOM_TEMPLATE_PATHS, BOSS_ROOM_TEMPLATE_PATH)
 		var room_nodes: Dictionary = {} # Vector2i (grid_position) -> Room
 		for room_data in dungeon_layout:
 			var room: Room = room_spawner.spawn(room_data)
@@ -67,7 +79,7 @@ func _ready() -> void:
 
 		var enemy_table: SpawnTable = load(ENEMY_SPAWN_TABLE_PATH) as SpawnTable
 		for room_data in dungeon_layout:
-			if room_data["is_special"] or room_data["is_start"]:
+			if room_data["is_special"] or room_data["is_start"] or room_data["is_boss"]:
 				continue
 			var room: Room = room_nodes[room_data["grid_position"]]
 			for enemy_scene_path in enemy_table.pick_many():
@@ -76,6 +88,21 @@ func _ready() -> void:
 					"position": _random_position_in_room(room_data),
 				})
 				room.register_enemy(enemy)
+
+		# Boss (7.4) : spawn direct et déterministe dans sa salle, pas via la
+		# spawn table pondérée — une seule instance, toujours au même endroit.
+		for room_data in dungeon_layout:
+			if not room_data["is_boss"]:
+				continue
+			var boss_room: Room = room_nodes[room_data["grid_position"]]
+			var boss: Node = enemy_spawner.spawn({
+				"scene_path": BOSS_SCENE_PATH,
+				"position": _room_world_rect(room_data).get_center(),
+			})
+			boss_room.register_enemy(boss)
+			current_boss = boss
+			boss.tree_exiting.connect(func(): current_boss = null)
+			break
 
 		var ingredient_table: SpawnTable = load(INGREDIENT_SPAWN_TABLE_PATH) as SpawnTable
 		for pickup_data in _generate_pickups_from_table(ingredient_table, "ingredient", dungeon_layout, false):
@@ -100,6 +127,7 @@ func _register_room_in_map(data: Dictionary) -> void:
 	dungeon_map[data["grid_position"]] = {
 		"is_start": data["is_start"],
 		"is_special": data["is_special"],
+		"is_boss": data["is_boss"],
 		"open_sides": data["open_sides"],
 		"visited": data["is_start"], # la salle de départ est toujours déjà "découverte"
 	}
@@ -124,7 +152,7 @@ func _room_world_rect(room_data: Dictionary) -> Rect2:
 func _random_explorable_room(dungeon_layout: Array[Dictionary]) -> Dictionary:
 	var candidates: Array[Dictionary] = []
 	for room_data in dungeon_layout:
-		if room_data["is_special"]:
+		if room_data["is_special"] or room_data["is_boss"]:
 			continue
 		candidates.append(room_data)
 	if candidates.is_empty():
@@ -184,6 +212,17 @@ func _spawn_bullet(data: Dictionary) -> Node:
 func _spawn_enemy(data: Dictionary) -> Node:
 	var enemy: Node = (load(data["scene_path"]) as PackedScene).instantiate()
 	enemy.position = data["position"]
+	# Tourne identiquement sur chaque pair, y compris pour un pair qui rejoint
+	# après coup (le MultiplayerSpawner rejoue les spawns déjà existants) :
+	# la barre de vie du boss apparaît donc pour tout le monde sans code
+	# spécifique côté connexion, cf. _on_peer_connected pour le rattrapage HP.
+	if data["scene_path"] == BOSS_SCENE_PATH:
+		var healthbar: Node = (load(BOSS_HEALTHBAR_SCENE_PATH) as PackedScene).instantiate()
+		# bind_boss() lit $Bar (@onready) : le noeud doit être entré dans
+		# l'arbre (add_child avant bind) sinon _bar est encore Nil — même
+		# piège documenté pour set_open_sides()/launch() ailleurs dans le projet.
+		HUD.add_child(healthbar)
+		healthbar.bind_boss(enemy)
 	return enemy
 
 func _on_peer_disconnected(peer_id) -> void:
@@ -193,6 +232,12 @@ func _on_peer_disconnected(peer_id) -> void:
 func _on_peer_connected(peer_id: int) -> void:
 	if multiplayer.is_server():
 		player_spawner.spawn(peer_id)
+		# Rattrape la vie actuelle du boss pour ce pair (7.4) : le
+		# MultiplayerSpawner rejoue le spawn du boss aux pairs qui rejoignent
+		# en cours de partie, mais _update_health est un RPC one-shot déjà
+		# passé — sans ce rattrapage sa boss_healthbar afficherait la vie max.
+		if is_instance_valid(current_boss):
+			current_boss._update_health.rpc_id(peer_id, current_boss.max_lifepoint, current_boss.lifepoint)
 
 func _hud_instance(hud: Node) -> void:
 	HUD.add_child(hud)

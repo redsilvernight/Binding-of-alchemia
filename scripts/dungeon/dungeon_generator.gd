@@ -20,7 +20,7 @@ const DIRECTIONS: Dictionary = {
 }
 
 
-static func generate(room_count: int, room_template_paths: Array[String], special_room_template_paths: Array[String]) -> Array[Dictionary]:
+static func generate(room_count: int, room_template_paths: Array[String], special_room_template_paths: Array[String], boss_room_template_path: String) -> Array[Dictionary]:
 	var start: Vector2i = Vector2i.ZERO
 	var occupied: Dictionary = {start: true}
 	var frontier: Array[Vector2i] = [start]
@@ -51,18 +51,38 @@ static func generate(room_count: int, room_template_paths: Array[String], specia
 		special_cell = cells[1 + (randi() % (cells.size() - 1))]
 	var special_template_path: String = special_room_template_paths[randi() % special_room_template_paths.size()]
 
+	# Salle de boss (7.4) : jamais tirée au hasard — toujours la cellule la
+	# plus éloignée du départ (distance de grille), pour que le boss se
+	# trouve systématiquement "au fond" du donjon. Exclut start et
+	# special_cell (jamais les deux salles spéciales superposées).
+	var boss_cell: Vector2i = start
+	var boss_candidates: Array = cells.filter(func(c): return c != start and c != special_cell)
+	if not boss_candidates.is_empty():
+		boss_cell = boss_candidates[0]
+		var best_distance: int = (boss_cell - start).length_squared()
+		for candidate in boss_candidates:
+			var distance: int = (candidate - start).length_squared()
+			if distance > best_distance:
+				best_distance = distance
+				boss_cell = candidate
+
 	var layout: Array[Dictionary] = []
 	for cell in cells:
 		var open_sides: Array[String] = []
 		for dir in DIRECTIONS.keys():
 			if occupied.has(cell + DIRECTIONS[dir]):
 				open_sides.append(dir)
-		var template_path: String = special_template_path if cell == special_cell else room_template_paths[randi() % room_template_paths.size()]
+		var template_path: String = room_template_paths[randi() % room_template_paths.size()]
+		if cell == special_cell:
+			template_path = special_template_path
+		elif cell == boss_cell:
+			template_path = boss_room_template_path
 		layout.append({
 			"grid_position": cell,
 			"template_path": template_path,
 			"open_sides": open_sides,
 			"is_start": cell == start,
 			"is_special": cell == special_cell,
+			"is_boss": cell == boss_cell,
 		})
 	return layout

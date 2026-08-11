@@ -14,6 +14,7 @@ const COLOR_UNVISITED_ADJACENT: Color = Color(1.0, 1.0, 1.0, 0.25)
 const COLOR_VISITED: Color = Color(0.6, 0.6, 0.65, 0.9)
 const COLOR_START: Color = Color(0.3, 0.75, 0.9, 0.9)
 const COLOR_SPECIAL: Color = Color(0.85, 0.7, 0.25, 0.9)
+const COLOR_BOSS: Color = Color(0.8, 0.2, 0.25, 0.9)
 const COLOR_CURRENT_OUTLINE: Color = Color(1.0, 0.35, 0.35, 1.0)
 
 var _game: Node = null
@@ -58,6 +59,8 @@ func _draw() -> void:
 		if room_info["visited"]:
 			if room_info["is_special"]:
 				color = COLOR_SPECIAL
+			elif room_info["is_boss"]:
+				color = COLOR_BOSS
 			elif room_info["is_start"]:
 				color = COLOR_START
 			else:
