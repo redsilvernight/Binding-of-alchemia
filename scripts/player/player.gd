@@ -12,6 +12,8 @@ signal instance_projectile(data: Dictionary)
 @onready var damage_timer: Timer = $DamageTimer
 @onready var weapon: Weapon = $Weapon
 @onready var inventory: Inventory = $Inventory
+@onready var collision_shape: CollisionShape2D = $CollisionShape2D
+@onready var sprite: Sprite2D = $Sprite2D
 var was_water_pressed: bool = false
 var was_mixture_pressed: bool = false
 var last_aim_direction: Vector2 = Vector2.RIGHT
@@ -21,12 +23,14 @@ var last_mouse_screen_position: Vector2 = Vector2.ZERO
 var mouse_position_initialized: bool = false
 var alchemy_crafting_screen: Node = null
 var weapon_crafting_screen: Node = null
+var _spectate_target: Node2D = null
 
 func _ready() -> void:
 	super()
 	add_to_group("Players")
 	damage_timer.wait_time = invulnerability_duration
 	weapon.projectile_requested.connect(_on_projectile_requested)
+	died.connect(_on_died)
 	if is_multiplayer_authority():
 		player_camera.enabled = true
 		var hud = hud_scene.instantiate()
@@ -51,6 +55,9 @@ func _ready() -> void:
 
 func _physics_process(_delta: float) -> void:
 	if not is_multiplayer_authority():
+		return
+	if is_dead:
+		_process_spectating()
 		return
 	var aim_direction = _get_aim_direction()
 	var water_pressed = Input.is_action_pressed("fire_water")
@@ -188,3 +195,88 @@ func _on_damage_timer_timeout() -> void:
 func _start_invulnerability() -> void:
 	can_take_damage = false
 	damage_timer.start()
+
+## Repositionne ce joueur (Phase 8.1, suivi de groupe façon Binding of
+## Isaac). Ne peut venir que de l'hôte : celui-ci n'a pas l'autorité sur ce
+## noeud s'il est possédé par un client (cf. game.gd._teleport_party_to_room),
+## donc doit lui demander de se déplacer lui-même pour que ça se réplique
+## normalement vers les autres pairs ensuite.
+@rpc("any_peer", "call_local", "reliable")
+func teleport(new_position: Vector2) -> void:
+	if multiplayer.get_remote_sender_id() != 1:
+		return
+	position = new_position
+
+## Contrairement à Character.kill() (queue_free) : un joueur mort (8.1)
+## devient spectateur plutôt que d'être retiré de la partie. Le noeud doit
+## survivre pour que sa caméra reste utilisable et pour que
+## game.gd._check_all_players_dead puisse encore le trouver dans "Players".
+func kill() -> void:
+	pass
+
+## Répliqué chez tous les pairs : died vient de Character._update_health
+## (RPC call_local), donc chaque pair applique ce rendu localement sur SA
+## copie du noeud, sans RPC dédié.
+##
+## Le sprite est complètement caché (pas juste rendu translucide) : un joueur
+## mort n'a pas besoin de se voir, ni que quiconque le voie.
+func _on_died() -> void:
+	sprite.visible = false
+	collision_shape.set_deferred("disabled", true)
+	if is_multiplayer_authority():
+		_show_spectator_label()
+		_pick_spectate_target()
+		# Lissage activé seulement en mode spectateur (pas pendant le jeu
+		# normal, où on veut un suivi caméra instantané). Nécessaire ici car
+		# la position d'un allié distant arrive par réplication réseau, donc
+		# par à-coups — sans lissage, faire suivre la caméra image par image
+		# amplifie chaque micro-saccade réseau en un vrai tremblement à
+		# l'écran (constaté en playtest). speed bas = lissage fort (2.5, sous
+		# la valeur par défaut de Camera2D à 5.0, qui laissait encore trop de
+		# saccade passer) : un peu de retard visuel est acceptable ici,
+		# contrairement à une caméra pilotée activement par le joueur.
+		player_camera.position_smoothing_enabled = true
+		player_camera.position_smoothing_speed = 2.5
+
+## Mode spectateur (8.1) : ne déplace QUE la caméra (pas tout le
+## CharacterBody2D) pour suivre un allié vivant — le corps du joueur mort
+## reste où game.gd._teleport_party_to_room l'a placé (suivi de groupe par
+## salle), rien d'autre n'a besoin de sa position exacte puisque son sprite
+## est caché. Éviter de déplacer le noeud entier limite aussi le bruit
+## répliqué au réseau pour un corps qui n'a plus d'effet de jeu.
+func _process_spectating() -> void:
+	if Input.is_action_just_pressed("spectate_next"):
+		_pick_spectate_target(true)
+	elif not is_instance_valid(_spectate_target) or _spectate_target.is_dead:
+		_pick_spectate_target()
+	if is_instance_valid(_spectate_target):
+		player_camera.global_position = _spectate_target.global_position
+
+## cycle = false : (re)choisit un cible parmi les vivants (appelé à la mort,
+## ou quand la cible actuelle meurt/se déconnecte). cycle = true : passe au
+## suivant dans la liste (appui sur "spectate_next").
+func _pick_spectate_target(cycle: bool = false) -> void:
+	var candidates: Array = []
+	for p in get_tree().get_nodes_in_group("Players"):
+		if p != self and not p.is_dead:
+			candidates.append(p)
+	if candidates.is_empty():
+		_spectate_target = null
+		return
+	if not cycle or _spectate_target == null or not candidates.has(_spectate_target):
+		_spectate_target = candidates[0]
+		return
+	var current_index: int = candidates.find(_spectate_target)
+	_spectate_target = candidates[(current_index + 1) % candidates.size()]
+
+func _show_spectator_label() -> void:
+	var label := Label.new()
+	label.text = "Vous êtes mort — Espace pour changer de vue"
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	label.position.y = 40
+	label.size.x = 400
+	label.position.x -= 200
+	var layer := CanvasLayer.new()
+	layer.add_child(label)
+	add_child(layer)

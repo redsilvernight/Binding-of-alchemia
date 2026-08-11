@@ -26,9 +26,10 @@ extends Node2D
 
 signal room_cleared
 ## Émis uniquement côté hôte (cf. garde is_server() plus bas) quand un joueur
-## entre dans cette salle — utilisé par game.gd pour la mini-map (Phase 6.4),
+## entre dans cette salle — utilisé par game.gd pour la mini-map (Phase 6.4)
+## et pour téléporter le reste du groupe (Phase 8.1, façon Binding of Isaac),
 ## indépendamment du verrouillage de porte.
-signal player_entered
+signal player_entered(player: Node2D)
 
 const SIDES: Array[String] = ["north", "south", "east", "west"]
 
@@ -83,7 +84,7 @@ func _on_trigger_body_entered(body: Node2D) -> void:
 		return
 	if not multiplayer.is_server():
 		return
-	player_entered.emit()
+	player_entered.emit(body)
 	_activate_enemies_delayed()
 	if _locked or _alive_enemies.is_empty():
 		return

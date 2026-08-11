@@ -76,6 +76,13 @@ func _ready() -> void:
 			room_nodes[room_data["grid_position"]] = room
 
 		player_spawner.spawn(NetworkManager.get_unique_id())
+		# Phase 8.1 : contrairement au tout premier lancement (menu -> game,
+		# où les clients se connectent APRÈS ce _ready), une run relancée
+		# depuis le hub (RunManager.request_start_run) recharge cette scène
+		# alors que tous les pairs sont déjà connectés — peer_connected ne se
+		# redéclenchera pas pour eux, donc il faut les spawn explicitement ici.
+		for peer_id in NetworkManager.get_peers():
+			player_spawner.spawn(peer_id)
 
 		var enemy_table: SpawnTable = load(ENEMY_SPAWN_TABLE_PATH) as SpawnTable
 		for room_data in dungeon_layout:
@@ -136,8 +143,38 @@ func _register_room_in_map(data: Dictionary) -> void:
 ## Ne s'exécute jamais côté client : Room.player_entered n'est émis que
 ## lorsque la salle hôte détecte l'entrée (cf. room.gd, garde is_server()
 ## avant l'émission) — pas besoin de re-vérifier ici.
-func _on_room_player_entered(grid_position: Vector2i) -> void:
+func _on_room_player_entered(player: Node2D, grid_position: Vector2i) -> void:
 	_rpc_mark_room_visited.rpc(grid_position)
+	_teleport_party_to_room(player, grid_position)
+
+## Façon Binding of Isaac (8.1) : dès qu'un joueur franchit une salle, tout
+## le groupe (vivants ET spectateurs) y est téléporté avec lui. Corrige un
+## vrai blocage constaté en playtest : un joueur mort/spectateur (cf.
+## player.gd.kill()) ne peut plus nettoyer les ennemis de sa salle, donc sa
+## porte reste verrouillée pour toujours (cf. Room._rpc_set_locked) — sans
+## ça, un coéquipier resté ailleurs se retrouvait bloqué dehors. Avec ce
+## comportement le groupe ne peut plus se séparer entre salles, donc ce cas
+## ne peut simplement plus se produire.
+func _teleport_party_to_room(entering_player: Node2D, grid_position: Vector2i) -> void:
+	var room_rect: Rect2 = _room_world_rect({"grid_position": grid_position})
+	# Position de l'entrant lui-même (déjà dans la salle à cet instant, cf.
+	# RoomTrigger) plutôt que le centre de la salle : il vient de passer la
+	# porte, donc apparaître à côté de lui place le reste du groupe près de
+	# cette porte plutôt qu'en plein milieu de la salle.
+	var target_position: Vector2 = entering_player.position
+	for player in players.get_children():
+		if player == entering_player:
+			continue
+		if room_rect.has_point(player.position):
+			continue # déjà dans cette salle : rien à faire
+		# Le joueur hôte a déjà l'autorité sur son propre noeud : affectation
+		# directe. Pour un noeud possédé par un client, seul lui peut modifier
+		# sa position (cf. player.tscn, MultiplayerSynchronizer répliquant
+		# ".:position" depuis l'autorité) — d'où le RPC ciblé vers son pair.
+		if player.is_multiplayer_authority():
+			player.position = target_position
+		else:
+			player.teleport.rpc_id(int(player.name), target_position)
 
 @rpc("authority", "call_local", "reliable")
 func _rpc_mark_room_visited(grid_position: Vector2i) -> void:
@@ -193,6 +230,8 @@ func _spawn_player(id: int) -> Node:
 	player.position = ROOM_CELL_SIZE / 2
 	player.instance_hud.connect(_hud_instance)
 	player.instance_projectile.connect(_on_projectile_requested)
+	if multiplayer.is_server():
+		player.died.connect(_check_all_players_dead)
 	return player
 
 ## scene_path optionnel (Phase 7.3) : les projectiles ennemis (voir
@@ -228,6 +267,23 @@ func _spawn_enemy(data: Dictionary) -> Node:
 func _on_peer_disconnected(peer_id) -> void:
 	if players.has_node(str(peer_id)):
 		players.get_node(str(peer_id)).queue_free()
+	# call_deferred : queue_free() ne retire le noeud de "players" qu'à la fin
+	# de la frame, un check immédiat verrait encore l'ancien peer déconnecté
+	# comme "vivant" (dernier joueur vivant qui quitte plutôt que de mourir).
+	_check_all_players_dead.call_deferred()
+
+## Phase 8.1 : mort individuelle (spectateur, cf. player.gd.kill()) mais fin
+## de run globale seulement quand tous les joueurs sont morts — hôte
+## uniquement, appelé à chaque mort et à chaque déconnexion.
+func _check_all_players_dead() -> void:
+	if not multiplayer.is_server():
+		return
+	if players.get_child_count() == 0:
+		return
+	for player in players.get_children():
+		if not player.is_dead:
+			return
+	RunManager.end_run()
 
 func _on_peer_connected(peer_id: int) -> void:
 	if multiplayer.is_server():

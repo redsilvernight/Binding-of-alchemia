@@ -2,6 +2,7 @@ class_name Character
 extends CharacterBody2D
 
 signal health_changed(max_lifepoint: float, lifepoint: float)
+signal died
 @export var max_lifepoint: float = 20.0
 var lifepoint: float
 var is_dead: bool = false
@@ -24,7 +25,6 @@ func take_damage(degat: float) -> void:
 	lifepoint -= degat
 	_update_health.rpc(max_lifepoint, lifepoint)
 	if lifepoint <= 0:
-		is_dead = true
 		kill()
 	else:
 		_start_invulnerability()
@@ -39,6 +39,13 @@ func _update_health(p_max_lifepoint: float, p_lifepoint: float) -> void:
 	max_lifepoint = p_max_lifepoint
 	lifepoint = p_lifepoint
 	health_changed.emit(max_lifepoint, lifepoint)
+	# is_dead/died sont dérivés ici plutôt que dans take_damage (hôte
+	# uniquement) pour se répliquer identiquement chez tous les pairs via ce
+	# même RPC (call_local, y compris l'hôte) — cf. Player._on_died (8.1) qui
+	# a besoin de is_dead sur chaque client, pas seulement l'hôte.
+	if lifepoint <= 0 and not is_dead:
+		is_dead = true
+		died.emit()
 
 func kill() -> void:
 	if multiplayer.is_server():
