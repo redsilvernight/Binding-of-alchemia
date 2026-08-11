@@ -9,7 +9,7 @@ var state_machine: EnemyStateMachine
 
 func _ready() -> void:
 	super()
-	state_machine = EnemyStateMachine.new(EnemyStateIdle.new(self))
+	state_machine = EnemyStateMachine.new(EnemyStateIdle.new(self, EnemyStateChase.new(self)))
 
 func _physics_process(delta: float) -> void:
 	if not multiplayer.is_server():

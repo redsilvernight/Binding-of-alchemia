@@ -167,8 +167,13 @@ func _spawn_player(id: int) -> Node:
 	player.instance_projectile.connect(_on_projectile_requested)
 	return player
 
+## scene_path optionnel (Phase 7.3) : les projectiles ennemis (voir
+## enemy_ranged.gd) passent leur propre scène (layer/mask pour toucher les
+## joueurs, pas les ennemis) ; sans cette clé, comportement identique à avant
+## (balle du joueur).
 func _spawn_bullet(data: Dictionary) -> Node:
-	var bullet: Bullet = preload("res://scenes/projectiles/bullet.tscn").instantiate()
+	var scene_path: String = data.get("scene_path", "res://scenes/projectiles/bullet.tscn")
+	var bullet: Bullet = (load(scene_path) as PackedScene).instantiate()
 	bullet.setup(data["damage"], data["speed"], data["lifetime"], data["trajectory"])
 	if data.has("impact_effect_data"):
 		var effect: ImpactEffect = ImpactEffect.from_dict(data["impact_effect_data"])
@@ -193,5 +198,12 @@ func _hud_instance(hud: Node) -> void:
 	HUD.add_child(hud)
 
 func _on_projectile_requested(data: Dictionary) -> void:
+	if multiplayer.is_server():
+		projectile_spawner.spawn(data)
+
+## Même pipeline que _on_projectile_requested, mais appelé directement par un
+## script d'ennemi (EnemyStateRangedAttack via enemy_ranged.gd.fire_at) plutôt
+## que déclenché par un signal joueur.
+func request_enemy_projectile(data: Dictionary) -> void:
 	if multiplayer.is_server():
 		projectile_spawner.spawn(data)

@@ -3,13 +3,23 @@
 [ext_resource type="Script" path="res://scripts/dungeon/spawn_table.gd" id="1_table"]
 [ext_resource type="Script" path="res://scripts/dungeon/spawn_table_entry.gd" id="2_entry"]
 
-[sub_resource type="Resource" id="Resource_ennemy_test"]
+[sub_resource type="Resource" id="Resource_enemy_melee"]
 script = ExtResource("2_entry")
-item_path = "res://scenes/mobs/ennemy_test.tscn"
+item_path = "res://scenes/enemies/enemy_melee.tscn"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_enemy_ranged"]
+script = ExtResource("2_entry")
+item_path = "res://scenes/enemies/enemy_ranged.tscn"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_enemy_erratic"]
+script = ExtResource("2_entry")
+item_path = "res://scenes/enemies/enemy_erratic.tscn"
 weight = 1.0
 
 [resource]
 script = ExtResource("1_table")
-entries = Array[ExtResource("2_entry")]([SubResource("Resource_ennemy_test")])
+entries = Array[ExtResource("2_entry")]([SubResource("Resource_enemy_melee"), SubResource("Resource_enemy_ranged"), SubResource("Resource_enemy_erratic")])
 min_count = 1
 max_count = 2
