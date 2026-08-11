@@ -28,6 +28,15 @@ var currency_by_peer: Dictionary = {} # int peer_id -> int
 var unlocked_by_peer: Dictionary = {} # int peer_id -> Dictionary[String, bool] (ensemble des item_path débloqués)
 
 
+func _ready() -> void:
+	# currency_changed/unlocks_changed n'émettent déjà que pour le joueur
+	# LOCAL (cf. _notify_currency/_notify_unlock) : pas besoin de nouvelle
+	# plomberie réseau pour savoir quand sauvegarder, juste écouter ce qui
+	# existe déjà (8.3).
+	currency_changed.connect(_on_local_progression_changed.unbind(1))
+	unlocks_changed.connect(_on_local_progression_changed)
+
+
 func get_currency(peer_id: int) -> int:
 	return currency_by_peer.get(peer_id, 0)
 
@@ -126,3 +135,53 @@ func _find_cost(item_path: String) -> int:
 		if entry["item_path"] == item_path:
 			return entry["cost"]
 	return -1
+
+
+## Appelée par NetworkManager.hosting() (8.3) : l'hôte est toujours peer_id 1
+## (Godot MultiplayerAPI), donc la sauvegarde locale peut y être seedée
+## directement sans passer par un RPC.
+func apply_local_save_as_host() -> void:
+	var save: Dictionary = SaveManager.load_progression()
+	currency_by_peer[1] = int(save["currency"])
+	var unlocked: Dictionary = {}
+	for item_path in save["unlocked"]:
+		unlocked[item_path] = true
+	unlocked_by_peer[1] = unlocked
+
+
+## Appelée par NetworkManager.joining() (8.3) juste après connexion, avec le
+## contenu de la sauvegarde locale du client. peer_id étant réattribué à
+## chaque session, ce n'est qu'ici (une fois le peer_id de cette partie
+## connu) que la progression sauvegardée peut être rattachée au bon
+## sender_id -- jamais calculée par le client lui-même (même règle que
+## request_unlock : seul l'hôte écrit dans currency_by_peer/unlocked_by_peer).
+@rpc("any_peer", "call_local", "reliable")
+func submit_saved_progression(currency: int, unlocked: Array) -> void:
+	if not multiplayer.is_server():
+		return
+	var sender_id: int = multiplayer.get_remote_sender_id()
+	if sender_id == 0:
+		sender_id = NetworkManager.get_unique_id()
+
+	# N'écrase jamais un gain déjà obtenu pendant la session en cours (ex :
+	# rattrapage tardif d'un submit qui serait arrivé après coup) : la monnaie
+	# n'est seedée que si absente, les déblocages sont fusionnés (union), pas
+	# remplacés.
+	if not currency_by_peer.has(sender_id):
+		currency_by_peer[sender_id] = int(currency)
+	if not unlocked_by_peer.has(sender_id):
+		unlocked_by_peer[sender_id] = {}
+	for item_path in unlocked:
+		unlocked_by_peer[sender_id][item_path] = true
+
+	# Republie l'état confirmé au pair -- même pattern que le rattrapage déjà
+	# fait dans hub.gd._on_peer_connected pour un pair qui rejoint en cours de
+	# partie.
+	_notify_currency(sender_id)
+	for item_path in unlocked_by_peer[sender_id].keys():
+		_notify_unlock(sender_id, item_path)
+
+
+func _on_local_progression_changed() -> void:
+	var local_id: int = NetworkManager.get_unique_id()
+	SaveManager.save_progression(get_currency(local_id), unlocked_by_peer.get(local_id, {}).keys())

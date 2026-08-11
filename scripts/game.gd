@@ -68,6 +68,26 @@ var dungeon_map: Dictionary = {} # Vector2i (grid_position) -> {is_start, is_spe
 # porté, puisque _update_health est un RPC one-shot jamais rejoué.
 var current_boss: Node = null
 
+# Bugfix hors scope (8.3, trouvé en playtest à plusieurs) : contrairement au
+# tout premier lancement (menu -> game, où les clients se connectent APRÈS ce
+# _ready et le MultiplayerSpawner rattrape nativement l'état déjà spawné via
+# le mécanisme de late-join), une run relancée depuis le hub
+# (RunManager.request_start_run) recharge cette scène alors que tous les
+# pairs sont déjà connectés -- ce mécanisme de rattrapage natif ne se
+# redéclenche PAS pour eux (il est lié à l'évènement peer_connected, pas à
+# l'apparition d'un noeud). L'hôte, sans aller-retour réseau, atteint ce
+# _ready() et spawnerait le donjon quasi immédiatement, bien avant qu'un
+# client (qui doit d'abord recevoir le RPC de changement de scène, détruire
+# le hub, puis charger cette scène) n'ait de RoomSpawner existant pour
+# recevoir ces spawns -- constaté en playtest : donjon non généré côté
+# client. D'où ce handshake explicite, complémentaire à celui de
+# RunManager._change_scene_with_handshake (qui, lui, s'assure que le trafic
+# de l'ANCIENNE scène soit résorbé avant de la détruire -- celui-ci s'assure
+# que la NOUVELLE scène soit prête côté client avant d'y spawn quoi que ce soit).
+const SCENE_READY_TIMEOUT: float = 5.0
+const SCENE_READY_POLL_INTERVAL: float = 0.1
+var _peers_ready_for_dungeon: Dictionary = {} # hôte uniquement : peer_id -> true
+
 func _ready() -> void:
 	add_to_group("Game")
 	NetworkManager.multiplayer.peer_disconnected.connect(_on_peer_disconnected)
@@ -79,60 +99,104 @@ func _ready() -> void:
 	pickup_spawner.spawn_function = _spawn_pickup
 
 	if multiplayer.is_server():
-		var dungeon_layout: Array[Dictionary] = DungeonGenerator.generate(DUNGEON_ROOM_COUNT, ROOM_TEMPLATE_PATHS, SPECIAL_ROOM_TEMPLATE_PATHS, BOSS_ROOM_TEMPLATE_PATH)
-		var room_nodes: Dictionary = {} # Vector2i (grid_position) -> Room
-		for room_data in dungeon_layout:
-			var room: Room = room_spawner.spawn(room_data)
-			room_nodes[room_data["grid_position"]] = room
+		await _wait_for_connected_peers_ready()
+		_generate_dungeon()
+	else:
+		notify_scene_ready.rpc_id(1)
 
-		player_spawner.spawn(NetworkManager.get_unique_id())
-		# Phase 8.1 : contrairement au tout premier lancement (menu -> game,
-		# où les clients se connectent APRÈS ce _ready), une run relancée
-		# depuis le hub (RunManager.request_start_run) recharge cette scène
-		# alors que tous les pairs sont déjà connectés — peer_connected ne se
-		# redéclenchera pas pour eux, donc il faut les spawn explicitement ici.
-		for peer_id in NetworkManager.get_peers():
-			player_spawner.spawn(peer_id)
 
-		var enemy_table: SpawnTable = load(ENEMY_SPAWN_TABLE_PATH) as SpawnTable
-		for room_data in dungeon_layout:
-			if room_data["is_special"] or room_data["is_start"] or room_data["is_boss"]:
-				continue
-			var room: Room = room_nodes[room_data["grid_position"]]
-			for enemy_scene_path in enemy_table.pick_many():
-				var enemy: Node = enemy_spawner.spawn({
-					"scene_path": enemy_scene_path,
-					"position": _random_position_in_room(room_data),
-				})
-				room.register_enemy(enemy)
+## Hôte uniquement : attend que chaque pair déjà connecté confirme avoir
+## atteint cette scène avant de générer/spawn le donjon (cf. commentaire
+## au-dessus de _peers_ready_for_dungeon). Timeout de sécurité pour ne pas
+## bloquer indéfiniment si un pair ne répond jamais (déconnexion en plein
+## transit, paquet perdu) -- dans ce cas le donjon est quand même généré,
+## ce pair ratera juste ce spawn initial (même dette que le rattrapage HP
+## boss ponctuel, cf. 7.4/_on_peer_connected).
+func _wait_for_connected_peers_ready() -> void:
+	var expected_peers: PackedInt32Array = NetworkManager.get_peers()
+	if expected_peers.is_empty():
+		return
+	var elapsed: float = 0.0
+	while elapsed < SCENE_READY_TIMEOUT:
+		var all_ready: bool = true
+		for peer_id in expected_peers:
+			if not _peers_ready_for_dungeon.has(peer_id):
+				all_ready = false
+				break
+		if all_ready:
+			return
+		await get_tree().create_timer(SCENE_READY_POLL_INTERVAL).timeout
+		elapsed += SCENE_READY_POLL_INTERVAL
 
-		# Boss (7.4) : spawn direct et déterministe dans sa salle, pas via la
-		# spawn table pondérée — une seule instance, toujours au même endroit.
-		for room_data in dungeon_layout:
-			if not room_data["is_boss"]:
-				continue
-			var boss_room: Room = room_nodes[room_data["grid_position"]]
-			var boss: Node = enemy_spawner.spawn({
-				"scene_path": BOSS_SCENE_PATH,
-				"position": _room_world_rect(room_data).get_center(),
+
+## Appelé par chaque client une fois ses spawn_function assignées (donc prêt
+## à recevoir les spawns de l'hôte) -- même garde que les autres RPC
+## "any_peer" du projet (request_unlock, etc.) : seul l'hôte agit dessus.
+@rpc("any_peer", "call_local", "reliable")
+func notify_scene_ready() -> void:
+	if not multiplayer.is_server():
+		return
+	var sender_id: int = multiplayer.get_remote_sender_id()
+	if sender_id == 0:
+		sender_id = NetworkManager.get_unique_id()
+	_peers_ready_for_dungeon[sender_id] = true
+
+
+func _generate_dungeon() -> void:
+	var dungeon_layout: Array[Dictionary] = DungeonGenerator.generate(DUNGEON_ROOM_COUNT, ROOM_TEMPLATE_PATHS, SPECIAL_ROOM_TEMPLATE_PATHS, BOSS_ROOM_TEMPLATE_PATH)
+	var room_nodes: Dictionary = {} # Vector2i (grid_position) -> Room
+	for room_data in dungeon_layout:
+		var room: Room = room_spawner.spawn(room_data)
+		room_nodes[room_data["grid_position"]] = room
+
+	player_spawner.spawn(NetworkManager.get_unique_id())
+	# Phase 8.1 : contrairement au tout premier lancement (menu -> game,
+	# où les clients se connectent APRÈS ce _ready), une run relancée
+	# depuis le hub (RunManager.request_start_run) recharge cette scène
+	# alors que tous les pairs sont déjà connectés — peer_connected ne se
+	# redéclenchera pas pour eux, donc il faut les spawn explicitement ici.
+	for peer_id in NetworkManager.get_peers():
+		player_spawner.spawn(peer_id)
+
+	var enemy_table: SpawnTable = load(ENEMY_SPAWN_TABLE_PATH) as SpawnTable
+	for room_data in dungeon_layout:
+		if room_data["is_special"] or room_data["is_start"] or room_data["is_boss"]:
+			continue
+		var room: Room = room_nodes[room_data["grid_position"]]
+		for enemy_scene_path in enemy_table.pick_many():
+			var enemy: Node = enemy_spawner.spawn({
+				"scene_path": enemy_scene_path,
+				"position": _random_position_in_room(room_data),
 			})
-			boss_room.register_enemy(boss)
-			current_boss = boss
-			boss.tree_exiting.connect(func(): current_boss = null)
-			# Tuer le boss termine la run pour tout le groupe (victoire), même
-			# destination que la fin de run par mort collective
-			# (_check_all_players_dead -> RunManager.end_run()). "died"
-			# (Character._update_health) n'émet qu'une seule fois (garde not
-			# is_dead), pas de risque de double appel.
-			boss.died.connect(_on_boss_defeated)
-			break
+			room.register_enemy(enemy)
 
-		var ingredient_table: SpawnTable = load(INGREDIENT_SPAWN_TABLE_PATH) as SpawnTable
-		for pickup_data in _generate_pickups_from_table(ingredient_table, "ingredient", dungeon_layout, false):
-			pickup_spawner.spawn(pickup_data)
-		var weapon_part_table: SpawnTable = load(WEAPON_PART_SPAWN_TABLE_PATH) as SpawnTable
-		for pickup_data in _generate_pickups_from_table(weapon_part_table, "weapon_part", dungeon_layout, true):
-			pickup_spawner.spawn(pickup_data)
+	# Boss (7.4) : spawn direct et déterministe dans sa salle, pas via la
+	# spawn table pondérée — une seule instance, toujours au même endroit.
+	for room_data in dungeon_layout:
+		if not room_data["is_boss"]:
+			continue
+		var boss_room: Room = room_nodes[room_data["grid_position"]]
+		var boss: Node = enemy_spawner.spawn({
+			"scene_path": BOSS_SCENE_PATH,
+			"position": _room_world_rect(room_data).get_center(),
+		})
+		boss_room.register_enemy(boss)
+		current_boss = boss
+		boss.tree_exiting.connect(func(): current_boss = null)
+		# Tuer le boss termine la run pour tout le groupe (victoire), même
+		# destination que la fin de run par mort collective
+		# (_check_all_players_dead -> RunManager.end_run()). "died"
+		# (Character._update_health) n'émet qu'une seule fois (garde not
+		# is_dead), pas de risque de double appel.
+		boss.died.connect(_on_boss_defeated)
+		break
+
+	var ingredient_table: SpawnTable = load(INGREDIENT_SPAWN_TABLE_PATH) as SpawnTable
+	for pickup_data in _generate_pickups_from_table(ingredient_table, "ingredient", dungeon_layout, false):
+		pickup_spawner.spawn(pickup_data)
+	var weapon_part_table: SpawnTable = load(WEAPON_PART_SPAWN_TABLE_PATH) as SpawnTable
+	for pickup_data in _generate_pickups_from_table(weapon_part_table, "weapon_part", dungeon_layout, true):
+		pickup_spawner.spawn(pickup_data)
 
 func _spawn_room(data: Dictionary) -> Node:
 	var room: Room = (load(data["template_path"]) as PackedScene).instantiate()
