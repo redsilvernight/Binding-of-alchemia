@@ -28,8 +28,20 @@ script = ExtResource("2_entry")
 item_path = "res://resources/Ingredients/racine_apaisante.tres"
 weight = 1.0
 
+[sub_resource type="Resource" id="Resource_sang_hydre"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/sang_hydre.tres"
+weight = 1.0
+requires_unlock = true
+
+[sub_resource type="Resource" id="Resource_eclair_zeus"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/eclair_zeus.tres"
+weight = 1.0
+requires_unlock = true
+
 [resource]
 script = ExtResource("1_table")
-entries = Array[ExtResource("2_entry")]([SubResource("Resource_braise"), SubResource("Resource_cristal_givre"), SubResource("Resource_bave_toxique"), SubResource("Resource_cendre_ardente"), SubResource("Resource_racine_apaisante")])
+entries = Array[ExtResource("2_entry")]([SubResource("Resource_braise"), SubResource("Resource_cristal_givre"), SubResource("Resource_bave_toxique"), SubResource("Resource_cendre_ardente"), SubResource("Resource_racine_apaisante"), SubResource("Resource_sang_hydre"), SubResource("Resource_eclair_zeus")])
 min_count = 4
 max_count = 6

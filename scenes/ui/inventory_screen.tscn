@@ -33,6 +33,10 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 12
 
+[node name="CurrencyLabel" type="Label" parent="Root/Content"]
+layout_mode = 2
+text = "Monnaie : 0"
+
 [node name="IngredientsTitle" type="Label" parent="Root/Content"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20

@@ -8,3 +8,7 @@ extends Resource
 ## disque, sans rapport avec l'objet qu'elle référence).
 @export var item_path: String = ""
 @export_range(0.0, 100.0, 0.1) var weight: float = 1.0
+## Phase 8.2 : si vrai, cette entrée n'est tirable que si MetaProgression
+## rapporte l'item comme débloqué par au moins un joueur de la partie
+## (cf. SpawnTable._available_entries).
+@export var requires_unlock: bool = false

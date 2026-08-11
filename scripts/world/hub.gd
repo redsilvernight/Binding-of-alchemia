@@ -33,3 +33,10 @@ func _hud_instance(hud: Node) -> void:
 func _on_peer_connected(peer_id: int) -> void:
 	if multiplayer.is_server():
 		player_spawner.spawn(peer_id)
+		# Rattrape la monnaie/les déblocages déjà acquis par ce pair (8.2) :
+		# MetaProgression._notify_currency/_notify_unlock ne poussent l'état
+		# qu'au moment où il change, un pair qui rejoint après coup ne les a
+		# jamais reçus autrement (même piège que le rattrapage HP du boss, 7.4).
+		MetaProgression._rpc_currency_changed.rpc_id(peer_id, MetaProgression.get_currency(peer_id))
+		for item_path in MetaProgression.unlocked_by_peer.get(peer_id, {}).keys():
+			MetaProgression._rpc_unlocked.rpc_id(peer_id, item_path)

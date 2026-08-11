@@ -24,15 +24,7 @@ func _physics_process(delta: float) -> void:
 	state_machine.physics_process(delta)
 
 func _update_target() -> void:
-	var players = get_tree().get_nodes_in_group("Players")
-	var closest: Node2D = null
-	var closest_distance: float = INF
-	for player in players:
-		var distance: float = global_position.distance_squared_to(player.global_position)
-		if distance < closest_distance:
-			closest_distance = distance
-			closest = player
-	target = closest
+	target = _closest_living_player()
 
 func fire_at(p_target: Node2D) -> void:
 	var game: Node = get_tree().get_first_node_in_group("Game")

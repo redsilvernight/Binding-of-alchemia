@@ -33,6 +33,16 @@ const SPECIAL_ROOM_TEMPLATE_PATHS: Array[String] = [
 const BOSS_ROOM_TEMPLATE_PATH: String = "res://scenes/rooms/boss_room.tscn"
 const BOSS_SCENE_PATH: String = "res://scenes/enemies/boss_01.tscn"
 const BOSS_HEALTHBAR_SCENE_PATH: String = "res://scenes/ui/boss_healthbar.tscn"
+# Phase 8.2 : battement avant le retour au hub après la mort du boss (voir
+# _on_boss_defeated) — contrairement à la fin de run par mort collective (où
+# plus personne n'envoie de RPC de jeu, tout le monde étant déjà spectateur),
+# le boss peut mourir pendant que des joueurs jouent encore activement. Un
+# changement de scène immédiat fait alors arriver leurs RPC en vol (tir,
+# etc.) après que la scène soit déjà détruite chez le destinataire (erreurs
+# réseau constatées en playtest : "Node not found", "on_despawn_receive"
+# ERR_UNAUTHORIZED). Laisser quelques secondes donne le temps à ce trafic de
+# se résorber naturellement pendant que la scène est encore pleinement vivante.
+const BOSS_DEFEAT_TO_HUB_DELAY: float = 2.5
 
 # Phase 6.3 : QUOI/COMBIEN spawn vient de ces tables pondérées (voir
 # scripts/dungeon/spawn_table.gd), le OÙ reste une position aléatoire dans
@@ -109,6 +119,12 @@ func _ready() -> void:
 			boss_room.register_enemy(boss)
 			current_boss = boss
 			boss.tree_exiting.connect(func(): current_boss = null)
+			# Tuer le boss termine la run pour tout le groupe (victoire), même
+			# destination que la fin de run par mort collective
+			# (_check_all_players_dead -> RunManager.end_run()). "died"
+			# (Character._update_health) n'émet qu'une seule fois (garde not
+			# is_dead), pas de risque de double appel.
+			boss.died.connect(_on_boss_defeated)
 			break
 
 		var ingredient_table: SpawnTable = load(INGREDIENT_SPAWN_TABLE_PATH) as SpawnTable
@@ -284,6 +300,12 @@ func _check_all_players_dead() -> void:
 		if not player.is_dead:
 			return
 	RunManager.end_run()
+
+## Cf. BOSS_DEFEAT_TO_HUB_DELAY : ne rappelle pas RunManager.end_run()
+## immédiatement pour laisser le trafic réseau en vol au moment du coup de
+## grâce se résorber pendant que la scène est encore chargée partout.
+func _on_boss_defeated() -> void:
+	get_tree().create_timer(BOSS_DEFEAT_TO_HUB_DELAY).timeout.connect(RunManager.end_run)
 
 func _on_peer_connected(peer_id: int) -> void:
 	if multiplayer.is_server():

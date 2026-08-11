@@ -11,6 +11,7 @@ const WEAPON_PART_FALLBACK_ICON: Texture2D = preload("res://assets/test/water_bu
 @export var slot_scene: PackedScene = preload("res://scenes/ui/inventory_slot.tscn")
 
 @onready var root: Control = $Root
+@onready var currency_label: Label = $Root/Content/CurrencyLabel
 @onready var ingredient_grid: GridContainer = $Root/Content/IngredientGrid
 @onready var weapon_part_grid: GridContainer = $Root/Content/WeaponPartGrid
 
@@ -19,6 +20,15 @@ var inventory: Inventory
 
 func _ready() -> void:
 	root.visible = false
+	# Monnaie méta (8.2) affichée ici à titre indicatif : elle vit dans
+	# MetaProgression (autoload, par-peer), pas dans Inventory (Node par-joueur
+	# recréé à chaque run) — cet écran ne fait qu'y lire/écouter, jamais écrire.
+	MetaProgression.currency_changed.connect(_on_currency_changed)
+	_on_currency_changed(MetaProgression.get_currency(NetworkManager.get_unique_id()))
+
+
+func _on_currency_changed(new_amount: int) -> void:
+	currency_label.text = "Monnaie : %d" % new_amount
 
 
 func bind_inventory(p_inventory: Inventory) -> void:

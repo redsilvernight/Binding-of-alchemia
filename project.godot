@@ -21,6 +21,7 @@ Global="*uid://c5asde2m5txr6"
 NetworkManager="*uid://6kp6mnbogy6y"
 PlayerManager="*uid://bs02lmt7nr33f"
 RunManager="*res://scripts/autoload/run_manager.gd"
+MetaProgression="*res://scripts/autoload/meta_progression.gd"
 
 [input]
 

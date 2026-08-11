@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="GunCore" format=3]
+
+[ext_resource type="Script" uid="uid://db7vhbef8vqw1" path="res://scripts/weapons/resources/GunCore.gd" id="1_apollo"]
+
+[resource]
+script = ExtResource("1_apollo")
+range_modifier = 150.0
+base_damage = 6.0
+projectile_speed_modifier = 1.8
+metadata/_custom_type_script = "uid://db7vhbef8vqw1"
