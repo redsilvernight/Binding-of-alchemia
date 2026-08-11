@@ -1,17 +1,7 @@
-extends Character
+extends EnemyBase
 @export var speed: float = 150.0
 @export var damage: float = 5.0
 var target: Node2D = null
-
-# Reste inactif tant que sa Room ne l'a pas activé (cf. Room._activate_enemies_delayed) :
-# sans ça, un ennemi vise le joueur le plus proche dès le lancement de la
-# partie, quelle que soit la salle où il se trouve, et va se coller contre
-# sa propre porte à attendre — repéré avant même que le joueur entre.
-var active: bool = false
-
-func _ready() -> void:
-	super()
-	add_to_group("Enemies")
 
 func _physics_process(_delta: float) -> void:
 	if not multiplayer.is_server():
