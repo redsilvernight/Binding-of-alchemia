@@ -1,15 +1,4 @@
 extends CanvasLayer
-## Barre de vie du boss (Phase 7.4). bind_boss() est appelé une fois par
-## game.gd._spawn_enemy juste après l'ajout du noeud à l'arbre (nécessaire
-## pour que $Bar soit déjà résolu par @onready) — même mécanisme de
-## branchement que LifeBar (player.gd connecte health_changed à la main),
-## réutilisé tel quel puisque Character.health_changed existe déjà.
-##
-## Visibilité : masquée tant que la salle de boss n'a pas été visitée par un
-## joueur. Basée sur game.dungeon_map (déjà répliqué identiquement à tous
-## les pairs, cf. minimap.gd) plutôt que sur EnemyBase.active — ce dernier
-## n'est mis à jour que côté hôte (Room._on_trigger_body_entered est gardé
-## par multiplayer.is_server()), donc il resterait toujours false sur un client.
 
 @onready var _bar: ProgressBar = $Bar
 var _boss: Node = null

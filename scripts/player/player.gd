@@ -193,6 +193,7 @@ func request_craft_mixture(ingredient_paths: Array[String]) -> void:
 	# barrel_mixture.impact_effect — dette acceptée, à traiter si le besoin
 	# de stockage multi-mixtures se confirme.
 	weapon.mixture_impact_effect = effect
+	weapon.set_mixture_ingredients_networked(ingredient_paths)
 	print("Mixture appliquée pour %s: %s" % [name, effect])
 
 func _on_projectile_requested(data: Dictionary) -> void:

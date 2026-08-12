@@ -15,6 +15,7 @@ extends Node
 ## de sa propre monnaie.
 
 signal currency_changed(new_amount: int)
+signal run_currency_changed(new_amount: int)
 signal unlocks_changed
 
 const UNLOCKABLES: Array[Dictionary] = [
@@ -26,6 +27,10 @@ const UNLOCKABLES: Array[Dictionary] = [
 
 var currency_by_peer: Dictionary = {} # int peer_id -> int
 var unlocked_by_peer: Dictionary = {} # int peer_id -> Dictionary[String, bool] (ensemble des item_path débloqués)
+# Sous-ensemble de currency_by_peer, remis à zéro à chaque lancement de run
+# (cf. RunManager.request_start_run) -- panneau de résumé de run (8.6), pour
+# afficher "monnaie gagnée pendant cette run" sans perdre le total cumulatif.
+var run_currency_by_peer: Dictionary = {} # int peer_id -> int
 
 
 func _ready() -> void:
@@ -39,6 +44,10 @@ func _ready() -> void:
 
 func get_currency(peer_id: int) -> int:
 	return currency_by_peer.get(peer_id, 0)
+
+
+func get_run_currency(peer_id: int) -> int:
+	return run_currency_by_peer.get(peer_id, 0)
 
 
 func is_unlocked(peer_id: int, item_path: String) -> bool:
@@ -60,7 +69,23 @@ func add_currency(peer_id: int, amount: int) -> void:
 	if not multiplayer.is_server():
 		return
 	currency_by_peer[peer_id] = get_currency(peer_id) + amount
+	run_currency_by_peer[peer_id] = get_run_currency(peer_id) + amount
 	_notify_currency(peer_id)
+	_notify_run_currency(peer_id)
+
+
+## Hôte uniquement, appelé par RunManager.request_start_run au lancement
+## d'une run (fraîche ou "Rejouer" depuis le panneau de résumé) : remet le
+## compteur "gagné cette run" à zéro pour tous les pairs déjà connus, et
+## republie 0 à chacun (même besoin de rattrapage explicite que
+## _notify_currency, un pair ne "voit" jamais l'état d'un autre pair).
+func reset_run_currency() -> void:
+	if not multiplayer.is_server():
+		return
+	run_currency_by_peer.clear()
+	_notify_run_currency(NetworkManager.get_unique_id())
+	for peer_id in NetworkManager.get_peers():
+		_notify_run_currency(peer_id)
 
 
 func _notify_currency(peer_id: int) -> void:
@@ -74,9 +99,22 @@ func _notify_currency(peer_id: int) -> void:
 		_rpc_currency_changed.rpc_id(peer_id, amount)
 
 
+func _notify_run_currency(peer_id: int) -> void:
+	var amount: int = get_run_currency(peer_id)
+	if peer_id == NetworkManager.get_unique_id():
+		run_currency_changed.emit(amount)
+	else:
+		_rpc_run_currency_changed.rpc_id(peer_id, amount)
+
+
 @rpc("authority", "call_local", "reliable")
 func _rpc_currency_changed(amount: int) -> void:
 	currency_changed.emit(amount)
+
+
+@rpc("authority", "call_local", "reliable")
+func _rpc_run_currency_changed(amount: int) -> void:
+	run_currency_changed.emit(amount)
 
 
 ## Requêtable par n'importe quel pair depuis unlock_screen.gd (hub) : même

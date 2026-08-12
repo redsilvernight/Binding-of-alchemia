@@ -29,6 +29,10 @@ var mixture_cooldown_accum: float = 0.0
 var water_trajectory: Bullet.TrajectoryType = Bullet.TrajectoryType.LINEAR
 var mixture_trajectory: Bullet.TrajectoryType = Bullet.TrajectoryType.LINEAR
 var mixture_impact_effect: ImpactEffect = null
+# Composition (resource_path des ingrédients, doublons compris) de la mixture
+# actuellement chargée -- purement informatif (8.6, panneau de résumé de run),
+# ImpactEffect ne conserve pas cette info après conversion (cf. MixtureToEffect).
+var mixture_ingredient_paths: Array[String] = []
 
 func _ready() -> void:
 	_recalculate_stats()
@@ -80,6 +84,21 @@ func equip_networked(piece: Resource) -> void:
 @rpc("any_peer", "call_local", "reliable")
 func _rpc_equip(part_path: String) -> void:
 	equip(load(part_path))
+
+## Même pattern que equip_networked/_rpc_equip : chaque client possède sa
+## propre copie du noeud Weapon, donc affecter mixture_ingredient_paths en
+## local ne suffit pas à garder les copies des autres pairs en phase (8.6,
+## panneau de résumé de run affichant la mixture de CHAQUE joueur sur
+## chaque écran). Seul l'hôte doit appeler ceci (cf. Player.request_craft_mixture).
+func set_mixture_ingredients_networked(ingredient_paths: Array[String]) -> void:
+	if is_inside_tree():
+		_rpc_set_mixture_ingredients.rpc(ingredient_paths)
+	else:
+		mixture_ingredient_paths = ingredient_paths
+
+@rpc("any_peer", "call_local", "reliable")
+func _rpc_set_mixture_ingredients(ingredient_paths: Array[String]) -> void:
+	mixture_ingredient_paths = ingredient_paths
 
 func _recalculate_stats():
 	var base_speed_water = 0.0
