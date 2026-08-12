@@ -16,7 +16,13 @@ extends Control
 # cf. DungeonGenerator) — obligatoire pour que les portes de deux salles
 # voisines s'alignent toujours sans avoir à les valider au cas par cas.
 const ROOM_CELL_SIZE: Vector2 = Vector2(1000, 1296)
-const DUNGEON_ROOM_COUNT: int = 6
+# Phase 9 (étages) : BASE_ROOM_COUNT est la taille d'origine (étage 1,
+# inchangée) -- chaque étage suivant ajoute des salles jusqu'à ROOM_COUNT_CAP,
+# cf. _room_count_for_floor. Le plafond évite un donjon ingérable (temps de
+# génération, taille de la grille) après une longue série de victoires.
+const BASE_ROOM_COUNT: int = 6
+const ROOM_COUNT_PER_FLOOR: int = 1
+const ROOM_COUNT_CAP: int = 12
 const ROOM_TEMPLATE_PATHS: Array[String] = [
 	"res://scenes/rooms/room_template_a.tscn",
 	"res://scenes/rooms/room_template_b.tscn",
@@ -33,6 +39,10 @@ const SPECIAL_ROOM_TEMPLATE_PATHS: Array[String] = [
 const BOSS_ROOM_TEMPLATE_PATH: String = "res://scenes/rooms/boss_room.tscn"
 const BOSS_SCENE_PATH: String = "res://scenes/enemies/boss_01.tscn"
 const BOSS_HEALTHBAR_SCENE_PATH: String = "res://scenes/ui/boss_healthbar.tscn"
+# Phase 8.6 : panneau de résumé affiché à tous les pairs quand tout le monde
+# est mort (cf. _check_all_players_dead) -- remplace l'ancien retour immédiat
+# au hub, laisse le choix "Rejouer"/"Retour au menu" (scripts/ui/run_summary_panel.gd).
+const RUN_SUMMARY_PANEL_SCENE_PATH: String = "res://scenes/ui/run_summary_panel.tscn"
 # Phase 8.2 : battement avant le retour au hub après la mort du boss (voir
 # _on_boss_defeated) — contrairement à la fin de run par mort collective (où
 # plus personne n'envoie de RPC de jeu, tout le monde étant déjà spectateur),
@@ -52,6 +62,12 @@ const ENEMY_SPAWN_TABLE_PATH: String = "res://resources/spawn_tables/enemies_nor
 const INGREDIENT_SPAWN_TABLE_PATH: String = "res://resources/spawn_tables/ingredients.tres"
 const WEAPON_PART_SPAWN_TABLE_PATH: String = "res://resources/spawn_tables/weapon_parts.tres"
 const ROOM_SPAWN_MARGIN: float = 80.0
+# Phase 9 (étages) : tirages pick_one() additionnels par salle normale, en plus
+# de la densité de base (enemy_table.pick_many(), fixée par la SpawnTable elle-
+# même) -- +1 tirage tous les ENEMY_EXTRA_ROLL_FLOORS étages, plafonné à
+# ENEMY_EXTRA_ROLL_CAP, cf. _extra_enemy_rolls_for_floor.
+const ENEMY_EXTRA_ROLL_FLOORS: int = 2
+const ENEMY_EXTRA_ROLL_CAP: int = 4
 
 # Phase 6.4 : carte du donjon pour la mini-map (scripts/ui/minimap.gd). Toutes
 # les salles y sont enregistrées dès leur spawn (_spawn_room tourne sur
@@ -87,6 +103,11 @@ var current_boss: Node = null
 const SCENE_READY_TIMEOUT: float = 5.0
 const SCENE_READY_POLL_INTERVAL: float = 0.1
 var _peers_ready_for_dungeon: Dictionary = {} # hôte uniquement : peer_id -> true
+
+# 8.6 : évite d'instancier plusieurs fois le panneau de résumé si
+# _check_all_players_dead est redéclenché après coup (ex : un pair déjà mort
+# se déconnecte pendant que le panneau est déjà affiché, cf. _on_peer_disconnected).
+var _run_summary_shown: bool = false
 
 func _ready() -> void:
 	add_to_group("Game")
@@ -143,7 +164,12 @@ func notify_scene_ready() -> void:
 
 
 func _generate_dungeon() -> void:
-	var dungeon_layout: Array[Dictionary] = DungeonGenerator.generate(DUNGEON_ROOM_COUNT, ROOM_TEMPLATE_PATHS, SPECIAL_ROOM_TEMPLATE_PATHS, BOSS_ROOM_TEMPLATE_PATH)
+	# Phase 9 : RunManager.current_floor est déjà répliqué et à jour à ce point
+	# (advance_floor()/reset_floor() tournent avant la bascule de scène qui mène
+	# ici, cf. RunManager._change_scene_with_handshake).
+	var floor_level: int = RunManager.current_floor
+	var room_count: int = _room_count_for_floor(floor_level)
+	var dungeon_layout: Array[Dictionary] = DungeonGenerator.generate(room_count, ROOM_TEMPLATE_PATHS, SPECIAL_ROOM_TEMPLATE_PATHS, BOSS_ROOM_TEMPLATE_PATH)
 	var room_nodes: Dictionary = {} # Vector2i (grid_position) -> Room
 	for room_data in dungeon_layout:
 		var room: Room = room_spawner.spawn(room_data)
@@ -159,11 +185,17 @@ func _generate_dungeon() -> void:
 		player_spawner.spawn(peer_id)
 
 	var enemy_table: SpawnTable = load(ENEMY_SPAWN_TABLE_PATH) as SpawnTable
+	var extra_enemy_rolls: int = _extra_enemy_rolls_for_floor(floor_level)
 	for room_data in dungeon_layout:
 		if room_data["is_special"] or room_data["is_start"] or room_data["is_boss"]:
 			continue
 		var room: Room = room_nodes[room_data["grid_position"]]
-		for enemy_scene_path in enemy_table.pick_many():
+		var enemy_paths: Array[String] = enemy_table.pick_many()
+		for i in extra_enemy_rolls:
+			var extra_path: String = enemy_table.pick_one()
+			if extra_path != "":
+				enemy_paths.append(extra_path)
+		for enemy_scene_path in enemy_paths:
 			var enemy: Node = enemy_spawner.spawn({
 				"scene_path": enemy_scene_path,
 				"position": _random_position_in_room(room_data),
@@ -197,6 +229,10 @@ func _generate_dungeon() -> void:
 	var weapon_part_table: SpawnTable = load(WEAPON_PART_SPAWN_TABLE_PATH) as SpawnTable
 	for pickup_data in _generate_pickups_from_table(weapon_part_table, "weapon_part", dungeon_layout, true):
 		pickup_spawner.spawn(pickup_data)
+
+	# Phase 9 (loader) : dernier appel, une fois tous les spawns émis --
+	# cf. RunManager.hide_loading_screen.
+	RunManager.hide_loading_screen()
 
 func _spawn_room(data: Dictionary) -> Node:
 	var room: Room = (load(data["template_path"]) as PackedScene).instantiate()
@@ -360,16 +396,52 @@ func _check_all_players_dead() -> void:
 		return
 	if players.get_child_count() == 0:
 		return
+	if _run_summary_shown:
+		return
 	for player in players.get_children():
 		if not player.is_dead:
 			return
-	RunManager.end_run()
+	# 8.6 : n'appelle plus RunManager.end_run() directement -- affiche d'abord
+	# le panneau de résumé sur chaque pair, c'est lui qui déclenche le retour
+	# au hub ("Rejouer") ou au menu principal. Un simple RPC ne détruit ni ne
+	# crée de noeud de scène, pas besoin du call_deferred qu'exigeait
+	# end_run() (cf. commentaire de RunManager._rpc_change_scene).
+	_run_summary_shown = true
+	_show_run_summary.rpc()
+
+## Cf. RUN_SUMMARY_PANEL_SCENE_PATH : instancié sur chaque pair (call_local),
+## chacun affiche ses propres données locales déjà répliquées (pièces d'arme
+## et composition de mixture de CHAQUE joueur, cf. weapon.gd
+## set_mixture_ingredients_networked -- seule sa propre monnaie de run,
+## MetaProgression étant par-pair par conception).
+@rpc("authority", "call_local", "reliable")
+func _show_run_summary() -> void:
+	var panel: Node = (load(RUN_SUMMARY_PANEL_SCENE_PATH) as PackedScene).instantiate()
+	HUD.add_child(panel)
+	panel.show_summary(players.get_children())
 
 ## Cf. BOSS_DEFEAT_TO_HUB_DELAY : ne rappelle pas RunManager.end_run()
 ## immédiatement pour laisser le trafic réseau en vol au moment du coup de
 ## grâce se résorber pendant que la scène est encore chargée partout.
+## Phase 9 : l'étage avance dès la victoire (pas après le délai) pour que
+## RunManager.current_floor soit déjà à jour si un autre système le lit entre-
+## temps (ex : affichage du panneau de résumé, non concerné aujourd'hui).
 func _on_boss_defeated() -> void:
+	RunManager.advance_floor()
 	get_tree().create_timer(BOSS_DEFEAT_TO_HUB_DELAY).timeout.connect(RunManager.end_run)
+
+
+## Phase 9 : +1 salle par étage au-delà de la taille de base (étage 1 = donjon
+## d'origine, inchangé), plafonné à ROOM_COUNT_CAP.
+func _room_count_for_floor(floor_level: int) -> int:
+	return mini(BASE_ROOM_COUNT + (floor_level - 1) * ROOM_COUNT_PER_FLOOR, ROOM_COUNT_CAP)
+
+
+## Phase 9 : tirages pick_one() additionnels par salle normale, en plus de la
+## densité de base -- même logique de crescendo que _room_count_for_floor,
+## plafonnée à ENEMY_EXTRA_ROLL_CAP.
+func _extra_enemy_rolls_for_floor(floor_level: int) -> int:
+	return mini((floor_level - 1) / ENEMY_EXTRA_ROLL_FLOORS, ENEMY_EXTRA_ROLL_CAP)
 
 func _on_peer_connected(peer_id: int) -> void:
 	if multiplayer.is_server():

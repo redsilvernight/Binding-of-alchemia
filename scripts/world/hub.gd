@@ -18,6 +18,8 @@ func _ready() -> void:
 		player_spawner.spawn(NetworkManager.get_unique_id())
 		for peer_id in NetworkManager.get_peers():
 			player_spawner.spawn(peer_id)
+		# Phase 9 (loader) : cf. RunManager.hide_loading_screen.
+		RunManager.hide_loading_screen()
 
 
 func _spawn_player(id: int) -> Node:

@@ -13,6 +13,7 @@ func hosting() -> void:
 	# L'hôte est toujours peer_id 1 : la sauvegarde locale peut donc être
 	# seedée directement, sans RPC (8.3).
 	MetaProgression.apply_local_save_as_host()
+	RunManager.reset_floor() # Phase 9 : toute nouvelle partie démarre à l'étage 1
 	_switch_to_game()
 
 
@@ -24,6 +25,7 @@ func hosting() -> void:
 ## de fonctionner tel quel, sans code réseau ni port ouvert.
 func play_solo() -> void:
 	MetaProgression.apply_local_save_as_host()
+	RunManager.reset_floor() # Phase 9 : toute nouvelle partie démarre à l'étage 1
 	_switch_to_game()
 
 
@@ -43,10 +45,21 @@ func joining() -> void:
 
 func get_peers() -> PackedInt32Array:
 	return multiplayer.get_peers()
-	
+
 func get_unique_id() -> int:
 	return multiplayer.get_unique_id()
-	
+
+
+## Quitte la session réseau localement (8.6, bouton "Retour au menu" du
+## panneau de résumé de run) : pas de coordination avec les autres pairs,
+## chacun décide pour lui-même, même logique que _on_connection_failed.
+## Si c'est l'hôte qui quitte, son serveur ENet se ferme et les pairs
+## restants perdent la connexion -- cas non géré au-delà de ça (aucun code
+## du projet ne gère aujourd'hui un hôte qui part en cours de partie).
+func leave_to_main_menu() -> void:
+	multiplayer.multiplayer_peer = null
+	get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")
+
 func _on_connection_failed() -> void:
 	multiplayer.multiplayer_peer = null
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
