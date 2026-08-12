@@ -27,6 +27,11 @@ size_flags_vertical = 4
 theme_override_constants/separation = 20
 alignment = 1
 
+[node name="ProfileLabel" type="Label" parent="Panel/MenuVBox"]
+layout_mode = 2
+horizontal_alignment = 1
+text = "Profil actif : Profil 1"
+
 [node name="Play" type="Button" parent="Panel/MenuVBox"]
 layout_mode = 2
 text = "Jouer"
@@ -38,6 +43,10 @@ text = "Multijoueur"
 [node name="Options" type="Button" parent="Panel/MenuVBox"]
 layout_mode = 2
 text = "Paramètres"
+
+[node name="ChangeProfile" type="Button" parent="Panel/MenuVBox"]
+layout_mode = 2
+text = "Changer de profil"
 
 [node name="Quit" type="Button" parent="Panel/MenuVBox"]
 layout_mode = 2
@@ -75,5 +84,42 @@ layout_mode = 2
 text = "Plein écran"
 
 [node name="Back" type="Button" parent="OptionsPanel/OptionsVBox"]
+layout_mode = 2
+text = "Retour"
+
+[node name="ProfilePanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ProfileVBox" type="VBoxContainer" parent="ProfilePanel"]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Title" type="Label" parent="ProfilePanel/ProfileVBox"]
+layout_mode = 2
+horizontal_alignment = 1
+text = "Choisir un profil"
+
+[node name="Profile0" type="Button" parent="ProfilePanel/ProfileVBox"]
+layout_mode = 2
+text = "Profil 1"
+
+[node name="Profile1" type="Button" parent="ProfilePanel/ProfileVBox"]
+layout_mode = 2
+text = "Profil 2"
+
+[node name="Profile2" type="Button" parent="ProfilePanel/ProfileVBox"]
+layout_mode = 2
+text = "Profil 3"
+
+[node name="Back" type="Button" parent="ProfilePanel/ProfileVBox"]
 layout_mode = 2
 text = "Retour"
