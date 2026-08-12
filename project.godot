@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Binding of apotheosis"
-run/main_scene="uid://bu0b7rpwxlbhq"
+run/main_scene="res://scenes/ui/main_menu.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -23,6 +23,7 @@ PlayerManager="*uid://bs02lmt7nr33f"
 RunManager="*res://scripts/autoload/run_manager.gd"
 MetaProgression="*res://scripts/autoload/meta_progression.gd"
 SaveManager="*res://scripts/autoload/save_manager.gd"
+Settings="*res://scripts/autoload/settings.gd"
 
 [input]
 

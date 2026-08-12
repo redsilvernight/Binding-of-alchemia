@@ -35,5 +35,10 @@ text = "Host"
 layout_mode = 2
 text = "Join"
 
+[node name="Back" type="Button" parent="Panel/MultiplayerVBox"]
+layout_mode = 2
+text = "Retour"
+
 [connection signal="pressed" from="Panel/MultiplayerVBox/Host" to="Panel/MultiplayerVBox" method="_on_host_pressed"]
 [connection signal="pressed" from="Panel/MultiplayerVBox/Join" to="Panel/MultiplayerVBox" method="_on_join_pressed"]
+[connection signal="pressed" from="Panel/MultiplayerVBox/Back" to="Panel/MultiplayerVBox" method="_on_back_pressed"]

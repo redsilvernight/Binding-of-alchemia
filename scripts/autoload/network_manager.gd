@@ -16,6 +16,17 @@ func hosting() -> void:
 	_switch_to_game()
 
 
+## "Jouer" en solo (main_menu.gd) : aucun ENet impliqué, multiplayer_peer
+## reste null. Godot considère alors la partie comme "hors-ligne"
+## (multiplayer.is_server() == true, get_unique_id() == 1, vérifié en sondant
+## le comportement réel du moteur) -- tout le code host-authoritative
+## (RPC "authority"/"any_peer" avec call_local, gardes is_server()) continue
+## de fonctionner tel quel, sans code réseau ni port ouvert.
+func play_solo() -> void:
+	MetaProgression.apply_local_save_as_host()
+	_switch_to_game()
+
+
 func joining() -> void:
 	# Un nouveau ENetMultiplayerPeer à chaque tentative : réutiliser l'ancien
 	# après un échec de connexion pouvait laisser un état ENet périmé.
