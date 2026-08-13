@@ -1,0 +1,36 @@
+{
+  "group_id": "6b908dac-9794-470b-bbbc-bbe9d677c10e",
+  "states": [
+    {
+      "character": {
+        "id": "5ec02b03-089a-4f0f-84e2-c655718d1740",
+        "name": "Idle",
+        "prompt": "top-down 2D pixel art game character sprite, single static idle pose facing directly toward camera (isaac-like top-down angle)\nsubject: young field alchemist, practical worn traveling coat (knee-length, functional not ornamental), leather harness with belt pouches and glass vial holders, fingerless gloves, sturdy boots \u2014 utilitarian adventurer silhouette, not a robed wizard\nsubtle etched alchemical circle motif on one glove or belt buckle as the only occult detail, no glowing effects, no visible weapon\ncolor palette: muted earthy base tones only (worn brown leather, dark slate, faded olive) \u2014 deliberately no bright cloth colors, so alchemy/mixture effects remain the only vivid color in the game later\n64x64 pixels, clean pixel grid, no anti-aliasing, 6-10 colors, flat lighting with soft directional shading\ntransparent background, centered, character fills ~70% of canvas height, small soft ground shadow beneath feet\nno text, no UI, no watermark, no literal military uniform, no oversized weapon, no generic fantasy robe/pointy hat, no automail limb, no pocket watch",
+        "size": {
+          "width": 64,
+          "height": 64
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-08-13T11:25:21.959023+00:00"
+      },
+      "folder": "Idle",
+      "frames": {
+        "rotations": {
+          "south": "Idle/rotations/south.png",
+          "south-east": "Idle/rotations/south-east.png",
+          "east": "Idle/rotations/east.png",
+          "north-east": "Idle/rotations/north-east.png",
+          "north": "Idle/rotations/north.png",
+          "north-west": "Idle/rotations/north-west.png",
+          "west": "Idle/rotations/west.png",
+          "south-west": "Idle/rotations/south-west.png"
+        },
+        "animations": {}
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-08-13T11:28:53.488055"
+}

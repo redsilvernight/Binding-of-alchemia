@@ -14,7 +14,7 @@ signal instance_projectile(data: Dictionary)
 @onready var weapon: Weapon = $Weapon
 @onready var inventory: Inventory = $Inventory
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
-@onready var sprite: Sprite2D = $Sprite2D
+@onready var sprite: AnimatedSprite2D = $Sprite2D
 var was_water_pressed: bool = false
 var was_mixture_pressed: bool = false
 var last_aim_direction: Vector2 = Vector2.RIGHT
@@ -27,12 +27,27 @@ var weapon_crafting_screen: Node = null
 var unlock_screen: Node = null
 var _spectate_target: Node2D = null
 
+## Phase 9.3 : 8 directions des sprites Idle/Walk, dans l'ordre des secteurs
+## de 45° en partant de l'Est et en tournant dans le sens horaire (cohérent
+## avec Vector2.angle() en repère écran où Y+ pointe vers le bas). Les noms
+## d'animation réels sont "idle-<direction>" ou "walk-<direction>".
+const FACING_DIRECTIONS: Array[String] = [
+	"east", "south-east", "south", "south-west",
+	"west", "north-west", "north", "north-east",
+]
+
 func _ready() -> void:
 	super()
 	add_to_group("Players")
 	damage_timer.wait_time = invulnerability_duration
 	weapon.projectile_requested.connect(_on_projectile_requested)
 	died.connect(_on_died)
+	# Doit tourner sur TOUS les pairs (pas seulement l'autorité) : seul le nom
+	# de l'animation est répliqué (Sprite2D:animation), pas l'index de frame --
+	# chaque instance doit faire avancer les frames de sa propre marche
+	# localement, sinon un pair distant verrait un cycle de marche figé sur sa
+	# frame 0 (l'anim Idle n'a qu'1 frame, donc ce bug ne s'y voyait pas).
+	sprite.play()
 	if is_multiplayer_authority():
 		player_camera.enabled = true
 		var hud = hud_scene.instantiate()
@@ -65,6 +80,8 @@ func _physics_process(_delta: float) -> void:
 		_process_spectating()
 		return
 	var aim_direction = _get_aim_direction()
+	var input_direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	_update_facing(aim_direction, input_direction.length() > 0.0)
 	var water_pressed = Input.is_action_pressed("fire_water")
 	var mixture_pressed = Input.is_action_pressed("fire_mixture")
 	if water_pressed and not mixture_pressed:
@@ -80,7 +97,6 @@ func _physics_process(_delta: float) -> void:
 			request_fire.rpc_id(1, "water", aim_direction)
 	was_water_pressed = water_pressed
 	was_mixture_pressed = mixture_pressed
-	var input_direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	move(input_direction, speed)
 
 @rpc("any_peer", "call_local", "reliable")
@@ -115,6 +131,21 @@ func _get_aim_direction() -> Vector2:
 		if mouse_delta.length() > 0.0:
 			last_aim_direction = mouse_delta.normalized()
 	return last_aim_direction
+
+## Phase 9.3 : ne tourne que côté instance locale (autorité), comme le reste
+## de _physics_process -- mais le résultat (sprite.animation) est répliqué
+## aux autres pairs via le MultiplayerSynchronizer de la scène (propriété
+## "Sprite2D:animation", même mécanisme que la position), donc les autres
+## joueurs voient bien l'orientation, pas seulement le joueur local.
+func _update_facing(direction: Vector2, is_moving: bool) -> void:
+	if direction.length() < 0.001:
+		return
+	var degrees := fposmod(rad_to_deg(direction.angle()), 360.0)
+	var index := int(round(degrees / 45.0)) % 8
+	var prefix := "walk-" if is_moving else "idle-"
+	var anim_name := StringName(prefix + FACING_DIRECTIONS[index])
+	if sprite.animation != anim_name:
+		sprite.play(anim_name)
 
 func open_alchemy_crafting() -> void:
 	if alchemy_crafting_screen:

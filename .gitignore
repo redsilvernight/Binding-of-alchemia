@@ -44,3 +44,6 @@ exports/
 tmp/
 temp/
 .cache/
+
+# Docs générées, pas du contenu de jeu
+*.xlsx
