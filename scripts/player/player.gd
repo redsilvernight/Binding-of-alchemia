@@ -27,15 +27,6 @@ var weapon_crafting_screen: Node = null
 var unlock_screen: Node = null
 var _spectate_target: Node2D = null
 
-## Phase 9.3 : 8 directions des sprites Idle/Walk, dans l'ordre des secteurs
-## de 45° en partant de l'Est et en tournant dans le sens horaire (cohérent
-## avec Vector2.angle() en repère écran où Y+ pointe vers le bas). Les noms
-## d'animation réels sont "idle-<direction>" ou "walk-<direction>".
-const FACING_DIRECTIONS: Array[String] = [
-	"east", "south-east", "south", "south-west",
-	"west", "north-west", "north", "north-east",
-]
-
 func _ready() -> void:
 	super()
 	add_to_group("Players")
@@ -140,10 +131,8 @@ func _get_aim_direction() -> Vector2:
 func _update_facing(direction: Vector2, is_moving: bool) -> void:
 	if direction.length() < 0.001:
 		return
-	var degrees := fposmod(rad_to_deg(direction.angle()), 360.0)
-	var index := int(round(degrees / 45.0)) % 8
 	var prefix := "walk-" if is_moving else "idle-"
-	var anim_name := StringName(prefix + FACING_DIRECTIONS[index])
+	var anim_name := StringName(prefix + FacingDirection.label_for(direction))
 	if sprite.animation != anim_name:
 		sprite.play(anim_name)
 
