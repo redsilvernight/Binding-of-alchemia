@@ -12,6 +12,10 @@ extends EnemyBase
 @export var projectile_speed: float = 320.0
 var target: Node2D = null
 @onready var sprite: AnimatedSprite2D = $Sprite2D
+## Dernière direction non-nulle : la vitesse retombe à zéro pendant la phase
+## "arrêté et tire" de EnemyStateRangedAttack, mais l'orientation doit rester
+## celle du dernier déplacement plutôt que de figer une frame de marche.
+var _last_facing_direction: Vector2 = Vector2.DOWN
 
 var state_machine: EnemyStateMachine
 
@@ -29,15 +33,18 @@ func _physics_process(delta: float) -> void:
 	state_machine.physics_process(delta)
 	_update_facing(velocity)
 
-## Hôte-only comme le reste de _physics_process (host-authoritative). Pas de
-## sprite Idle : à l'arrêt (le cas EnemyStateRangedAttack qui tire sans
-## bouger), le sprite garde sa dernière frame de marche -- direction
-## approximative correcte dans la plupart des cas puisque l'ennemi vient de
-## se déplacer vers/depuis la cible juste avant de s'arrêter pour tirer.
+## Hôte-only comme le reste de _physics_process (host-authoritative).
+## Bascule idle/walk selon le mouvement réel (vitesse quasi nulle pendant la
+## phase "arrêté et tire" de EnemyStateRangedAttack), mais l'orientation
+## utilise toujours la dernière direction de déplacement connue, pas la
+## vitesse instantanée -- sinon l'ennemi se réoriente vers Vector2.DOWN par
+## défaut dès qu'il s'arrête.
 func _update_facing(direction: Vector2) -> void:
-	if direction.length() < 0.001:
-		return
-	var anim_name := StringName("walk-" + FacingDirection.label_for(direction))
+	var is_moving := direction.length() > 0.001
+	if is_moving:
+		_last_facing_direction = direction
+	var prefix := "walk-" if is_moving else "idle-"
+	var anim_name := StringName(prefix + FacingDirection.label_for(_last_facing_direction))
 	if sprite.animation != anim_name:
 		sprite.play(anim_name)
 

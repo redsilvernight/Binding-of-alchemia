@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/enemy_ranged.gd" id="1"]
-[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/enemy_ranged_walk.tres" id="2"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/enemy_ranged.tres" id="2"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
 radius = 102.01961
@@ -24,7 +24,7 @@ script = ExtResource("1")
 texture_filter = 1
 scale = Vector2(3, 3)
 sprite_frames = ExtResource("2")
-animation = &"walk-south"
+animation = &"idle-south"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(2, -12)
