@@ -67,4 +67,68 @@ animations = [{
 "loop": true,
 "name": &"walk-south-west",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"idle-south",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"idle-south-east",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"idle-east",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"idle-north-east",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"idle-north",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"idle-north-west",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"idle-west",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"idle-south-west",
+"speed": 5.0
 }]
