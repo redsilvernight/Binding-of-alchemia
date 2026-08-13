@@ -20,7 +20,7 @@ const DIRECTIONS: Dictionary = {
 }
 
 
-static func generate(room_count: int, room_template_paths: Array[String], special_room_template_paths: Array[String], boss_room_template_path: String) -> Array[Dictionary]:
+static func generate(room_count: int, room_template_paths: Array[String], special_room_template_paths: Array[String], boss_room_template_path: String, treasure_room_template_path: String) -> Array[Dictionary]:
 	var start: Vector2i = Vector2i.ZERO
 	var occupied: Dictionary = {start: true}
 	var frontier: Array[Vector2i] = [start]
@@ -66,6 +66,16 @@ static func generate(room_count: int, room_template_paths: Array[String], specia
 				best_distance = distance
 				boss_cell = candidate
 
+	# Salle au trésor (9.2) : comme la salle de boss, une salle garantie
+	# supplémentaire (pas en concurrence avec special_cell, qui reste
+	# réservée à l'alchimie/l'arme) -- contrairement au boss, position
+	# aléatoire parmi les cellules restantes (pas de raison d'être "au
+	# fond du donjon"). Même repli sur start si aucune cellule libre.
+	var treasure_cell: Vector2i = start
+	var treasure_candidates: Array = cells.filter(func(c): return c != start and c != special_cell and c != boss_cell)
+	if not treasure_candidates.is_empty():
+		treasure_cell = treasure_candidates[randi() % treasure_candidates.size()]
+
 	var layout: Array[Dictionary] = []
 	for cell in cells:
 		var open_sides: Array[String] = []
@@ -77,6 +87,8 @@ static func generate(room_count: int, room_template_paths: Array[String], specia
 			template_path = special_template_path
 		elif cell == boss_cell:
 			template_path = boss_room_template_path
+		elif cell == treasure_cell:
+			template_path = treasure_room_template_path
 		layout.append({
 			"grid_position": cell,
 			"template_path": template_path,
@@ -84,5 +96,6 @@ static func generate(room_count: int, room_template_paths: Array[String], specia
 			"is_start": cell == start,
 			"is_special": cell == special_cell,
 			"is_boss": cell == boss_cell,
+			"is_treasure": cell == treasure_cell,
 		})
 	return layout

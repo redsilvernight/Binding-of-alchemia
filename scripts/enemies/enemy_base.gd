@@ -11,24 +11,28 @@ var active: bool = false
 ## pour permettre à des ennemis plus forts (ex : boss_01.tscn) de valoir plus.
 @export var currency_reward: int = 5
 
+## Phase 9.2 : chemin d'un ingrédient à lâcher à la mort, assigné par
+## game.gd juste après spawn (budget d'ingrédients fixe réparti sur des
+## ennemis choisis au hasard pour tout l'étage — pas un tirage indépendant
+## par mort, cf. _generate_dungeon()). Vide = cet ennemi ne lâche rien.
+var carries_ingredient_path: String = ""
+
 func _ready() -> void:
 	super()
 	add_to_group("Enemies")
 
-## Point d'extension pour un futur système de drop : les sous-classes peuvent
-## surcharger (en appelant super() pour garder la récompense de monnaie) pour
-## ajouter un spawn de pickup avant la destruction du noeud.
-##
-## Récompense partagée par toute la partie plutôt qu'attribuée au tireur
-## précis : take_damage()/Bullet/ImpactEffect ne portent aucune identité de
-## tireur aujourd'hui (Character.take_damage(degat: float) ne reçoit qu'un
-## montant), et ajouter cette traçabilité toucherait la chaîne de dégâts
-## partagée (cf. règle "Combat and gameplay systems" du projet) pour un
-## bénéfice minime en co-op où l'équipe progresse ensemble.
+## Monnaie et ingrédient (si porté) lâchés comme pickups physiques au sol
+## (Phase 9.2, dynamisme) -- ramassés individuellement par qui marche
+## dessus, plus de crédit/attribution de "partie" à décider ici. Les
+## sous-classes peuvent surcharger (en appelant super()) pour ajouter
+## d'autres drops avant la destruction du noeud.
 func _on_death() -> void:
-	for peer_id in NetworkManager.get_peers():
-		MetaProgression.add_currency(peer_id, currency_reward)
-	MetaProgression.add_currency(NetworkManager.get_unique_id(), currency_reward)
+	var game: Node = get_tree().get_first_node_in_group("Game")
+	if game == null:
+		return
+	game.request_currency_drop(global_position, currency_reward)
+	if carries_ingredient_path != "":
+		game.request_enemy_drop(global_position, carries_ingredient_path)
 
 func kill() -> void:
 	if multiplayer.is_server():

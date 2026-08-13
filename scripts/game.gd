@@ -37,6 +37,10 @@ const SPECIAL_ROOM_TEMPLATE_PATHS: Array[String] = [
 # toujours la cellule la plus éloignée du départ) — le boss lui-même est
 # spawné à part, hors de la spawn table pondérée des ennemis normaux.
 const BOSS_ROOM_TEMPLATE_PATH: String = "res://scenes/rooms/boss_room.tscn"
+# Phase 9.2 : salle au trésor, une par étage (comme la salle de boss, jamais
+# absente), contient le coffre de pièces d'arme (cf. chest.gd) -- distincte
+# de SPECIAL_ROOM_TEMPLATE_PATHS (alchimie/arme), pas en concurrence avec elles.
+const TREASURE_ROOM_TEMPLATE_PATH: String = "res://scenes/rooms/room_treasure.tscn"
 const BOSS_SCENE_PATH: String = "res://scenes/enemies/boss_01.tscn"
 const BOSS_HEALTHBAR_SCENE_PATH: String = "res://scenes/ui/boss_healthbar.tscn"
 # Phase 8.6 : panneau de résumé affiché à tous les pairs quand tout le monde
@@ -61,6 +65,11 @@ const BOSS_DEFEAT_TO_HUB_DELAY: float = 2.5
 const ENEMY_SPAWN_TABLE_PATH: String = "res://resources/spawn_tables/enemies_normal.tres"
 const INGREDIENT_SPAWN_TABLE_PATH: String = "res://resources/spawn_tables/ingredients.tres"
 const WEAPON_PART_SPAWN_TABLE_PATH: String = "res://resources/spawn_tables/weapon_parts.tres"
+# Phase 9.2 : au plus cette fraction des ennemis d'un étage peuvent être
+# "porteurs" d'ingrédient (cf. _generate_dungeon()) -- garantit des kills
+# "vides" même sur un petit étage où le budget d'ingrédients dépasserait
+# sinon l'effectif total. Premier réglage, à ajuster en playtest.
+const INGREDIENT_CARRIER_RATIO_CAP: float = 0.5
 const ROOM_SPAWN_MARGIN: float = 80.0
 # Phase 9 (étages) : tirages pick_one() additionnels par salle normale, en plus
 # de la densité de base (enemy_table.pick_many(), fixée par la SpawnTable elle-
@@ -169,7 +178,7 @@ func _generate_dungeon() -> void:
 	# ici, cf. RunManager._change_scene_with_handshake).
 	var floor_level: int = RunManager.current_floor
 	var room_count: int = _room_count_for_floor(floor_level)
-	var dungeon_layout: Array[Dictionary] = DungeonGenerator.generate(room_count, ROOM_TEMPLATE_PATHS, SPECIAL_ROOM_TEMPLATE_PATHS, BOSS_ROOM_TEMPLATE_PATH)
+	var dungeon_layout: Array[Dictionary] = DungeonGenerator.generate(room_count, ROOM_TEMPLATE_PATHS, SPECIAL_ROOM_TEMPLATE_PATHS, BOSS_ROOM_TEMPLATE_PATH, TREASURE_ROOM_TEMPLATE_PATH)
 	var room_nodes: Dictionary = {} # Vector2i (grid_position) -> Room
 	for room_data in dungeon_layout:
 		var room: Room = room_spawner.spawn(room_data)
@@ -186,8 +195,9 @@ func _generate_dungeon() -> void:
 
 	var enemy_table: SpawnTable = load(ENEMY_SPAWN_TABLE_PATH) as SpawnTable
 	var extra_enemy_rolls: int = _extra_enemy_rolls_for_floor(floor_level)
+	var floor_enemies: Array[Node] = []
 	for room_data in dungeon_layout:
-		if room_data["is_special"] or room_data["is_start"] or room_data["is_boss"]:
+		if room_data["is_special"] or room_data["is_start"] or room_data["is_boss"] or room_data["is_treasure"]:
 			continue
 		var room: Room = room_nodes[room_data["grid_position"]]
 		var enemy_paths: Array[String] = enemy_table.pick_many()
@@ -201,6 +211,25 @@ func _generate_dungeon() -> void:
 				"position": _random_position_in_room(room_data),
 			})
 			room.register_enemy(enemy)
+			floor_enemies.append(enemy)
+
+	# Phase 9.2 : budget d'ingrédients fixe pour tout l'étage (même quantité
+	# que l'ancien scatter, cf. ingredients.tres min_count/max_count), réparti
+	# sur des ennemis choisis au hasard plutôt qu'un tirage indépendant par
+	# mort -- seuls ces ennemis "porteurs" lâchent un ingrédient en mourant
+	# (EnemyBase._on_death()). Plafonné à INGREDIENT_CARRIER_RATIO_CAP de
+	# l'effectif de l'étage : sur les premiers étages (peu de salles, 1-2
+	# ennemis/salle sur enemies_normal.tres), le budget dépassait le nombre
+	# d'ennemis et 100% des morts lâchaient un ingrédient -- ce plafond
+	# garantit qu'une partie des kills restent "vides" quelle que soit la
+	# taille de l'étage. Si l'étage a moins d'ennemis que le budget une fois
+	# plafonné, le surplus n'est simplement pas distribué.
+	var ingredient_table: SpawnTable = load(INGREDIENT_SPAWN_TABLE_PATH) as SpawnTable
+	var ingredient_paths: Array[String] = ingredient_table.pick_many()
+	floor_enemies.shuffle()
+	var max_carriers: int = int(floor_enemies.size() * INGREDIENT_CARRIER_RATIO_CAP)
+	for i in mini(ingredient_paths.size(), max_carriers):
+		floor_enemies[i].carries_ingredient_path = ingredient_paths[i]
 
 	# Boss (7.4) : spawn direct et déterministe dans sa salle, pas via la
 	# spawn table pondérée — une seule instance, toujours au même endroit.
@@ -223,12 +252,15 @@ func _generate_dungeon() -> void:
 		boss.died.connect(_on_boss_defeated)
 		break
 
-	var ingredient_table: SpawnTable = load(INGREDIENT_SPAWN_TABLE_PATH) as SpawnTable
-	for pickup_data in _generate_pickups_from_table(ingredient_table, "ingredient", dungeon_layout, false):
-		pickup_spawner.spawn(pickup_data)
-	var weapon_part_table: SpawnTable = load(WEAPON_PART_SPAWN_TABLE_PATH) as SpawnTable
-	for pickup_data in _generate_pickups_from_table(weapon_part_table, "weapon_part", dungeon_layout, true):
-		pickup_spawner.spawn(pickup_data)
+	# Phase 9.2 : le contenu du coffre de la salle au trésor est déterminé
+	# maintenant mais rien n'est spawné avant l'ouverture (cf. chest.gd).
+	for room_data in dungeon_layout:
+		if not room_data["is_treasure"]:
+			continue
+		var treasure_room: Room = room_nodes[room_data["grid_position"]]
+		var chest: Node = treasure_room.get_node("Chest")
+		chest.set_contents(_roll_chest_contents(room_data))
+		break
 
 	# Phase 9 (loader) : dernier appel, une fois tous les spawns émis --
 	# cf. RunManager.hide_loading_screen.
@@ -251,6 +283,7 @@ func _register_room_in_map(data: Dictionary) -> void:
 		"is_start": data["is_start"],
 		"is_special": data["is_special"],
 		"is_boss": data["is_boss"],
+		"is_treasure": data["is_treasure"],
 		"open_sides": data["open_sides"],
 		"visited": data["is_start"], # la salle de départ est toujours déjà "découverte"
 	}
@@ -302,16 +335,6 @@ func _rpc_mark_room_visited(grid_position: Vector2i) -> void:
 func _room_world_rect(room_data: Dictionary) -> Rect2:
 	return Rect2(Vector2(room_data["grid_position"]) * ROOM_CELL_SIZE, ROOM_CELL_SIZE)
 
-func _random_explorable_room(dungeon_layout: Array[Dictionary]) -> Dictionary:
-	var candidates: Array[Dictionary] = []
-	for room_data in dungeon_layout:
-		if room_data["is_special"] or room_data["is_boss"]:
-			continue
-		candidates.append(room_data)
-	if candidates.is_empty():
-		candidates = dungeon_layout
-	return candidates[randi() % candidates.size()]
-
 func _random_position_in_room(room_data: Dictionary) -> Vector2:
 	var rect: Rect2 = _room_world_rect(room_data)
 	return Vector2(
@@ -319,24 +342,159 @@ func _random_position_in_room(room_data: Dictionary) -> Vector2:
 		rect.position.y + randf_range(ROOM_SPAWN_MARGIN, rect.size.y - ROOM_SPAWN_MARGIN)
 	)
 
-## unique = true : chaque entrée de la table apparaît exactement une fois
-## (garantit la couverture complète d'un pool, ex : une pièce d'arme de
-## chaque catégorie). unique = false : tirage pondéré avec remise sur
-## min_count..max_count de la table (rareté relative, doublons possibles).
-func _generate_pickups_from_table(table: SpawnTable, item_type: String, dungeon_layout: Array[Dictionary], unique: bool) -> Array[Dictionary]:
-	var paths: Array[String] = table.pick_all_shuffled() if unique else table.pick_many()
-	var pickups: Array[Dictionary] = []
-	for path in paths:
-		var room_data: Dictionary = _random_explorable_room(dungeon_layout)
-		pickups.append({"item_type": item_type, "item_resource_path": path, "position": _random_position_in_room(room_data)})
-	return pickups
+## Phase 9.2 : contenu du coffre de la salle au trésor, tiré une fois à la
+## génération (pas à l'ouverture, pour rester déterministe côté hôte) --
+## chest.gd se contente de stocker ce dict et de le renvoyer tel quel à
+## request_open_chest() une fois interagi. Une seule pièce d'arme au plus
+## (pick_one pondéré, plus l'ancienne garantie "une de chaque"), de la
+## monnaie possible en plus ou à la place, et une très faible chance de
+## "coffre piège" (pas de loot, un ennemi apparaît à la place). Pourcentages
+## et montants sont un premier réglage, à ajuster en playtest.
+const CHEST_TRAP_CHANCE: float = 0.05
+const CHEST_WEAPON_PART_CHANCE: float = 0.65
+const CHEST_CURRENCY_CHANCE: float = 0.5
+# Tiré en nombre de pièces (cf. CURRENCY_PER_COIN plus bas), pas en montant
+# brut -- garantit que le total est toujours un multiple exact de
+# CURRENCY_PER_COIN, sans quoi une partie du montant tiré ne correspondrait
+# à aucune pièce physique réellement spawnable.
+const CHEST_CURRENCY_COINS_MIN: int = 3
+const CHEST_CURRENCY_COINS_MAX: int = 6
+# Dispersion autour du coffre lui-même (room_treasure.tscn place le noeud
+# Chest au centre de la salle, cf. _room_world_rect().get_center()) plutôt
+# qu'une position aléatoire dans toute la salle -- sinon les items pouvaient
+# apparaître très loin du coffre qu'on vient d'ouvrir.
+const CHEST_LOOT_SCATTER_RADIUS: float = 80.0
+
+func _random_position_near(center: Vector2, radius: float) -> Vector2:
+	return center + Vector2(randf_range(-radius, radius), randf_range(-radius, radius))
+
+## Phase 9.2 (dynamisme) : une pièce physique vaut toujours CURRENCY_PER_COIN
+## -- un montant total (récompense de kill, monnaie de coffre) se traduit en
+## N pièces séparées à ramasser plutôt qu'une seule au montant variable.
+## Division entière, au moins une pièce si amount > 0 (arrondi vers le bas
+## si amount n'est pas un multiple exact de CURRENCY_PER_COIN).
+const CURRENCY_PER_COIN: int = 5
+const CURRENCY_SCATTER_RADIUS: float = 40.0
+
+func _currency_coin_positions(amount: int, center: Vector2) -> Array[Vector2]:
+	var positions: Array[Vector2] = []
+	if amount <= 0:
+		return positions
+	var coin_count: int = maxi(1, amount / CURRENCY_PER_COIN)
+	for i in coin_count:
+		positions.append(_random_position_near(center, CURRENCY_SCATTER_RADIUS))
+	return positions
+
+func _roll_chest_contents(room_data: Dictionary) -> Dictionary:
+	var chest_position: Vector2 = _room_world_rect(room_data).get_center()
+	if randf() < CHEST_TRAP_CHANCE:
+		var enemy_table: SpawnTable = load(ENEMY_SPAWN_TABLE_PATH) as SpawnTable
+		return {
+			"is_trap": true,
+			"enemy_scene_path": enemy_table.pick_one(),
+			"position": chest_position,
+		}
+
+	var contents: Dictionary = {
+		"is_trap": false,
+		"weapon_part_path": "",
+		"currency": 0,
+		"position": _random_position_near(chest_position, CHEST_LOOT_SCATTER_RADIUS),
+	}
+	if randf() < CHEST_WEAPON_PART_CHANCE:
+		var weapon_part_table: SpawnTable = load(WEAPON_PART_SPAWN_TABLE_PATH) as SpawnTable
+		contents["weapon_part_path"] = weapon_part_table.pick_one()
+	if randf() < CHEST_CURRENCY_CHANCE:
+		contents["currency"] = randi_range(CHEST_CURRENCY_COINS_MIN, CHEST_CURRENCY_COINS_MAX) * CURRENCY_PER_COIN
+	return contents
+
+## Phase 9.2 : appelé par EnemyBase._on_death() pour l'ennemi "porteur"
+## désigné à la génération (cf. _generate_dungeon()) -- même pipeline que
+## request_enemy_projectile().
+##
+## call_deferred obligatoire ici (même piège que RunManager._rpc_change_scene,
+## cf. Phase 8.1) : _on_death() est atteint depuis take_damage() -> kill(),
+## lui-même appelé depuis Bullet._on_body_entered() -- un callback de
+## collision, donc en pleine "flush" physique. Activer la zone de collision
+## d'un Pickup fraîchement instancié à ce moment précis fait planter le
+## moteur physique ("Can't change this state while flushing queries").
+func request_enemy_drop(position: Vector2, item_resource_path: String) -> void:
+	if multiplayer.is_server():
+		pickup_spawner.spawn.call_deferred({
+			"item_type": "ingredient",
+			"item_resource_path": item_resource_path,
+			"position": position,
+		})
+
+## Phase 9.2 (dynamisme) : la monnaie de kill devient N pickups physiques de
+## valeur fixe (cf. CURRENCY_PER_COIN/_currency_coin_positions ci-dessus),
+## ramassés individuellement (Pickup._on_body_entered()) plutôt qu'un crédit
+## instantané à toute la partie -- appelé par EnemyBase._on_death() pour
+## CHAQUE ennemi tué (pas seulement les porteurs d'ingrédient). Même piège de
+## flush physique que request_enemy_drop() ci-dessus : call_deferred
+## obligatoire, ce chemin part aussi de Bullet._on_body_entered().
+func request_currency_drop(position: Vector2, amount: int) -> void:
+	if not multiplayer.is_server():
+		return
+	for coin_position in _currency_coin_positions(amount, position):
+		pickup_spawner.spawn.call_deferred({
+			"item_type": "currency",
+			"currency_amount": CURRENCY_PER_COIN,
+			"position": coin_position,
+		})
+
+## Phase 9.2 : appelé par chest.gd à l'ouverture du coffre de la salle au
+## trésor -- rien n'est spawné avant ce moment. `contents` vient de
+## _roll_chest_contents() (tiré à la génération, cf. _generate_dungeon()).
+func request_open_chest(contents: Dictionary) -> void:
+	if not multiplayer.is_server():
+		return
+
+	if contents.get("is_trap", false):
+		var enemy_path: String = contents.get("enemy_scene_path", "")
+		if enemy_path != "":
+			var enemy: Node = enemy_spawner.spawn({"scene_path": enemy_path, "position": contents["position"]})
+			# Pas de Room.register_enemy() ici : l'activation normale
+			# (EnemyBase.active) est déclenchée par l'entrée du joueur dans
+			# la salle (Room._on_trigger_body_entered), déjà passée à ce
+			# stade (le joueur est déjà devant le coffre) -- l'enregistrer
+			# maintenant ne (ré)activerait rien. Activation directe à la place ;
+			# pas de verrouillage de porte pour ce piège (hors scope demandé).
+			enemy.active = true
+		return
+
+	var weapon_part_path: String = contents.get("weapon_part_path", "")
+	if weapon_part_path != "":
+		pickup_spawner.spawn({
+			"item_type": "weapon_part",
+			"item_resource_path": weapon_part_path,
+			"position": contents["position"],
+		})
+
+	var currency: int = contents.get("currency", 0)
+	for coin_position in _currency_coin_positions(currency, contents["position"] as Vector2):
+		pickup_spawner.spawn({
+			"item_type": "currency",
+			"currency_amount": CURRENCY_PER_COIN,
+			"position": coin_position,
+		})
 
 func _spawn_pickup(data: Dictionary) -> Node:
-	var scene_path := "res://scenes/debug/ingredient_pickup.tscn" if data["item_type"] == "ingredient" else "res://scenes/debug/weapon_part_pickup.tscn"
-	var pickup: Pickup = load(scene_path).instantiate() if false else (load(scene_path) as PackedScene).instantiate()
+	var scene_path: String
+	match data["item_type"]:
+		"ingredient":
+			scene_path = "res://scenes/debug/ingredient_pickup.tscn"
+		"weapon_part":
+			scene_path = "res://scenes/debug/weapon_part_pickup.tscn"
+		"currency":
+			scene_path = "res://scenes/debug/currency_pickup.tscn"
+	var pickup: Pickup = (load(scene_path) as PackedScene).instantiate()
 	pickup.position = data["position"]
 	pickup.item_type = data["item_type"]
-	pickup.item_resource = load(data["item_resource_path"])
+	if data["item_type"] == "currency":
+		pickup.currency_amount = data["currency_amount"]
+	else:
+		pickup.item_resource = load(data["item_resource_path"])
 	return pickup
 	
 func _spawn_player(id: int) -> Node:

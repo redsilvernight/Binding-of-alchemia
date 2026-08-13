@@ -2,17 +2,41 @@ class_name Pickup
 extends Area2D
 
 @export var item_resource: Resource # Ingredient ou pièce d'arme (GunBarrelWater, etc.)
-@export var item_type: String = "ingredient" # "ingredient" ou "weapon_part"
+@export var item_type: String = "ingredient" # "ingredient", "weapon_part" ou "currency"
+@export var currency_amount: int = 0 # utilisé seulement si item_type == "currency"
+
+## Un drop de kill (Phase 9.2 : request_enemy_drop/request_currency_drop)
+## apparaît à la position de mort de l'ennemi, souvent collée au joueur en
+## mêlée -- sans délai, body_entered se déclenche dès l'instanciation et le
+## pickup disparaît avant même d'être visible. monitoring désactivé le temps
+## de ce délai, sur chaque pair indépendamment (état purement local/visuel,
+## pas de coordination réseau nécessaire).
+const PICKUP_DELAY: float = 0.3
 
 
 func _ready() -> void:
+	monitoring = false
 	body_entered.connect(_on_body_entered)
+	await get_tree().create_timer(PICKUP_DELAY).timeout
+	if is_instance_valid(self):
+		monitoring = true
 
 
 func _on_body_entered(body: Node2D) -> void:
 	if not multiplayer.is_server():
 		return
 	if not body.is_in_group("Players"):
+		return
+
+	if item_type == "currency":
+		# Partagée à toute la partie dès le ramassage par n'importe quel
+		# joueur (pas individuelle) : les améliorations méta débloquables
+		# (Phase 8.2) n'ont de sens que si l'équipe progresse ensemble,
+		# même logique que l'ancien crédit instantané de kill.
+		for peer_id in NetworkManager.get_peers():
+			MetaProgression.add_currency(peer_id, currency_amount)
+		MetaProgression.add_currency(NetworkManager.get_unique_id(), currency_amount)
+		queue_free()
 		return
 
 	var player_inventory: Inventory = body.get_node("Inventory")
