@@ -483,11 +483,11 @@ func _spawn_pickup(data: Dictionary) -> Node:
 	var scene_path: String
 	match data["item_type"]:
 		"ingredient":
-			scene_path = "res://scenes/debug/ingredient_pickup.tscn"
+			scene_path = "res://scenes/items/ingredient_pickup.tscn"
 		"weapon_part":
-			scene_path = "res://scenes/debug/weapon_part_pickup.tscn"
+			scene_path = "res://scenes/items/weapon_part_pickup.tscn"
 		"currency":
-			scene_path = "res://scenes/debug/currency_pickup.tscn"
+			scene_path = "res://scenes/items/currency_pickup.tscn"
 	var pickup: Pickup = (load(scene_path) as PackedScene).instantiate()
 	pickup.position = data["position"]
 	pickup.item_type = data["item_type"]

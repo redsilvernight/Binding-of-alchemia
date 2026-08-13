@@ -22,7 +22,6 @@
 [ext_resource type="Resource" uid="uid://tncetr6q4x53" path="res://resources/GunParts/mixture_barrel_basic.tres" id="5_smehm"]
 [ext_resource type="Resource" uid="uid://mwcvmsgsfh38" path="res://resources/GunParts/tank_basic.tres" id="6_ur7pv"]
 [ext_resource type="Resource" uid="uid://doe4xdbp6v482" path="res://resources/GunParts/core_basic.tres" id="7_y4r1p"]
-[ext_resource type="Script" uid="uid://but3eifbhvr6k" path="res://scripts/debug/weapon_switcher.gd" id="8_smehm"]
 [ext_resource type="Script" uid="uid://2jlnyyd5liv1" path="res://scripts/inventory/inventory.gd" id="9_ur7pv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3vyb7"]
@@ -906,10 +905,6 @@ barrel_water = ExtResource("4_fjrip")
 barrel_mixture = ExtResource("5_smehm")
 tank = ExtResource("6_ur7pv")
 core = ExtResource("7_y4r1p")
-
-[node name="Debug" type="Node2D" parent="." unique_id=920536677 node_paths=PackedStringArray("target_weapon")]
-script = ExtResource("8_smehm")
-target_weapon = NodePath("../Weapon")
 
 [node name="Inventory" type="Node" parent="." unique_id=1831496670]
 script = ExtResource("9_ur7pv")
