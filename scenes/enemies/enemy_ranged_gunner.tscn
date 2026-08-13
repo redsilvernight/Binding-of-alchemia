@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/enemies/enemy_ranged.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/test/mob_test.png" id="2"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/enemy_placeholder_walk.tres" id="2"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
 radius = 102.01961
@@ -10,6 +10,9 @@ radius = 102.01961
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
+properties/1/path = NodePath("Sprite2D:animation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
 
 [node name="EnemyRangedGunner" type="CharacterBody2D"]
 scale = Vector2(0.5, 0.5)
@@ -25,9 +28,9 @@ attack_range = 280.0
 fire_cooldown = 0.6
 projectile_speed = 300.0
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(0.95, 0.6, 0.2, 1)
-texture = ExtResource("2")
+[node name="Sprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2")
+animation = &"walk-south"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(2, -12)
