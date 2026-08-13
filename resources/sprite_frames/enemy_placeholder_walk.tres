@@ -1,0 +1,70 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/test/mob_test.png" id="1_mob"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"walk-south",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"walk-south-east",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"walk-east",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"walk-north-east",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"walk-north",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"walk-north-west",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"walk-west",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mob")
+}],
+"loop": true,
+"name": &"walk-south-west",
+"speed": 5.0
+}]
