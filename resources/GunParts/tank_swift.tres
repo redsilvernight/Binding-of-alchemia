@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="GunTank" format=3]
+
+[ext_resource type="Script" uid="uid://dnvy32a3exwr" path="res://scripts/weapons/resources/GunTank.gd" id="1_tswift"]
+
+[resource]
+script = ExtResource("1_tswift")
+max_capacity = 40.0
+regen_rate = 8.0
+mixture_cost_per_shot = 8.0
+regen_delay = 0.5
+metadata/_custom_type_script = "uid://dnvy32a3exwr"

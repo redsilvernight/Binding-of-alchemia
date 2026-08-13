@@ -95,8 +95,48 @@ script = ExtResource("2_entry")
 item_path = "res://resources/Ingredients/spore_corrosive.tres"
 weight = 1.0
 
+[sub_resource type="Resource" id="Resource_ecorce_brulante"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/ecorce_brulante.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_brume_polaire"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/brume_polaire.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_venin_necrosant"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/venin_necrosant.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_orage_captif"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/orage_captif.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_baume_regenerant"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/baume_regenerant.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_noyau_instable"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/noyau_instable.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_cendre_vive"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/cendre_vive.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_eclat_cryogene"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/eclat_cryogene.tres"
+weight = 1.0
+
 [resource]
 script = ExtResource("1_table")
-entries = Array[ExtResource("2_entry")]([SubResource("Resource_braise"), SubResource("Resource_cristal_givre"), SubResource("Resource_bave_toxique"), SubResource("Resource_cendre_ardente"), SubResource("Resource_racine_apaisante"), SubResource("Resource_sang_hydre"), SubResource("Resource_eclair_zeus"), SubResource("Resource_poudre_fulminante"), SubResource("Resource_baril_poudre"), SubResource("Resource_eclat_meteore"), SubResource("Resource_larme_banquise"), SubResource("Resource_poussiere_diamant_gele"), SubResource("Resource_nerf_foudre"), SubResource("Resource_resine_conductrice"), SubResource("Resource_pollen_curatif"), SubResource("Resource_seve_de_vie"), SubResource("Resource_huile_enflammee"), SubResource("Resource_spore_corrosive")])
+entries = Array[ExtResource("2_entry")]([SubResource("Resource_braise"), SubResource("Resource_cristal_givre"), SubResource("Resource_bave_toxique"), SubResource("Resource_cendre_ardente"), SubResource("Resource_racine_apaisante"), SubResource("Resource_sang_hydre"), SubResource("Resource_eclair_zeus"), SubResource("Resource_poudre_fulminante"), SubResource("Resource_baril_poudre"), SubResource("Resource_eclat_meteore"), SubResource("Resource_larme_banquise"), SubResource("Resource_poussiere_diamant_gele"), SubResource("Resource_nerf_foudre"), SubResource("Resource_resine_conductrice"), SubResource("Resource_pollen_curatif"), SubResource("Resource_seve_de_vie"), SubResource("Resource_huile_enflammee"), SubResource("Resource_spore_corrosive"), SubResource("Resource_ecorce_brulante"), SubResource("Resource_brume_polaire"), SubResource("Resource_venin_necrosant"), SubResource("Resource_orage_captif"), SubResource("Resource_baume_regenerant"), SubResource("Resource_noyau_instable"), SubResource("Resource_cendre_vive"), SubResource("Resource_eclat_cryogene")])
 min_count = 4
 max_count = 6

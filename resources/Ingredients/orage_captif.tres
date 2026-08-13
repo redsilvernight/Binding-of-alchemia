@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Ingredient" format=3]
+
+[ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_ocapt"]
+
+[resource]
+script = ExtResource("1_ocapt")
+nom = "Orage Captif"
+type_alchimie = 3
+degats_base = 9.0
+duree_base = 2.0
+zone_base = 1.5
+metadata/_custom_type_script = "uid://bja0da4fhu872"
