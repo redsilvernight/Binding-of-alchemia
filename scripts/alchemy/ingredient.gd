@@ -15,4 +15,4 @@ enum TypeAlchimie {
 @export var degats_base: float = 0.0
 @export var duree_base: float = 0.0
 @export var zone_base: float = 0.0
-@export var icon: Texture2D = null # Placeholder tant que l'art définitif n'existe pas (Phase 9.2)
+@export var icon: Texture2D = null # Placeholder tant que l'art définitif n'existe pas (Phase 9.3)

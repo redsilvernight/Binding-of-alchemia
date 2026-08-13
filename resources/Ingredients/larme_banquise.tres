@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Ingredient" format=3]
+
+[ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_lbanq"]
+
+[resource]
+script = ExtResource("1_lbanq")
+nom = "Larme de Banquise"
+type_alchimie = 1
+degats_base = 1.5
+duree_base = 7.0
+metadata/_custom_type_script = "uid://bja0da4fhu872"

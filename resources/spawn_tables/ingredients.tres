@@ -40,8 +40,63 @@ item_path = "res://resources/Ingredients/eclair_zeus.tres"
 weight = 1.0
 requires_unlock = true
 
+[sub_resource type="Resource" id="Resource_poudre_fulminante"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/poudre_fulminante.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_baril_poudre"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/baril_poudre.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_eclat_meteore"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/eclat_meteore.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_larme_banquise"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/larme_banquise.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_poussiere_diamant_gele"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/poussiere_diamant_gele.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_nerf_foudre"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/nerf_foudre.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_resine_conductrice"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/resine_conductrice.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_pollen_curatif"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/pollen_curatif.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_seve_de_vie"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/seve_de_vie.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_huile_enflammee"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/huile_enflammee.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_spore_corrosive"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/spore_corrosive.tres"
+weight = 1.0
+
 [resource]
 script = ExtResource("1_table")
-entries = Array[ExtResource("2_entry")]([SubResource("Resource_braise"), SubResource("Resource_cristal_givre"), SubResource("Resource_bave_toxique"), SubResource("Resource_cendre_ardente"), SubResource("Resource_racine_apaisante"), SubResource("Resource_sang_hydre"), SubResource("Resource_eclair_zeus")])
+entries = Array[ExtResource("2_entry")]([SubResource("Resource_braise"), SubResource("Resource_cristal_givre"), SubResource("Resource_bave_toxique"), SubResource("Resource_cendre_ardente"), SubResource("Resource_racine_apaisante"), SubResource("Resource_sang_hydre"), SubResource("Resource_eclair_zeus"), SubResource("Resource_poudre_fulminante"), SubResource("Resource_baril_poudre"), SubResource("Resource_eclat_meteore"), SubResource("Resource_larme_banquise"), SubResource("Resource_poussiere_diamant_gele"), SubResource("Resource_nerf_foudre"), SubResource("Resource_resine_conductrice"), SubResource("Resource_pollen_curatif"), SubResource("Resource_seve_de_vie"), SubResource("Resource_huile_enflammee"), SubResource("Resource_spore_corrosive")])
 min_count = 4
 max_count = 6

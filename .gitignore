@@ -11,6 +11,7 @@ export_credentials.cfg
 .mono/
 data_*/
 mono_crash.*.json
+.graphifyignore
 
 # Exported builds
 build/
@@ -30,3 +31,16 @@ editor_layout.cfg
 
 infos/
 graphify-out/
+.claude/
+.git/
+
+.vscode/
+.idea/
+build/
+builds/
+export/
+exports/
+
+tmp/
+temp/
+.cache/
