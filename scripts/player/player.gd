@@ -27,6 +27,8 @@ var alchemy_crafting_screen: Node = null
 var weapon_crafting_screen: Node = null
 var unlock_screen: Node = null
 var _spectate_target: Node2D = null
+var _pending_fire_type: String = ""
+var _pending_fire_direction: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	super()
@@ -40,6 +42,7 @@ func _ready() -> void:
 	# localement, sinon un pair distant verrait un cycle de marche figé sur sa
 	# frame 0 (l'anim Idle n'a qu'1 frame, donc ce bug ne s'y voyait pas).
 	sprite.play()
+	sprite.animation_finished.connect(_on_sprite_animation_finished)
 	if is_multiplayer_authority():
 		player_camera.enabled = true
 		var hud = hud_scene.instantiate()
@@ -77,18 +80,19 @@ func _physics_process(_delta: float) -> void:
 	_update_facing(facing_direction, input_direction.length() > 0.0)
 	var water_pressed = Input.is_action_pressed("fire_water")
 	var mixture_pressed = Input.is_action_pressed("fire_mixture")
-	_try_play_attack_animation(aim_direction, water_pressed or mixture_pressed)
+	var fire_type := ""
 	if water_pressed and not mixture_pressed:
-		request_fire.rpc_id(1, "water", aim_direction)
+		fire_type = "water"
 	elif mixture_pressed and not water_pressed:
-		request_fire.rpc_id(1, "mixture", aim_direction)
+		fire_type = "mixture"
 	elif water_pressed and mixture_pressed:
 		if was_water_pressed:
-			request_fire.rpc_id(1, "water", aim_direction)
+			fire_type = "water"
 		elif was_mixture_pressed:
-			request_fire.rpc_id(1, "mixture", aim_direction)
+			fire_type = "mixture"
 		else:
-			request_fire.rpc_id(1, "water", aim_direction)
+			fire_type = "water"
+	_try_play_attack_animation(aim_direction, fire_type)
 	was_water_pressed = water_pressed
 	was_mixture_pressed = mixture_pressed
 	move(input_direction, speed)
@@ -159,16 +163,50 @@ func _update_facing(direction: Vector2, is_moving: bool) -> void:
 ## Rejoue le swing tant que le tir est maintenu : ne redémarre que quand le
 ## cycle précédent est terminé (sprite.is_playing() == false, animation non
 ## bouclée), sinon un appel par frame sur is_action_pressed couperait
-## l'animation en boucle dès la 2e frame. Purement côté client local
-## (is_multiplayer_authority), même mécanisme de réplication que le reste de
-## _update_facing -- pas besoin d'attendre la confirmation hôte du tir réel
-## (request_fire), c'est un feedback visuel, pas une donnée de jeu.
-func _try_play_attack_animation(direction: Vector2, is_firing: bool) -> void:
-	if not is_firing or direction.length() < 0.001:
+## l'animation en boucle dès la 2e frame. Le tir réel (request_fire) n'est
+## plus envoyé ici : il est différé jusqu'à la fin du swing (cf.
+## _on_sprite_animation_finished), pour que le projectile parte après
+## l'animation plutôt qu'au moment de l'appui.
+##
+## L'anim est jouée localement tout de suite (réactivité), ET diffusée par RPC
+## explicite à tous les pairs (_rpc_play_attack_animation) plutôt que de
+## compter uniquement sur le sync passif de "Sprite2D:animation" du
+## MultiplayerSynchronizer (utilisé pour walk/idle) : ce sync est un simple
+## mirroring de propriété, pas garanti de capturer un état transitoire d'à
+## peine 0.6s (un seul tick de retard ou de coalescing suffit à le manquer),
+## contrairement à un déplacement continu. Constaté en jeu : le swing de
+## l'hôte restait invisible chez les clients alors que la marche répliquait
+## normalement.
+func _try_play_attack_animation(direction: Vector2, fire_type: String) -> void:
+	if fire_type == "" or direction.length() < 0.001:
 		return
 	if sprite.animation.begins_with("attack") and sprite.is_playing():
 		return
-	sprite.play(StringName("attack-" + FacingDirection.label_for(direction)))
+	_pending_fire_type = fire_type
+	_pending_fire_direction = direction
+	var anim_name := "attack-" + FacingDirection.label_for(direction)
+	sprite.play(StringName(anim_name))
+	_rpc_play_attack_animation.rpc(anim_name)
+
+## Reçu uniquement par les pairs distants (l'autorité s'est déjà joué l'anim
+## localement dans _try_play_attack_animation, pas de call_local ici pour
+## éviter un redémarrage redondant de sa propre animation).
+@rpc("authority", "call_remote", "reliable")
+func _rpc_play_attack_animation(anim_name: String) -> void:
+	sprite.play(StringName(anim_name))
+
+## Déclenche le tir une fois le swing terminé (direction/type figés au lancement
+## de l'animation, cf. _try_play_attack_animation) -- même si le bouton a été
+## relâché entre-temps, le swing engagé va jusqu'au bout et tire. Les cycles
+## walk/idle (loop=true) réémettent aussi animation_finished à chaque boucle,
+## d'où le filtre sur le préfixe "attack".
+func _on_sprite_animation_finished() -> void:
+	if not sprite.animation.begins_with("attack"):
+		return
+	if _pending_fire_type == "":
+		return
+	request_fire.rpc_id(1, _pending_fire_type, _pending_fire_direction)
+	_pending_fire_type = ""
 
 func open_alchemy_crafting() -> void:
 	if alchemy_crafting_screen:

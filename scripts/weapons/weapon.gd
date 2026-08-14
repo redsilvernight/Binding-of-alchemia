@@ -5,6 +5,9 @@ class_name Weapon
 signal ammo_changed(current: float, max: float)
 signal projectile_requested(data: Dictionary)
 
+const WATER_BULLET_SCENE: String = "res://scenes/projectiles/bullet_water.tscn"
+const MIXTURE_BULLET_SCENE: String = "res://scenes/projectiles/bullet_mixture.tscn"
+
 @export var barrel_water: GunBarrelWater
 @export var barrel_mixture: GunBarrelMixture
 @export var tank: GunTank
@@ -156,7 +159,7 @@ func try_fire_water(direction: Vector2) -> bool:
 		return false
 
 	water_cooldown_accum = 0.0
-	_fire_bullet(water_damage, water_projectile_speed, direction, water_trajectory, null)
+	_fire_bullet(water_damage, water_projectile_speed, direction, water_trajectory, null, WATER_BULLET_SCENE)
 	return true
 
 func try_fire_mixture(direction: Vector2) -> bool:
@@ -176,7 +179,7 @@ func try_fire_mixture(direction: Vector2) -> bool:
 	time_since_last_mixture_fire = 0.0
 	_broadcast_ammo()
 
-	_fire_bullet(mixture_damage_multiplier, mixture_projectile_speed, direction, mixture_trajectory, mixture_impact_effect)
+	_fire_bullet(mixture_damage_multiplier, mixture_projectile_speed, direction, mixture_trajectory, mixture_impact_effect, MIXTURE_BULLET_SCENE)
 	return true
 
 func _broadcast_ammo() -> void:
@@ -193,7 +196,7 @@ func _update_ammo(current: float, max_ammo: float) -> void:
 	mixture_max_capacity = max_ammo
 	ammo_changed.emit(current_mixture_ammo, mixture_max_capacity)
 
-func _fire_bullet(damage: float, speed: float, direction: Vector2, trajectory: Bullet.TrajectoryType, effect: ImpactEffect) -> void:
+func _fire_bullet(damage: float, speed: float, direction: Vector2, trajectory: Bullet.TrajectoryType, effect: ImpactEffect, scene_path: String) -> void:
 	var data: Dictionary = {
 		"damage": damage,
 		"speed": speed,
@@ -201,6 +204,7 @@ func _fire_bullet(damage: float, speed: float, direction: Vector2, trajectory: B
 		"trajectory": trajectory,
 		"from_position": global_position,
 		"direction": direction,
+		"scene_path": scene_path,
 	}
 	if effect != null:
 		# On sérialise les données de l'effet plutôt que son resource_path :

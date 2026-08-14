@@ -513,7 +513,7 @@ func _spawn_player(id: int) -> Node:
 ## joueurs, pas les ennemis) ; sans cette clé, comportement identique à avant
 ## (balle du joueur).
 func _spawn_bullet(data: Dictionary) -> Node:
-	var scene_path: String = data.get("scene_path", "res://scenes/projectiles/bullet.tscn")
+	var scene_path: String = data.get("scene_path", "res://scenes/projectiles/bullet_water.tscn")
 	var bullet: Bullet = (load(scene_path) as PackedScene).instantiate()
 	bullet.setup(data["damage"], data["speed"], data["lifetime"], data["trajectory"])
 	if data.has("impact_effect_data"):
