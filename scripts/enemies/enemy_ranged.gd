@@ -40,6 +40,12 @@ func _physics_process(delta: float) -> void:
 ## vitesse instantanée -- sinon l'ennemi se réoriente vers Vector2.DOWN par
 ## défaut dès qu'il s'arrête.
 func _update_facing(direction: Vector2) -> void:
+	# Ne pas couper l'animation d'attaque en cours (cf. fire_at) : sinon
+	# EnemyStateRangedAttack qui immobilise l'ennemi pendant le tir
+	# (enemy.move(Vector2.ZERO, 0.0)) la remplace par idle- dès la frame
+	# suivante.
+	if sprite.animation.begins_with("attack") and sprite.is_playing():
+		return
 	var is_moving := direction.length() > 0.001
 	if is_moving:
 		_last_facing_direction = direction
@@ -55,6 +61,8 @@ func fire_at(p_target: Node2D) -> void:
 	var game: Node = get_tree().get_first_node_in_group("Game")
 	if game == null:
 		return
+	var fire_direction := global_position.direction_to(p_target.global_position)
+	sprite.play(StringName("attack-" + FacingDirection.label_for(fire_direction)))
 	game.request_enemy_projectile({
 		"scene_path": "res://scenes/enemies/enemy_projectile.tscn",
 		"damage": damage,

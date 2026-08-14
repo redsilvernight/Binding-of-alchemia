@@ -77,6 +77,7 @@ func _physics_process(_delta: float) -> void:
 	_update_facing(facing_direction, input_direction.length() > 0.0)
 	var water_pressed = Input.is_action_pressed("fire_water")
 	var mixture_pressed = Input.is_action_pressed("fire_mixture")
+	_try_play_attack_animation(aim_direction, water_pressed or mixture_pressed)
 	if water_pressed and not mixture_pressed:
 		request_fire.rpc_id(1, "water", aim_direction)
 	elif mixture_pressed and not water_pressed:
@@ -145,12 +146,29 @@ func _get_facing_direction(aim_direction: Vector2, input_direction: Vector2) -> 
 ## "Sprite2D:animation", même mécanisme que la position), donc les autres
 ## joueurs voient bien l'orientation, pas seulement le joueur local.
 func _update_facing(direction: Vector2, is_moving: bool) -> void:
+	# Ne pas couper l'animation d'attaque en cours (cf. _try_play_attack_animation).
+	if sprite.animation.begins_with("attack") and sprite.is_playing():
+		return
 	if direction.length() < 0.001:
 		return
 	var prefix := "walk-" if is_moving else "idle-"
 	var anim_name := StringName(prefix + FacingDirection.label_for(direction))
 	if sprite.animation != anim_name:
 		sprite.play(anim_name)
+
+## Rejoue le swing tant que le tir est maintenu : ne redémarre que quand le
+## cycle précédent est terminé (sprite.is_playing() == false, animation non
+## bouclée), sinon un appel par frame sur is_action_pressed couperait
+## l'animation en boucle dès la 2e frame. Purement côté client local
+## (is_multiplayer_authority), même mécanisme de réplication que le reste de
+## _update_facing -- pas besoin d'attendre la confirmation hôte du tir réel
+## (request_fire), c'est un feedback visuel, pas une donnée de jeu.
+func _try_play_attack_animation(direction: Vector2, is_firing: bool) -> void:
+	if not is_firing or direction.length() < 0.001:
+		return
+	if sprite.animation.begins_with("attack") and sprite.is_playing():
+		return
+	sprite.play(StringName("attack-" + FacingDirection.label_for(direction)))
 
 func open_alchemy_crafting() -> void:
 	if alchemy_crafting_screen:

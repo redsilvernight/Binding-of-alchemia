@@ -48,6 +48,10 @@ func _physics_process(delta: float) -> void:
 ## (EnemyStateRangedAttack) alterne walk-*/idle-* selon qu'il se
 ## positionne ou qu'il s'arrête pour tirer.
 func _update_facing(direction: Vector2) -> void:
+	# Ne pas couper l'animation d'attaque en cours (cf. _on_collision_area_body_entered
+	# phase 1 / fire_at phase 2) — même raisonnement que enemy_ranged.gd.
+	if sprite.animation.begins_with("attack") and sprite.is_playing():
+		return
 	var is_moving := direction.length() > 0.001
 	if is_moving:
 		_last_facing_direction = direction
@@ -68,11 +72,16 @@ func _on_collision_area_body_entered(body: Node2D) -> void:
 		return
 	if body.is_in_group("Players"):
 		body.take_damage(contact_damage)
+		var direction: Vector2 = body.global_position - global_position
+		if direction.length() >= 0.001:
+			sprite.play(StringName("attack-melee-" + FacingDirection.label_for(direction)))
 
 func fire_at(p_target: Node2D) -> void:
 	var game: Node = get_tree().get_first_node_in_group("Game")
 	if game == null:
 		return
+	var fire_direction := global_position.direction_to(p_target.global_position)
+	sprite.play(StringName("attack-ranged-" + FacingDirection.label_for(fire_direction)))
 	game.request_enemy_projectile({
 		"scene_path": "res://scenes/enemies/enemy_projectile.tscn",
 		"damage": projectile_damage,

@@ -29,6 +29,10 @@ func _physics_process(delta: float) -> void:
 ## vitesse nulle (avant activation ou bloqué), le sprite garde juste sa
 ## dernière frame de marche.
 func _update_facing(direction: Vector2) -> void:
+	# Ne pas couper l'animation d'attaque en cours (cf. _on_collision_area_body_entered) :
+	# sinon la reprise du mouvement l'écrase dès la frame suivante.
+	if sprite.animation.begins_with("attack") and sprite.is_playing():
+		return
 	if direction.length() < 0.001:
 		return
 	var anim_name := StringName("walk-" + FacingDirection.label_for(direction))
@@ -41,3 +45,13 @@ func _update_target() -> void:
 func _on_collision_area_body_entered(body: Node2D) -> void:
 	if body.is_in_group("Players"):
 		body.take_damage(damage)
+		_play_attack_animation(body.global_position - global_position)
+
+## Direction vers la cible plutôt que la dernière direction de déplacement :
+## simple et toujours valide, pas besoin de tracker un _last_facing_direction
+## rien que pour ce cas (contrairement à enemy_ranged.gd/boss_01.gd où la
+## vitesse retombe à zéro pendant l'attaque).
+func _play_attack_animation(direction: Vector2) -> void:
+	if direction.length() < 0.001:
+		return
+	sprite.play(StringName("attack-" + FacingDirection.label_for(direction)))

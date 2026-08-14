@@ -49,6 +49,102 @@
 [ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/walk/south-west/4.png" id="1_south_west_4"]
 [ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/walk/south-west/5.png" id="1_south_west_5"]
 
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south/0.png" id="atkm_south_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south/1.png" id="atkm_south_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south/2.png" id="atkm_south_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south/3.png" id="atkm_south_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south/4.png" id="atkm_south_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south/5.png" id="atkm_south_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south-east/0.png" id="atkm_south_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south-east/1.png" id="atkm_south_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south-east/2.png" id="atkm_south_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south-east/3.png" id="atkm_south_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south-east/4.png" id="atkm_south_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south-east/5.png" id="atkm_south_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/east/0.png" id="atkm_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/east/1.png" id="atkm_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/east/2.png" id="atkm_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/east/3.png" id="atkm_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/east/4.png" id="atkm_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/east/5.png" id="atkm_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north-east/0.png" id="atkm_north_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north-east/1.png" id="atkm_north_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north-east/2.png" id="atkm_north_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north-east/3.png" id="atkm_north_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north-east/4.png" id="atkm_north_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north-east/5.png" id="atkm_north_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north/0.png" id="atkm_north_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north/1.png" id="atkm_north_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north/2.png" id="atkm_north_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north/3.png" id="atkm_north_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north/4.png" id="atkm_north_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north/5.png" id="atkm_north_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north-west/0.png" id="atkm_north_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north-west/1.png" id="atkm_north_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north-west/2.png" id="atkm_north_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north-west/3.png" id="atkm_north_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north-west/4.png" id="atkm_north_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/north-west/5.png" id="atkm_north_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/west/0.png" id="atkm_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/west/1.png" id="atkm_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/west/2.png" id="atkm_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/west/3.png" id="atkm_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/west/4.png" id="atkm_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/west/5.png" id="atkm_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south-west/0.png" id="atkm_south_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south-west/1.png" id="atkm_south_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south-west/2.png" id="atkm_south_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south-west/3.png" id="atkm_south_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south-west/4.png" id="atkm_south_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_melee/south-west/5.png" id="atkm_south_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south/0.png" id="atkr_south_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south/1.png" id="atkr_south_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south/2.png" id="atkr_south_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south/3.png" id="atkr_south_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south/4.png" id="atkr_south_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south/5.png" id="atkr_south_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south-east/0.png" id="atkr_south_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south-east/1.png" id="atkr_south_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south-east/2.png" id="atkr_south_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south-east/3.png" id="atkr_south_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south-east/4.png" id="atkr_south_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south-east/5.png" id="atkr_south_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/east/0.png" id="atkr_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/east/1.png" id="atkr_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/east/2.png" id="atkr_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/east/3.png" id="atkr_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/east/4.png" id="atkr_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/east/5.png" id="atkr_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north-east/0.png" id="atkr_north_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north-east/1.png" id="atkr_north_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north-east/2.png" id="atkr_north_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north-east/3.png" id="atkr_north_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north-east/4.png" id="atkr_north_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north-east/5.png" id="atkr_north_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north/0.png" id="atkr_north_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north/1.png" id="atkr_north_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north/2.png" id="atkr_north_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north/3.png" id="atkr_north_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north/4.png" id="atkr_north_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north/5.png" id="atkr_north_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north-west/0.png" id="atkr_north_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north-west/1.png" id="atkr_north_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north-west/2.png" id="atkr_north_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north-west/3.png" id="atkr_north_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north-west/4.png" id="atkr_north_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/north-west/5.png" id="atkr_north_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/west/0.png" id="atkr_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/west/1.png" id="atkr_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/west/2.png" id="atkr_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/west/3.png" id="atkr_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/west/4.png" id="atkr_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/west/5.png" id="atkr_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south-west/0.png" id="atkr_south_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south-west/1.png" id="atkr_south_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south-west/2.png" id="atkr_south_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south-west/3.png" id="atkr_south_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south-west/4.png" id="atkr_south_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/boss_v2/attack_ranged/south-west/5.png" id="atkr_south_west_5"]
 [resource]
 animations = [{
 "frames": [{
@@ -353,4 +449,468 @@ animations = [{
 "loop": true,
 "name": &"idle-south-west",
 "speed": 5.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_5")
+}],
+"loop": false,
+"name": &"attack-melee-south",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_east_5")
+}],
+"loop": false,
+"name": &"attack-melee-south-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkm_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_east_5")
+}],
+"loop": false,
+"name": &"attack-melee-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_east_5")
+}],
+"loop": false,
+"name": &"attack-melee-north-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_5")
+}],
+"loop": false,
+"name": &"attack-melee-north",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_north_west_5")
+}],
+"loop": false,
+"name": &"attack-melee-north-west",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkm_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_west_5")
+}],
+"loop": false,
+"name": &"attack-melee-west",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkm_south_west_5")
+}],
+"loop": false,
+"name": &"attack-melee-south-west",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_5")
+}],
+"loop": false,
+"name": &"attack-ranged-south",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_east_5")
+}],
+"loop": false,
+"name": &"attack-ranged-south-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkr_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_east_5")
+}],
+"loop": false,
+"name": &"attack-ranged-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_east_5")
+}],
+"loop": false,
+"name": &"attack-ranged-north-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_5")
+}],
+"loop": false,
+"name": &"attack-ranged-north",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_north_west_5")
+}],
+"loop": false,
+"name": &"attack-ranged-north-west",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkr_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_west_5")
+}],
+"loop": false,
+"name": &"attack-ranged-west",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atkr_south_west_5")
+}],
+"loop": false,
+"name": &"attack-ranged-south-west",
+"speed": 10.0
 }]

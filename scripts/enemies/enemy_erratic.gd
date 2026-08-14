@@ -28,6 +28,9 @@ func _physics_process(delta: float) -> void:
 ## comme peut l'avoir EnemyStateRangedAttack -- même raisonnement que le
 ## mêlée (ennemi_test.gd), qui n'a pas d'idle non plus.
 func _update_facing(direction: Vector2) -> void:
+	# Ne pas couper l'animation d'attaque en cours (cf. _on_collision_area_body_entered).
+	if sprite.animation.begins_with("attack") and sprite.is_playing():
+		return
 	if direction.length() < 0.001:
 		return
 	var anim_name := StringName("walk-" + FacingDirection.label_for(direction))
@@ -37,3 +40,10 @@ func _update_facing(direction: Vector2) -> void:
 func _on_collision_area_body_entered(body: Node2D) -> void:
 	if body.is_in_group("Players"):
 		body.take_damage(damage)
+		_play_attack_animation(body.global_position - global_position)
+
+## Même raisonnement que ennemi_test.gd::_play_attack_animation.
+func _play_attack_animation(direction: Vector2) -> void:
+	if direction.length() < 0.001:
+		return
+	sprite.play(StringName("attack-" + FacingDirection.label_for(direction)))

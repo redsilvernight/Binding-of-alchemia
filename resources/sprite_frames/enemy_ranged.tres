@@ -49,6 +49,54 @@
 [ext_resource type="Texture2D" path="res://assets/enemies/range_v2/walk/south-west/4.png" id="1_south_west_4"]
 [ext_resource type="Texture2D" path="res://assets/enemies/range_v2/walk/south-west/5.png" id="1_south_west_5"]
 
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south/0.png" id="atk_south_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south/1.png" id="atk_south_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south/2.png" id="atk_south_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south/3.png" id="atk_south_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south/4.png" id="atk_south_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south/5.png" id="atk_south_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south-east/0.png" id="atk_south_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south-east/1.png" id="atk_south_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south-east/2.png" id="atk_south_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south-east/3.png" id="atk_south_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south-east/4.png" id="atk_south_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south-east/5.png" id="atk_south_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/east/0.png" id="atk_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/east/1.png" id="atk_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/east/2.png" id="atk_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/east/3.png" id="atk_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/east/4.png" id="atk_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/east/5.png" id="atk_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north-east/0.png" id="atk_north_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north-east/1.png" id="atk_north_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north-east/2.png" id="atk_north_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north-east/3.png" id="atk_north_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north-east/4.png" id="atk_north_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north-east/5.png" id="atk_north_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north/0.png" id="atk_north_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north/1.png" id="atk_north_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north/2.png" id="atk_north_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north/3.png" id="atk_north_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north/4.png" id="atk_north_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north/5.png" id="atk_north_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north-west/0.png" id="atk_north_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north-west/1.png" id="atk_north_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north-west/2.png" id="atk_north_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north-west/3.png" id="atk_north_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north-west/4.png" id="atk_north_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/north-west/5.png" id="atk_north_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/west/0.png" id="atk_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/west/1.png" id="atk_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/west/2.png" id="atk_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/west/3.png" id="atk_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/west/4.png" id="atk_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/west/5.png" id="atk_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south-west/0.png" id="atk_south_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south-west/1.png" id="atk_south_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south-west/2.png" id="atk_south_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south-west/3.png" id="atk_south_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south-west/4.png" id="atk_south_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/range_v2/attack/south-west/5.png" id="atk_south_west_5"]
 [resource]
 animations = [{
 "frames": [{
@@ -353,4 +401,236 @@ animations = [{
 "loop": true,
 "name": &"idle-south-west",
 "speed": 5.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_south_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_5")
+}],
+"loop": false,
+"name": &"attack-south",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_5")
+}],
+"loop": false,
+"name": &"attack-south-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_east_5")
+}],
+"loop": false,
+"name": &"attack-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_5")
+}],
+"loop": false,
+"name": &"attack-north-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_north_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_5")
+}],
+"loop": false,
+"name": &"attack-north",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_north_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_west_5")
+}],
+"loop": false,
+"name": &"attack-north-west",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_west_5")
+}],
+"loop": false,
+"name": &"attack-west",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_south_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_west_5")
+}],
+"loop": false,
+"name": &"attack-south-west",
+"speed": 10.0
 }]
