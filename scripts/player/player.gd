@@ -22,6 +22,7 @@ var last_stick_activity_time: float = -INF
 var last_mouse_activity_time: float = -INF
 var last_mouse_screen_position: Vector2 = Vector2.ZERO
 var mouse_position_initialized: bool = false
+var last_movement_activity_time: float = -INF
 var alchemy_crafting_screen: Node = null
 var weapon_crafting_screen: Node = null
 var unlock_screen: Node = null
@@ -72,7 +73,8 @@ func _physics_process(_delta: float) -> void:
 		return
 	var aim_direction = _get_aim_direction()
 	var input_direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	_update_facing(aim_direction, input_direction.length() > 0.0)
+	var facing_direction = _get_facing_direction(aim_direction, input_direction)
+	_update_facing(facing_direction, input_direction.length() > 0.0)
 	var water_pressed = Input.is_action_pressed("fire_water")
 	var mixture_pressed = Input.is_action_pressed("fire_mixture")
 	if water_pressed and not mixture_pressed:
@@ -122,6 +124,20 @@ func _get_aim_direction() -> Vector2:
 		if mouse_delta.length() > 0.0:
 			last_aim_direction = mouse_delta.normalized()
 	return last_aim_direction
+
+## Oriente le sprite vers la direction de marche par défaut, mais laisse la
+## visée (souris/stick) reprendre la main dès qu'elle est plus récemment
+## active que le déplacement -- même pattern d'arbitrage par timestamp que
+## _get_aim_direction() pour stick vs souris. Le tir continue lui d'utiliser
+## aim_direction directement (non affecté par cette fonction).
+func _get_facing_direction(aim_direction: Vector2, input_direction: Vector2) -> Vector2:
+	var now = Time.get_ticks_msec() / 1000.0
+	if input_direction.length() > 0.0:
+		last_movement_activity_time = now
+	var aim_activity_time = max(last_stick_activity_time, last_mouse_activity_time)
+	if last_movement_activity_time >= aim_activity_time and input_direction.length() > 0.0:
+		return input_direction.normalized()
+	return aim_direction
 
 ## Phase 9.3 : ne tourne que côté instance locale (autorité), comme le reste
 ## de _physics_process -- mais le résultat (sprite.animation) est répliqué
