@@ -1,10 +1,11 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://d0mhmgldgp7s4"]
 
-[ext_resource type="Script" path="res://scripts/mobs/ennemi_test.gd" id="1"]
+[ext_resource type="Script" uid="uid://cdw5nd0stmqte" path="res://scripts/mobs/ennemi_test.gd" id="1"]
 [ext_resource type="SpriteFrames" path="res://resources/sprite_frames/enemy_melee_swarm.tres" id="2"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
-radius = 102.01961
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_upisi"]
+radius = 72.28571
+height = 218.2857
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1"]
 properties/0/path = NodePath(".:position")
@@ -14,34 +15,38 @@ properties/1/path = NodePath("Sprite2D:animation")
 properties/1/spawn = true
 properties/1/replication_mode = 1
 
-[node name="EnemyMeleeSwarm" type="CharacterBody2D"]
+[node name="EnemyMeleeSwarm" type="CharacterBody2D" unique_id=2077570567]
 scale = Vector2(0.35, 0.35)
 collision_layer = 2
 collision_mask = 28
 script = ExtResource("1")
-max_lifepoint = 8.0
-currency_reward = 3
 speed = 220.0
 damage = 3.0
+currency_reward = 3
+max_lifepoint = 8.0
 
-[node name="Sprite2D" type="AnimatedSprite2D" parent="."]
+[node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=1662776537]
 texture_filter = 1
-scale = Vector2(3, 3)
+scale = Vector2(4, 4)
 sprite_frames = ExtResource("2")
 animation = &"walk-south"
+metadata/_edit_lock_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(2, -12)
-shape = SubResource("CircleShape2D_1")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=400394197]
+position = Vector2(1.1920929e-07, -9.536743e-07)
+shape = SubResource("CapsuleShape2D_upisi")
+metadata/_edit_lock_ = true
 
-[node name="CollisionArea" type="Area2D" parent="."]
+[node name="CollisionArea" type="Area2D" parent="." unique_id=476981234]
 collision_layer = 2
+metadata/_edit_lock_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea"]
-position = Vector2(2, -12)
-shape = SubResource("CircleShape2D_1")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea" unique_id=894882010]
+position = Vector2(1.1920929e-07, -9.536743e-07)
+shape = SubResource("CapsuleShape2D_upisi")
+metadata/_edit_lock_ = true
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1260983078]
 replication_config = SubResource("SceneReplicationConfig_1")
 
 [connection signal="body_entered" from="CollisionArea" to="." method="_on_collision_area_body_entered"]

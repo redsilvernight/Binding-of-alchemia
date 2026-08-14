@@ -1,10 +1,11 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://gh6bgp8j6xgl"]
 
-[ext_resource type="Script" path="res://scripts/enemies/enemy_ranged.gd" id="1"]
+[ext_resource type="Script" uid="uid://c63am0uspu2to" path="res://scripts/enemies/enemy_ranged.gd" id="1"]
 [ext_resource type="SpriteFrames" path="res://resources/sprite_frames/enemy_ranged_gunner.tres" id="2"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
-radius = 102.01961
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6qewl"]
+radius = 58.0
+height = 188.0
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1"]
 properties/0/path = NodePath(".:position")
@@ -14,29 +15,30 @@ properties/1/path = NodePath("Sprite2D:animation")
 properties/1/spawn = true
 properties/1/replication_mode = 1
 
-[node name="EnemyRangedGunner" type="CharacterBody2D"]
+[node name="EnemyRangedGunner" type="CharacterBody2D" unique_id=2028780369]
 scale = Vector2(0.5, 0.5)
 collision_layer = 2
 collision_mask = 28
 script = ExtResource("1")
-max_lifepoint = 18.0
-currency_reward = 6
 speed = 110.0
 damage = 4.0
 preferred_range = 120.0
 attack_range = 280.0
 fire_cooldown = 0.6
 projectile_speed = 300.0
+currency_reward = 6
+max_lifepoint = 18.0
 
-[node name="Sprite2D" type="AnimatedSprite2D" parent="."]
+[node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=478204224]
 texture_filter = 1
-scale = Vector2(2.0, 2.0)
+scale = Vector2(4, 4)
 sprite_frames = ExtResource("2")
 animation = &"idle-south"
+metadata/_edit_lock_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(2, -12)
-shape = SubResource("CircleShape2D_1")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=195439243]
+position = Vector2(-2, 6)
+shape = SubResource("CapsuleShape2D_6qewl")
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=21424727]
 replication_config = SubResource("SceneReplicationConfig_1")

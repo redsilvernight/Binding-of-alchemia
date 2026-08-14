@@ -16,6 +16,12 @@ extends EnemyBase
 @export var projectile_damage: float = 10.0
 @export var projectile_speed: float = 340.0
 var target: Node2D = null
+@onready var sprite: AnimatedSprite2D = $Sprite2D
+## Dernière direction non-nulle (Phase 9.3) : la vitesse retombe à zéro
+## pendant la phase "arrêté et tire" de EnemyStateRangedAttack (phase 2),
+## mais l'orientation doit rester celle du dernier déplacement -- même
+## raison que enemy_ranged.gd.
+var _last_facing_direction: Vector2 = Vector2.DOWN
 
 var state_machine: EnemyStateMachine
 var _phase: int = 1
@@ -25,11 +31,30 @@ func _ready() -> void:
 	super()
 	add_to_group("Boss")
 	state_machine = EnemyStateMachine.new(EnemyStateIdle.new(self, EnemyStateChase.new(self)))
+	# Doit tourner sur tous les pairs, pas seulement l'hôte (Phase 9.3, même
+	# raison que les autres ennemis) : seul le nom de l'animation est
+	# répliqué, chaque instance avance ses propres frames localement.
+	sprite.play()
 
 func _physics_process(delta: float) -> void:
 	if not multiplayer.is_server():
 		return
 	state_machine.physics_process(delta)
+	_update_facing(velocity)
+
+## Hôte-only comme le reste de _physics_process (host-authoritative).
+## Bascule idle/walk selon le mouvement réel -- phase 1 (EnemyStateChase)
+## bouge en permanence donc reste sur walk-*, phase 2
+## (EnemyStateRangedAttack) alterne walk-*/idle-* selon qu'il se
+## positionne ou qu'il s'arrête pour tirer.
+func _update_facing(direction: Vector2) -> void:
+	var is_moving := direction.length() > 0.001
+	if is_moving:
+		_last_facing_direction = direction
+	var prefix := "walk-" if is_moving else "idle-"
+	var anim_name := StringName(prefix + FacingDirection.label_for(_last_facing_direction))
+	if sprite.animation != anim_name:
+		sprite.play(anim_name)
 
 func _update_target() -> void:
 	target = _closest_living_player()

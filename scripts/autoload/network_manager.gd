@@ -56,12 +56,18 @@ func get_unique_id() -> int:
 ## Si c'est l'hôte qui quitte, son serveur ENet se ferme et les pairs
 ## restants perdent la connexion -- cas non géré au-delà de ça (aucun code
 ## du projet ne gère aujourd'hui un hôte qui part en cours de partie).
+## Réassigne un OfflineMultiplayerPeer plutôt que null : c'est le peer par
+## défaut de SceneMultiplayer (celui dont profite play_solo() sans jamais le
+## créer explicitement) -- passer par null au lieu de lui le supprime pour de
+## bon, et is_server()/get_unique_id()/RPC échouent ensuite pour le reste de
+## la session (vu en jeu : plantage au nettoyage de room.gd puis à la
+## relance d'une partie solo depuis le menu).
 func leave_to_main_menu() -> void:
-	multiplayer.multiplayer_peer = null
+	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")
 
 func _on_connection_failed() -> void:
-	multiplayer.multiplayer_peer = null
+	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 	print("connexion fail")
 	

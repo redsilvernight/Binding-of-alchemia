@@ -1,429 +1,277 @@
 [gd_resource type="SpriteFrames" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/enemies/melee/walk/South.png" id="1_south"]
-[ext_resource type="Texture2D" path="res://assets/enemies/melee/walk/South-East.png" id="1_south_east"]
-[ext_resource type="Texture2D" path="res://assets/enemies/melee/walk/East.png" id="1_east"]
-[ext_resource type="Texture2D" path="res://assets/enemies/melee/walk/North-East.png" id="1_north_east"]
-[ext_resource type="Texture2D" path="res://assets/enemies/melee/walk/North.png" id="1_north"]
-[ext_resource type="Texture2D" path="res://assets/enemies/melee/walk/North-West.png" id="1_north_west"]
-[ext_resource type="Texture2D" path="res://assets/enemies/melee/walk/West.png" id="1_west"]
-[ext_resource type="Texture2D" path="res://assets/enemies/melee/walk/South-West.png" id="1_south_west"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_0"]
-atlas = ExtResource("1_south")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_1"]
-atlas = ExtResource("1_south")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_2"]
-atlas = ExtResource("1_south")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_3"]
-atlas = ExtResource("1_south")
-region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_4"]
-atlas = ExtResource("1_south")
-region = Rect2(256, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_5"]
-atlas = ExtResource("1_south")
-region = Rect2(320, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_east_0"]
-atlas = ExtResource("1_south_east")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_east_1"]
-atlas = ExtResource("1_south_east")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_east_2"]
-atlas = ExtResource("1_south_east")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_east_3"]
-atlas = ExtResource("1_south_east")
-region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_east_4"]
-atlas = ExtResource("1_south_east")
-region = Rect2(256, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_east_5"]
-atlas = ExtResource("1_south_east")
-region = Rect2(320, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_east_0"]
-atlas = ExtResource("1_east")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_east_1"]
-atlas = ExtResource("1_east")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_east_2"]
-atlas = ExtResource("1_east")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_east_3"]
-atlas = ExtResource("1_east")
-region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_east_4"]
-atlas = ExtResource("1_east")
-region = Rect2(256, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_east_5"]
-atlas = ExtResource("1_east")
-region = Rect2(320, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_east_0"]
-atlas = ExtResource("1_north_east")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_east_1"]
-atlas = ExtResource("1_north_east")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_east_2"]
-atlas = ExtResource("1_north_east")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_east_3"]
-atlas = ExtResource("1_north_east")
-region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_east_4"]
-atlas = ExtResource("1_north_east")
-region = Rect2(256, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_east_5"]
-atlas = ExtResource("1_north_east")
-region = Rect2(320, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_0"]
-atlas = ExtResource("1_north")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_1"]
-atlas = ExtResource("1_north")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_2"]
-atlas = ExtResource("1_north")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_3"]
-atlas = ExtResource("1_north")
-region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_4"]
-atlas = ExtResource("1_north")
-region = Rect2(256, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_5"]
-atlas = ExtResource("1_north")
-region = Rect2(320, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_west_0"]
-atlas = ExtResource("1_north_west")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_west_1"]
-atlas = ExtResource("1_north_west")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_west_2"]
-atlas = ExtResource("1_north_west")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_west_3"]
-atlas = ExtResource("1_north_west")
-region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_west_4"]
-atlas = ExtResource("1_north_west")
-region = Rect2(256, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_north_west_5"]
-atlas = ExtResource("1_north_west")
-region = Rect2(320, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_west_0"]
-atlas = ExtResource("1_west")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_west_1"]
-atlas = ExtResource("1_west")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_west_2"]
-atlas = ExtResource("1_west")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_west_3"]
-atlas = ExtResource("1_west")
-region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_west_4"]
-atlas = ExtResource("1_west")
-region = Rect2(256, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_west_5"]
-atlas = ExtResource("1_west")
-region = Rect2(320, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_west_0"]
-atlas = ExtResource("1_south_west")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_west_1"]
-atlas = ExtResource("1_south_west")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_west_2"]
-atlas = ExtResource("1_south_west")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_west_3"]
-atlas = ExtResource("1_south_west")
-region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_west_4"]
-atlas = ExtResource("1_south_west")
-region = Rect2(256, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_south_west_5"]
-atlas = ExtResource("1_south_west")
-region = Rect2(320, 0, 64, 64)
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south/0.png" id="1_south_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south/1.png" id="1_south_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south/2.png" id="1_south_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south/3.png" id="1_south_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south/4.png" id="1_south_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south/5.png" id="1_south_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south-east/0.png" id="1_south_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south-east/1.png" id="1_south_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south-east/2.png" id="1_south_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south-east/3.png" id="1_south_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south-east/4.png" id="1_south_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south-east/5.png" id="1_south_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/east/0.png" id="1_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/east/1.png" id="1_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/east/2.png" id="1_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/east/3.png" id="1_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/east/4.png" id="1_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/east/5.png" id="1_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north-east/0.png" id="1_north_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north-east/1.png" id="1_north_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north-east/2.png" id="1_north_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north-east/3.png" id="1_north_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north-east/4.png" id="1_north_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north-east/5.png" id="1_north_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north/0.png" id="1_north_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north/1.png" id="1_north_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north/2.png" id="1_north_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north/3.png" id="1_north_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north/4.png" id="1_north_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north/5.png" id="1_north_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north-west/0.png" id="1_north_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north-west/1.png" id="1_north_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north-west/2.png" id="1_north_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north-west/3.png" id="1_north_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north-west/4.png" id="1_north_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/north-west/5.png" id="1_north_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/west/0.png" id="1_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/west/1.png" id="1_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/west/2.png" id="1_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/west/3.png" id="1_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/west/4.png" id="1_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/west/5.png" id="1_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south-west/0.png" id="1_south_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south-west/1.png" id="1_south_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south-west/2.png" id="1_south_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south-west/3.png" id="1_south_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south-west/4.png" id="1_south_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/melee_v2/walk/south-west/5.png" id="1_south_west_5"]
 
 [resource]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_0")
+"texture": ExtResource("1_south_0")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_1")
+"texture": ExtResource("1_south_1")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_2")
+"texture": ExtResource("1_south_2")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_3")
+"texture": ExtResource("1_south_3")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_4")
+"texture": ExtResource("1_south_4")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_5")
+"texture": ExtResource("1_south_5")
 }],
 "loop": true,
 "name": &"walk-south",
-"speed": 10.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_east_0")
+"texture": ExtResource("1_south_east_0")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_east_1")
+"texture": ExtResource("1_south_east_1")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_east_2")
+"texture": ExtResource("1_south_east_2")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_east_3")
+"texture": ExtResource("1_south_east_3")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_east_4")
+"texture": ExtResource("1_south_east_4")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_east_5")
+"texture": ExtResource("1_south_east_5")
 }],
 "loop": true,
 "name": &"walk-south-east",
-"speed": 10.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_east_0")
+"texture": ExtResource("1_east_0")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_east_1")
+"texture": ExtResource("1_east_1")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_east_2")
+"texture": ExtResource("1_east_2")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_east_3")
+"texture": ExtResource("1_east_3")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_east_4")
+"texture": ExtResource("1_east_4")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_east_5")
+"texture": ExtResource("1_east_5")
 }],
 "loop": true,
 "name": &"walk-east",
-"speed": 10.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_east_0")
+"texture": ExtResource("1_north_east_0")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_east_1")
+"texture": ExtResource("1_north_east_1")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_east_2")
+"texture": ExtResource("1_north_east_2")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_east_3")
+"texture": ExtResource("1_north_east_3")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_east_4")
+"texture": ExtResource("1_north_east_4")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_east_5")
+"texture": ExtResource("1_north_east_5")
 }],
 "loop": true,
 "name": &"walk-north-east",
-"speed": 10.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_0")
+"texture": ExtResource("1_north_0")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_1")
+"texture": ExtResource("1_north_1")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_2")
+"texture": ExtResource("1_north_2")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_3")
+"texture": ExtResource("1_north_3")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_4")
+"texture": ExtResource("1_north_4")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_5")
+"texture": ExtResource("1_north_5")
 }],
 "loop": true,
 "name": &"walk-north",
-"speed": 10.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_west_0")
+"texture": ExtResource("1_north_west_0")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_west_1")
+"texture": ExtResource("1_north_west_1")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_west_2")
+"texture": ExtResource("1_north_west_2")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_west_3")
+"texture": ExtResource("1_north_west_3")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_west_4")
+"texture": ExtResource("1_north_west_4")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_north_west_5")
+"texture": ExtResource("1_north_west_5")
 }],
 "loop": true,
 "name": &"walk-north-west",
-"speed": 10.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_west_0")
+"texture": ExtResource("1_west_0")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_west_1")
+"texture": ExtResource("1_west_1")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_west_2")
+"texture": ExtResource("1_west_2")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_west_3")
+"texture": ExtResource("1_west_3")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_west_4")
+"texture": ExtResource("1_west_4")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_west_5")
+"texture": ExtResource("1_west_5")
 }],
 "loop": true,
 "name": &"walk-west",
-"speed": 10.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_west_0")
+"texture": ExtResource("1_south_west_0")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_west_1")
+"texture": ExtResource("1_south_west_1")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_west_2")
+"texture": ExtResource("1_south_west_2")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_west_3")
+"texture": ExtResource("1_south_west_3")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_west_4")
+"texture": ExtResource("1_south_west_4")
 },
 {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_south_west_5")
+"texture": ExtResource("1_south_west_5")
 }],
 "loop": true,
 "name": &"walk-south-west",
-"speed": 10.0
+"speed": 8.0
 }]
