@@ -4,6 +4,8 @@
 [ext_resource type="Script" path="res://scripts/world/run_start_station.gd" id="2_runstation"]
 [ext_resource type="Script" path="res://scripts/world/interactable.gd" id="3_interactable"]
 [ext_resource type="Script" path="res://scripts/world/unlock_station.gd" id="4_unlockstation"]
+[ext_resource type="Texture2D" path="res://assets/tiles/run_start_station/run_start_station.png" id="5_run_start_station"]
+[ext_resource type="Texture2D" path="res://assets/tiles/unlock_station/unlock_station.png" id="6_unlock_station"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_station"]
 radius = 80.0
@@ -21,11 +23,8 @@ spawn_path = NodePath("../Players")
 [node name="RunStartStation" type="Node2D" parent="."]
 script = ExtResource("2_runstation")
 
-[node name="BenchVisual" type="ColorRect" parent="RunStartStation"]
-position = Vector2(-50, -50)
-size = Vector2(100, 100)
-color = Color(0.3, 0.9, 0.5, 1)
-mouse_filter = 2
+[node name="BenchVisual" type="Sprite2D" parent="RunStartStation"]
+texture = ExtResource("5_run_start_station")
 
 [node name="Interactable" type="Area2D" parent="RunStartStation"]
 script = ExtResource("3_interactable")
@@ -44,11 +43,8 @@ text = "Appuyer sur E pour commencer une run"
 position = Vector2(200, 0)
 script = ExtResource("4_unlockstation")
 
-[node name="BenchVisual" type="ColorRect" parent="UnlockStation"]
-position = Vector2(-50, -50)
-size = Vector2(100, 100)
-color = Color(0.9, 0.7, 0.2, 1)
-mouse_filter = 2
+[node name="BenchVisual" type="Sprite2D" parent="UnlockStation"]
+texture = ExtResource("6_unlock_station")
 
 [node name="Interactable" type="Area2D" parent="UnlockStation"]
 script = ExtResource("3_interactable")

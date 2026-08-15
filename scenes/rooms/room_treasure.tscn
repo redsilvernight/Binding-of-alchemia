@@ -6,6 +6,8 @@
 [ext_resource type="TileSet" path="res://resources/tilesets/dungeon_stone_terrain.tres" id="4_tileset"]
 [ext_resource type="PackedScene" path="res://scenes/rooms/door.tscn" id="door_scene"]
 [ext_resource type="PackedScene" path="res://scenes/rooms/door_vertical.tscn" id="door_vertical_scene"]
+[ext_resource type="Texture2D" path="res://assets/tiles/chest/chest_closed.png" id="5_chest_closed"]
+[ext_resource type="Texture2D" path="res://assets/tiles/chest/chest_open.png" id="6_chest_open"]
 
 [sub_resource type="RectangleShape2D" id="Closed_NS"]
 size = Vector2(960, 40)
@@ -183,11 +185,11 @@ shape = SubResource("Closed_EW")
 position = Vector2(480, 672)
 script = ExtResource("2_chest")
 
-[node name="ChestVisual" type="ColorRect" parent="Chest"]
-position = Vector2(-50, -50)
-size = Vector2(100, 100)
-color = Color(0.95, 0.8, 0.1, 1)
-mouse_filter = 2
+[node name="Closed" type="Sprite2D" parent="Chest"]
+texture = ExtResource("5_chest_closed")
+
+[node name="Open" type="Sprite2D" parent="Chest"]
+texture = ExtResource("6_chest_open")
 
 [node name="Interactable" type="Area2D" parent="Chest"]
 script = ExtResource("3_interactable")

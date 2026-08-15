@@ -6,6 +6,7 @@
 [ext_resource type="TileSet" path="res://resources/tilesets/dungeon_stone_terrain.tres" id="4_tileset"]
 [ext_resource type="PackedScene" path="res://scenes/rooms/door.tscn" id="door_scene"]
 [ext_resource type="PackedScene" path="res://scenes/rooms/door_vertical.tscn" id="door_vertical_scene"]
+[ext_resource type="Texture2D" path="res://assets/tiles/weapon_station/weapon_station.png" id="5_weapon_station"]
 
 [sub_resource type="RectangleShape2D" id="Closed_NS"]
 size = Vector2(960, 40)
@@ -183,11 +184,8 @@ shape = SubResource("Closed_EW")
 position = Vector2(480, 672)
 script = ExtResource("2_station")
 
-[node name="BenchVisual" type="ColorRect" parent="WeaponStation"]
-position = Vector2(-50, -50)
-size = Vector2(100, 100)
-color = Color(0.3, 0.65, 1, 1)
-mouse_filter = 2
+[node name="BenchVisual" type="Sprite2D" parent="WeaponStation"]
+texture = ExtResource("5_weapon_station")
 
 [node name="Interactable" type="Area2D" parent="WeaponStation"]
 script = ExtResource("3_interactable")

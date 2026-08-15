@@ -5,8 +5,16 @@ extends Node2D
 # relaie vers l'hôte. Son contenu (pièces d'arme) est assigné par
 # game.gd juste après le spawn de la salle (cf. set_contents()) -- rien
 # n'est spawné dans le monde avant l'ouverture.
+#
+# Visuel Closed/Open avec fondu (Phase 9.3), même pattern que door.gd :
+# deux sprites superposés plutôt qu'une AnimatedSprite2D, l'ouverture du
+# coffre étant un événement ponctuel qui n'a besoin que d'un état avant/après.
+
+const FADE_DURATION: float = 0.3
 
 @onready var interactable: Interactable = $Interactable
+@onready var _closed_sprite: Sprite2D = $Closed
+@onready var _open_sprite: Sprite2D = $Open
 
 var _contents: Dictionary = {}
 var _opened: bool = false
@@ -14,6 +22,8 @@ var _opened: bool = false
 
 func _ready() -> void:
 	interactable.interacted.connect(_on_interacted)
+	_closed_sprite.modulate.a = 1.0
+	_open_sprite.modulate.a = 0.0
 
 
 func set_contents(contents: Dictionary) -> void:
@@ -43,3 +53,6 @@ func _request_open() -> void:
 func _rpc_mark_opened() -> void:
 	_opened = true
 	interactable.visible = false
+	var tween: Tween = create_tween().set_parallel(true)
+	tween.tween_property(_closed_sprite, "modulate:a", 0.0, FADE_DURATION)
+	tween.tween_property(_open_sprite, "modulate:a", 1.0, FADE_DURATION)
