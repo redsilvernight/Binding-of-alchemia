@@ -3,38 +3,33 @@
 [ext_resource type="Script" path="res://scripts/dungeon/room.gd" id="1_room"]
 [ext_resource type="Script" path="res://scripts/world/alchemy_station.gd" id="2_station"]
 [ext_resource type="Script" path="res://scripts/world/interactable.gd" id="3_interactable"]
+[ext_resource type="TileSet" path="res://resources/tilesets/dungeon_stone_terrain.tres" id="4_tileset"]
+[ext_resource type="PackedScene" path="res://scenes/rooms/door.tscn" id="door_scene"]
+[ext_resource type="PackedScene" path="res://scenes/rooms/door_vertical.tscn" id="door_vertical_scene"]
 
 [sub_resource type="RectangleShape2D" id="Closed_NS"]
-size = Vector2(1000, 40)
+size = Vector2(960, 40)
 
 [sub_resource type="RectangleShape2D" id="Open_NS_Segment"]
-size = Vector2(340, 40)
+size = Vector2(320, 40)
 
 [sub_resource type="RectangleShape2D" id="Closed_EW"]
-size = Vector2(40, 1296)
+size = Vector2(40, 1344)
 
 [sub_resource type="RectangleShape2D" id="Open_EW_Segment"]
-size = Vector2(40, 488)
+size = Vector2(40, 512)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_station"]
 radius = 80.0
 
 [sub_resource type="RectangleShape2D" id="RoomTriggerShape"]
-size = Vector2(600, 896)
+size = Vector2(576, 928)
 
 [node name="RoomAlchemy" type="Node2D"]
 script = ExtResource("1_room")
-# Salle spéciale de donjon (type "treasure/shop room" à la Isaac), une des
-# salles générées par DungeonGenerator (Phase 6.1). Contient uniquement
-# l'établi d'alchimie — l'atelier d'arme vit dans room_weapon.tscn, une
-# salle distincte : le générateur choisit aléatoirement laquelle des deux
-# apparaît dans le donjon, jamais les deux ensemble (cf. game.gd,
-# SPECIAL_ROOM_TEMPLATE_PATHS).
 
-[node name="Background" type="ColorRect" parent="."]
-size = Vector2(1000, 1296)
-color = Color(0.5, 0.15, 0.5, 0.6)
-mouse_filter = 2
+[node name="Floor" type="TileMapLayer" parent="."]
+tile_set = ExtResource("4_tileset")
 
 [node name="North" type="Node2D" parent="."]
 
@@ -43,7 +38,7 @@ collision_layer = 8
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="North/Closed"]
-position = Vector2(500, 0)
+position = Vector2(480, 0)
 shape = SubResource("Closed_NS")
 
 [node name="Open" type="StaticBody2D" parent="North"]
@@ -51,14 +46,17 @@ collision_layer = 8
 collision_mask = 0
 
 [node name="Left" type="CollisionShape2D" parent="North/Open"]
-position = Vector2(170, 0)
+position = Vector2(160, 0)
 shape = SubResource("Open_NS_Segment")
 disabled = true
 
 [node name="Right" type="CollisionShape2D" parent="North/Open"]
-position = Vector2(830, 0)
+position = Vector2(800, 0)
 shape = SubResource("Open_NS_Segment")
 disabled = true
+
+[node name="Door" parent="North" instance=ExtResource("door_scene")]
+position = Vector2(480, 0)
 
 [node name="South" type="Node2D" parent="."]
 
@@ -67,7 +65,7 @@ collision_layer = 8
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="South/Closed"]
-position = Vector2(500, 1296)
+position = Vector2(480, 1344)
 shape = SubResource("Closed_NS")
 
 [node name="Open" type="StaticBody2D" parent="South"]
@@ -75,14 +73,17 @@ collision_layer = 8
 collision_mask = 0
 
 [node name="Left" type="CollisionShape2D" parent="South/Open"]
-position = Vector2(170, 1296)
+position = Vector2(160, 1344)
 shape = SubResource("Open_NS_Segment")
 disabled = true
 
 [node name="Right" type="CollisionShape2D" parent="South/Open"]
-position = Vector2(830, 1296)
+position = Vector2(800, 1344)
 shape = SubResource("Open_NS_Segment")
 disabled = true
+
+[node name="Door" parent="South" instance=ExtResource("door_scene")]
+position = Vector2(480, 1344)
 
 [node name="West" type="Node2D" parent="."]
 
@@ -91,7 +92,7 @@ collision_layer = 8
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="West/Closed"]
-position = Vector2(0, 648)
+position = Vector2(0, 672)
 shape = SubResource("Closed_EW")
 
 [node name="Open" type="StaticBody2D" parent="West"]
@@ -99,14 +100,17 @@ collision_layer = 8
 collision_mask = 0
 
 [node name="Top" type="CollisionShape2D" parent="West/Open"]
-position = Vector2(0, 244)
+position = Vector2(0, 256)
 shape = SubResource("Open_EW_Segment")
 disabled = true
 
 [node name="Bottom" type="CollisionShape2D" parent="West/Open"]
-position = Vector2(0, 1052)
+position = Vector2(0, 1088)
 shape = SubResource("Open_EW_Segment")
 disabled = true
+
+[node name="Door" parent="West" instance=ExtResource("door_vertical_scene")]
+position = Vector2(0, 672)
 
 [node name="East" type="Node2D" parent="."]
 
@@ -115,7 +119,7 @@ collision_layer = 8
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="East/Closed"]
-position = Vector2(1000, 648)
+position = Vector2(960, 672)
 shape = SubResource("Closed_EW")
 
 [node name="Open" type="StaticBody2D" parent="East"]
@@ -123,19 +127,22 @@ collision_layer = 8
 collision_mask = 0
 
 [node name="Top" type="CollisionShape2D" parent="East/Open"]
-position = Vector2(1000, 244)
+position = Vector2(960, 256)
 shape = SubResource("Open_EW_Segment")
 disabled = true
 
 [node name="Bottom" type="CollisionShape2D" parent="East/Open"]
-position = Vector2(1000, 1052)
+position = Vector2(960, 1088)
 shape = SubResource("Open_EW_Segment")
 disabled = true
+
+[node name="Door" parent="East" instance=ExtResource("door_vertical_scene")]
+position = Vector2(960, 672)
 
 [node name="RoomTrigger" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RoomTrigger"]
-position = Vector2(500, 648)
+position = Vector2(480, 672)
 shape = SubResource("RoomTriggerShape")
 
 [node name="EnemyBoundaries" type="Node2D" parent="."]
@@ -145,7 +152,7 @@ collision_layer = 16
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyBoundaries/North"]
-position = Vector2(500, 0)
+position = Vector2(480, 0)
 shape = SubResource("Closed_NS")
 
 [node name="South" type="StaticBody2D" parent="EnemyBoundaries"]
@@ -153,7 +160,7 @@ collision_layer = 16
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyBoundaries/South"]
-position = Vector2(500, 1296)
+position = Vector2(480, 1344)
 shape = SubResource("Closed_NS")
 
 [node name="West" type="StaticBody2D" parent="EnemyBoundaries"]
@@ -161,7 +168,7 @@ collision_layer = 16
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyBoundaries/West"]
-position = Vector2(0, 648)
+position = Vector2(0, 672)
 shape = SubResource("Closed_EW")
 
 [node name="East" type="StaticBody2D" parent="EnemyBoundaries"]
@@ -169,11 +176,11 @@ collision_layer = 16
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyBoundaries/East"]
-position = Vector2(1000, 648)
+position = Vector2(960, 672)
 shape = SubResource("Closed_EW")
 
 [node name="AlchemyStation" type="Node2D" parent="."]
-position = Vector2(500, 648)
+position = Vector2(480, 672)
 script = ExtResource("2_station")
 
 [node name="BenchVisual" type="ColorRect" parent="AlchemyStation"]

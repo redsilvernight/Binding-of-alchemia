@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon/door.gd" id="1_door"]
+[ext_resource type="Texture2D" path="res://assets/tiles/door/door_closed.png" id="2_closed"]
+[ext_resource type="Texture2D" path="res://assets/tiles/door/door_open.png" id="3_open"]
+
+[sub_resource type="RectangleShape2D" id="DoorCollisionShape"]
+size = Vector2(320, 40)
+
+[node name="Door" type="Node2D"]
+visible = false
+script = ExtResource("1_door")
+
+[node name="Closed" type="Sprite2D" parent="."]
+texture = ExtResource("2_closed")
+
+[node name="Open" type="Sprite2D" parent="."]
+texture = ExtResource("3_open")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 8
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("DoorCollisionShape")

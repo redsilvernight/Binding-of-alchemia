@@ -15,7 +15,7 @@ extends Control
 # Phase 6.1 : toutes les salles ont le même gabarit (modèle grille fixe,
 # cf. DungeonGenerator) — obligatoire pour que les portes de deux salles
 # voisines s'alignent toujours sans avoir à les valider au cas par cas.
-const ROOM_CELL_SIZE: Vector2 = Vector2(1000, 1296)
+const ROOM_CELL_SIZE: Vector2 = Vector2(960, 1344)
 # Phase 9 (étages) : BASE_ROOM_COUNT est la taille d'origine (étage 1,
 # inchangée) -- chaque étage suivant ajoute des salles jusqu'à ROOM_COUNT_CAP,
 # cf. _room_count_for_floor. Le plafond évite un donjon ingérable (temps de
@@ -269,6 +269,7 @@ func _generate_dungeon() -> void:
 func _spawn_room(data: Dictionary) -> Node:
 	var room: Room = (load(data["template_path"]) as PackedScene).instantiate()
 	room.position = Vector2(data["grid_position"]) * ROOM_CELL_SIZE
+	room.grid_position = data["grid_position"]
 	# set_open_sides() lit des noeuds enfants via @onready : le noeud doit
 	# être entré dans l'arbre (donc _ready() déjà passé) avant qu'on
 	# l'appelle, sans quoi les références sont encore nulles (même piège
