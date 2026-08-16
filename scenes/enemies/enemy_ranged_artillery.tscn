@@ -1,0 +1,42 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_ranged.gd" id="1"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/enemy_ranged_artillery.tres" id="2"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1"]
+radius = 68.0
+height = 250.0
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath("Sprite2D:animation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[node name="EnemyRangedArtillery" type="CharacterBody2D"]
+scale = Vector2(0.55, 0.55)
+collision_layer = 2
+collision_mask = 28
+script = ExtResource("1")
+speed = 75.0
+damage = 20.0
+preferred_range = 320.0
+attack_range = 850.0
+fire_cooldown = 3.2
+projectile_speed = 380.0
+currency_reward = 10.0
+max_lifepoint = 22.0
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(4, 4)
+sprite_frames = ExtResource("2")
+animation = &"idle-south"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_1")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_1")

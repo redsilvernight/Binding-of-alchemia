@@ -2,6 +2,12 @@ class_name Character
 extends CharacterBody2D
 
 signal health_changed(max_lifepoint: float, lifepoint: float)
+## Distinct de health_changed (Phase 9.2, 3e passe, ennemi soigneur) : les
+## sous-classes concrètes réagissent à health_changed en jouant une anim
+## "hit-*" dès que lifepoint > 0, sans distinguer dégât et soin -- réutiliser
+## ce signal pour un soin y jouerait donc à tort l'anim de coup. healed()
+## permet à heal() de répliquer lifepoint sans déclencher ce chemin.
+signal healed(max_lifepoint: float, lifepoint: float)
 signal died
 @export var max_lifepoint: float = 20.0
 var lifepoint: float
@@ -28,6 +34,22 @@ func take_damage(degat: float) -> void:
 		kill()
 	else:
 		_start_invulnerability()
+
+## Phase 9.2 (3e passe, ennemi soigneur) : hôte-only comme take_damage(),
+## plafonné à max_lifepoint. Passe par une RPC dédiée (_update_heal) plutôt
+## que _update_health -- voir le commentaire sur le signal healed.
+func heal(amount: float) -> void:
+	if not multiplayer.is_server():
+		return
+	if is_dead:
+		return
+	lifepoint = min(lifepoint + amount, max_lifepoint)
+	_update_heal.rpc(lifepoint)
+
+@rpc("any_peer", "call_local", "reliable")
+func _update_heal(p_lifepoint: float) -> void:
+	lifepoint = p_lifepoint
+	healed.emit(max_lifepoint, lifepoint)
 
 ## Point d'extension : ne fait rien par défaut. Les sous-classes qui veulent
 ## des i-frames (ex: Player, via son DamageTimer) surchargent cette méthode.
