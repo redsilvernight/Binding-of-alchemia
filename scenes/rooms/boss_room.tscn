@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" path="res://scripts/dungeon/room.gd" id="1_room"]
 [ext_resource type="TileSet" path="res://resources/tilesets/dungeon_stone_terrain.tres" id="2_tileset"]
-[ext_resource type="PackedScene" path="res://scenes/rooms/door.tscn" id="door_scene"]
-[ext_resource type="PackedScene" path="res://scenes/rooms/door_vertical.tscn" id="door_vertical_scene"]
+[ext_resource type="PackedScene" path="res://scenes/rooms/boss_door.tscn" id="door_scene"]
+[ext_resource type="PackedScene" path="res://scenes/rooms/boss_door_vertical.tscn" id="door_vertical_scene"]
 
 [sub_resource type="RectangleShape2D" id="Closed_NS"]
 size = Vector2(1344, 40)
