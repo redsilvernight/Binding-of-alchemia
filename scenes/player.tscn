@@ -1528,7 +1528,8 @@ max_lifepoint = 30.0
 texture_filter = 1
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_player_idle")
-animation = &"idle-south"
+animation = &"idle-south-west"
+frame = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103710012]
 position = Vector2(-1, 2)
