@@ -1,25 +1,27 @@
 class_name Room
 extends Node2D
 
-# Salle de donjon générique (Phase 6.1/6.2, tileset et portes en Phase 10).
-# Un template déclare ses 4 côtés (North/South/East/West), chacun pré-câblé
-# dans la scène avec un node "Closed" (mur plein, StaticBody2D) et un node
-# "Door" (sprite + collision propre, cf. door.gd) -- "Open" ne sert plus
-# qu'à rester compatible avec d'anciens templates non encore équipés d'une
-# porte. Le générateur (DungeonGenerator, appelé depuis game.gd côté hôte)
-# décide quels côtés sont réellement connectés à une salle voisine et
-# appelle set_open_sides() en conséquence — le template lui-même ne sait
-# rien de sa position dans le donjon.
+# Salle de donjon générique (Phase 6.1/6.2, tileset et portes en Phase 10,
+# collision 100% tuiles en Phase 10.x). Un template déclare ses 4 côtés
+# (North/South/East/West), chacun pré-câblé avec un node "Door" (habillage
+# visuel uniquement, cf. door.gd) -- il n'y a plus aucun StaticBody2D de mur
+# dans les templates : toute la collision de mur/porte vient du TileMapLayer
+# "Floor" et du physics layer défini sur les tuiles de mur dans
+# dungeon_stone_terrain.tres. Le générateur (DungeonGenerator, appelé depuis
+# game.gd côté hôte) décide quels côtés sont réellement connectés à une
+# salle voisine et appelle set_open_sides() en conséquence — le template
+# lui-même ne sait rien de sa position dans le donjon.
 #
-# Un côté structurellement fermé (pas de voisin) garde son mur "Closed"
-# activé en permanence -- pas de porte là, cf. _paint_walls(). Un côté
-# ouvert n'a JAMAIS de mur fixe actif : c'est la porte qui bloque le
-# passage pendant un combat (verrouillage, 6.2), via sa propre collision
-# togglée dans door.gd.set_state(). Les tuiles de mur/sol (_paint_walls())
-# reflètent uniquement cette connectivité structurelle, jamais l'état de
-# verrouillage -- avoir DEUX systèmes qui se ferment en même temps (mur en
-# tuiles + porte) créait un mur visuellement bloqué en travers de la porte
-# une fois le combat commencé.
+# Un côté structurellement fermé (pas de voisin) reste peint en tuiles de mur
+# sur toute sa largeur -- pas d'embrasure là, cf. _paint_walls(). Un côté
+# structurellement ouvert a une embrasure de DOOR_TILES tuiles : ces tuiles-là
+# basculent entre "sol" (déverrouillé) et "mur" (verrouillé pendant un combat)
+# via _set_door_gap_tiles(), appelée depuis _sync_shared_door(). La porte
+# (sprite Closed/Open, cf. door.gd) n'est plus qu'un habillage visuel
+# superposé à cette tuile, synchronisé mais sans collision propre -- avoir
+# DEUX systèmes de collision qui se ferment en même temps (mur en tuiles +
+# StaticBody2D de porte) était la source d'un bug où la collision de la
+# porte ne bloquait pas de façon fiable le passage.
 #
 # Verrouillage (6.2) : un côté structurellement ouvert peut être
 # temporairement bloqué tant que la salle contient des ennemis enregistrés
@@ -30,11 +32,11 @@ extends Node2D
 # architecture_reseau.md).
 #
 # EnemyBoundaries : 4 murs pleins permanents (layer 16, exclusif aux
-# ennemis, jamais togglés) superposés à chaque côté, en plus du système
-# Closed/Open ci-dessus. Sans eux, un ennemi qui vise le joueur le plus
-# proche traverse sa propre porte dès qu'elle est ouverte pour quelqu'un
-# d'autre (le lock ne se déclenche qu'à l'entrée d'un joueur DANS cette
-# salle précise) — les ennemis ne doivent jamais quitter leur salle.
+# ennemis, StaticBody2D jamais togglés, indépendants du système de tuiles
+# ci-dessus) superposés à chaque côté. Sans eux, un ennemi qui vise le joueur
+# le plus proche traverse sa propre porte dès qu'elle est ouverte pour
+# quelqu'un d'autre (le lock ne se déclenche qu'à l'entrée d'un joueur DANS
+# cette salle précise) — les ennemis ne doivent jamais quitter leur salle.
 
 signal room_cleared
 ## Émis uniquement côté hôte (cf. garde is_server() plus bas) quand un joueur
@@ -81,6 +83,12 @@ const WANG_ATLAS_BY_CORNERS: Dictionary = {
 	14: Vector2i(1, 3),
 	15: Vector2i(0, 3),
 }
+## Dimensions fixes de tous les templates de salle, en pixels -- remplace
+## l'ancienne lecture dynamique de la taille du mur "Closed" (supprimé,
+## cf. header) maintenant que plus aucun node de la scène ne porte cette
+## information. Multiple exact de la tuile (64px), cf. _paint_floor().
+const ROOM_WIDTH_PX: int = 960
+const ROOM_HEIGHT_PX: int = 1344
 ## Largeur/hauteur de chaque porte, en tuiles — doit rester un diviseur commun
 ## qui centre proprement dans _cols/_rows (cf. _paint_walls()). Salles à
 ## 15x21 tuiles : (15-5)/2=5 et (21-5)/2=8, donc tout tombe rond.
@@ -93,18 +101,6 @@ const SOUTH_EDGE_INDEX: int = 3
 const WEST_EDGE_INDEX: int = 10
 const EAST_EDGE_INDEX: int = 5
 
-@onready var _closed_by_side: Dictionary = {
-	"north": $North/Closed,
-	"south": $South/Closed,
-	"east": $East/Closed,
-	"west": $West/Closed,
-}
-@onready var _open_by_side: Dictionary = {
-	"north": $North/Open,
-	"south": $South/Open,
-	"east": $East/Open,
-	"west": $West/Open,
-}
 @onready var _trigger: Area2D = $RoomTrigger
 @onready var _floor: TileMapLayer = get_node_or_null("Floor")
 ## get_node_or_null (pas $North/Door) : templates pas encore équipés du sprite
@@ -137,19 +133,12 @@ func _ready() -> void:
 
 
 ## Templates sans node "Floor" (pas encore passés au tileset) : no-op silencieux.
-## La taille du sol est dérivée des shapes de collision Nord/Ouest plutôt que
-## codée en dur, pour rester correcte si un template change de dimensions.
-## Les salles (960x1344) sont un multiple exact de la tuile (64px) --
-## dimensionnées ainsi précisément pour que les embrasures de porte tombent
-## sur des limites de tuile (cf. DOOR_TILES/_paint_walls()).
 func _paint_floor() -> void:
 	if _floor == null or _floor.tile_set == null:
 		return
-	var width: float = (_closed_by_side["north"].get_node("CollisionShape2D").shape as RectangleShape2D).size.x
-	var height: float = (_closed_by_side["west"].get_node("CollisionShape2D").shape as RectangleShape2D).size.y
 	var tile_size: Vector2i = _floor.tile_set.tile_size
-	_cols = ceili(width / tile_size.x)
-	_rows = ceili(height / tile_size.y)
+	_cols = ceili(float(ROOM_WIDTH_PX) / tile_size.x)
+	_rows = ceili(float(ROOM_HEIGHT_PX) / tile_size.y)
 	_floor.position = Vector2.ZERO
 	for x in range(_cols):
 		for y in range(_rows):
@@ -164,9 +153,9 @@ func _paint_floor() -> void:
 ## WANG_ATLAS_BY_CORNERS). Appelée une seule fois (cf. set_open_sides()) :
 ## contrairement au verrouillage (_apply_walls(), qui rejoue à chaque combat),
 ## la connectivité structurelle ne change jamais après la génération du
-## donjon -- l'embrasure reste visuellement ouverte en permanence, c'est la
-## porte (sprite + collision propre, cf. door.gd) qui se ferme pendant un
-## combat, pas ce mur en tuiles.
+## donjon -- l'embrasure de DOOR_TILES tuiles peinte ici reste "sol" tant
+## qu'aucun combat n'est en cours ; _set_door_gap_tiles() la repeint en "mur"
+## pendant un verrouillage, sans repasser par cette fonction.
 func _paint_walls() -> void:
 	if _floor == null or _floor.tile_set == null or _cols == 0:
 		return
@@ -282,40 +271,35 @@ func _rpc_set_locked(locked: bool) -> void:
 func _apply_walls() -> void:
 	for side in SIDES:
 		var structurally_open: bool = side in _open_sides
-		if structurally_open:
-			# Plus aucun mur fixe à opposer ici : la porte (sa propre
-			# collision, cf. door.gd) bloque seule le passage pendant un
-			# verrouillage -- cf. _paint_walls() pour le pourquoi.
-			_set_body_disabled(_closed_by_side[side], true)
-			_set_body_disabled(_open_by_side[side], true)
-		else:
-			_set_body_disabled(_closed_by_side[side], false)
-			_set_body_disabled(_open_by_side[side], true)
 		# Pas de porte à afficher là où la salle n'a structurellement aucune
-		# voisine (le mur y est plein en permanence, cf. _paint_walls()).
+		# voisine (le mur y reste plein en permanence, peint une seule fois
+		# par _paint_walls() -- rien à toggler ici pour ce côté).
 		var door: Door = _door_by_side[side]
 		if door != null:
 			door.visible = structurally_open
-			if structurally_open:
-				_sync_shared_door(side)
+		if structurally_open:
+			_sync_shared_door(side)
 
 
 ## Une intersection = une seule porte à l'écran (Phase 10.x), mais chaque
 ## salle garde son propre verrouillage (cf. _locked, register_enemy()) --
 ## chacune des deux salles possède donc toujours sa propre instance de porte
-## (superposées pile sur la frontière commune, cf. templates), pilotées avec
-## la MÊME valeur combinée pour rester visuellement indissociables d'une
+## (superposées pile sur la frontière commune, cf. templates) ET sa propre
+## embrasure de tuiles (superposée au même endroit dans le monde), pilotées
+## avec la MÊME valeur combinée pour rester visuellement indissociables d'une
 ## porte unique : fermée dès que l'une ou l'autre salle a des ennemis actifs.
 func _sync_shared_door(side: String) -> void:
 	var neighbor: Room = _find_neighbor_room(side)
 	var combined_locked: bool = _locked or (neighbor != null and neighbor.is_locked())
 	var effectively_open: bool = not combined_locked
 	(_door_by_side[side] as Door).set_state(effectively_open)
+	_set_door_gap_tiles(side, combined_locked)
 	if neighbor == null:
 		return
 	var neighbor_door: Door = neighbor.get_door(OPPOSITE_SIDE[side])
 	if neighbor_door != null:
 		neighbor_door.set_state(effectively_open)
+	neighbor._set_door_gap_tiles(OPPOSITE_SIDE[side], combined_locked)
 
 
 ## Résolution par comparaison directe de grid_position plutôt que par nom de
@@ -342,11 +326,39 @@ func get_door(side: String) -> Door:
 	return _door_by_side.get(side)
 
 
-func _set_body_disabled(body: StaticBody2D, disabled: bool) -> void:
-	# set_deferred (pas une affectation directe) : _apply_walls() peut être
-	# appelée depuis _rpc_set_locked() elle-même déclenchée par
-	# RoomTrigger.body_entered, donc en pleine requête physique — modifier
-	# CollisionShape2D.disabled à ce moment précis lève "flushing queries".
-	for child in body.get_children():
-		if child is CollisionShape2D:
-			child.set_deferred("disabled", disabled)
+## Bascule la collision de l'embrasure d'un côté structurellement ouvert
+## entre "mur" (verrouillé -- même tuile de bord plein que les cases
+## encadrant l'embrasure, cf. _flatten_door_frame()) et "sol" (déverrouillé).
+## Remplace l'ancien système de StaticBody2D Closed/Open + collision propre de
+## la porte : la collision vient désormais uniquement des tuiles peintes ici
+## et de leur physics layer (cf. dungeon_stone_terrain.tres) -- la porte
+## (sprite, cf. door.gd) n'est plus qu'un habillage visuel superposé, sans
+## collision à elle.
+## call_deferred (pas set_cell direct) : appelée depuis _sync_shared_door(),
+## elle-même appelable depuis _rpc_set_locked() déclenchée par
+## RoomTrigger.body_entered, donc en pleine requête physique -- même piège
+## que l'ancien _set_body_disabled() avec CollisionShape2D.disabled.
+func _set_door_gap_tiles(side: String, locked: bool) -> void:
+	if _floor == null or _floor.tile_set == null or _cols == 0:
+		return
+	var door_col_start: int = (_cols - DOOR_TILES) / 2
+	var door_row_start: int = (_rows - DOOR_TILES) / 2
+	for i in range(DOOR_TILES):
+		var coords: Vector2i
+		var atlas_coords: Vector2i
+		match side:
+			"north":
+				coords = Vector2i(door_col_start + i, 0)
+				atlas_coords = WANG_ATLAS_BY_CORNERS[NORTH_EDGE_INDEX] if locked else TILE_FLOOR
+			"south":
+				coords = Vector2i(door_col_start + i, _rows - 1)
+				atlas_coords = WANG_ATLAS_BY_CORNERS[SOUTH_EDGE_INDEX] if locked else TILE_FLOOR
+			"west":
+				coords = Vector2i(0, door_row_start + i)
+				atlas_coords = WANG_ATLAS_BY_CORNERS[WEST_EDGE_INDEX] if locked else TILE_FLOOR
+			"east":
+				coords = Vector2i(_cols - 1, door_row_start + i)
+				atlas_coords = WANG_ATLAS_BY_CORNERS[EAST_EDGE_INDEX] if locked else TILE_FLOOR
+			_:
+				continue
+		_floor.call_deferred("set_cell", coords, 0, atlas_coords)

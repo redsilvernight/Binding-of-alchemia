@@ -1,14 +1,15 @@
 class_name Door
 extends Node2D
 
-# Habillage d'une embrasure de porte (Phase 10). Porte désormais seule
-# responsable de bloquer le passage quand elle est fermée : les murs
-# Room._closed_by_side/_open_by_side ne servent plus qu'aux côtés sans
-# aucune porte (pas de voisin structurel) -- cf. Room._apply_walls(). Les
-# tuiles de mur/sol (Room._paint_walls()) reflètent uniquement la
-# connectivité structurelle, jamais le verrouillage : l'embrasure reste
-# visuellement ouverte en permanence, seule la porte (sprite + collision
-# ici) se ferme pendant un combat.
+# Habillage VISUEL d'une embrasure de porte (Phase 10, collision passée aux
+# tuiles en Phase 10.x). La porte n'a plus de collision propre : c'est
+# Room._set_door_gap_tiles() qui bloque le passage en repeignant l'embrasure
+# (Room._paint_walls()) en tuile de mur pendant un verrouillage, via le
+# physics layer de dungeon_stone_terrain.tres -- avoir deux systèmes de
+# collision distincts (mur en tuiles + StaticBody2D de porte) togglés en
+# parallèle laissait des fenêtres où l'un désynchronisait l'autre et le
+# joueur passait à travers une porte pourtant fermée à l'écran. Ce script ne
+# gère donc plus que le fondu visuel entre les deux sprites et le son.
 # Deux sprites (Closed/Open) plutôt qu'une AnimatedSprite2D à frames
 # interpolées : un fondu enchaîné entre les deux états suffit à lire le
 # changement de porte et évite une génération d'animation PixelLab
@@ -18,7 +19,6 @@ const FADE_DURATION: float = 0.3
 
 @onready var _closed_sprite: Sprite2D = $Closed
 @onready var _open_sprite: Sprite2D = $Open
-@onready var _collision: CollisionShape2D = $StaticBody2D/CollisionShape2D
 
 var _open: bool = false
 var _tween: Tween
@@ -32,7 +32,6 @@ var _initialized: bool = false
 func _ready() -> void:
 	_closed_sprite.modulate.a = 1.0
 	_open_sprite.modulate.a = 0.0
-	_collision.disabled = false
 
 
 func set_state(effectively_open: bool) -> void:
@@ -43,7 +42,6 @@ func set_state(effectively_open: bool) -> void:
 	_open = effectively_open
 	if should_play_sound:
 		AudioManager.play_sfx("door_open" if effectively_open else "door_close")
-	_collision.set_deferred("disabled", effectively_open)
 	if _tween:
 		_tween.kill()
 	_tween = create_tween().set_parallel(true)

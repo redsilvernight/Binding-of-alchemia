@@ -12,14 +12,8 @@
 [sub_resource type="RectangleShape2D" id="Closed_NS"]
 size = Vector2(960, 40)
 
-[sub_resource type="RectangleShape2D" id="Open_NS_Segment"]
-size = Vector2(320, 40)
-
 [sub_resource type="RectangleShape2D" id="Closed_EW"]
 size = Vector2(40, 1344)
-
-[sub_resource type="RectangleShape2D" id="Open_EW_Segment"]
-size = Vector2(40, 512)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_chest"]
 radius = 80.0
@@ -35,108 +29,20 @@ tile_set = ExtResource("4_tileset")
 
 [node name="North" type="Node2D" parent="."]
 
-[node name="Closed" type="StaticBody2D" parent="North"]
-collision_layer = 8
-collision_mask = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="North/Closed"]
-position = Vector2(480, 0)
-shape = SubResource("Closed_NS")
-
-[node name="Open" type="StaticBody2D" parent="North"]
-collision_layer = 8
-collision_mask = 0
-
-[node name="Left" type="CollisionShape2D" parent="North/Open"]
-position = Vector2(160, 0)
-shape = SubResource("Open_NS_Segment")
-disabled = true
-
-[node name="Right" type="CollisionShape2D" parent="North/Open"]
-position = Vector2(800, 0)
-shape = SubResource("Open_NS_Segment")
-disabled = true
-
 [node name="Door" parent="North" instance=ExtResource("door_scene")]
 position = Vector2(480, 0)
 
 [node name="South" type="Node2D" parent="."]
-
-[node name="Closed" type="StaticBody2D" parent="South"]
-collision_layer = 8
-collision_mask = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="South/Closed"]
-position = Vector2(480, 1344)
-shape = SubResource("Closed_NS")
-
-[node name="Open" type="StaticBody2D" parent="South"]
-collision_layer = 8
-collision_mask = 0
-
-[node name="Left" type="CollisionShape2D" parent="South/Open"]
-position = Vector2(160, 1344)
-shape = SubResource("Open_NS_Segment")
-disabled = true
-
-[node name="Right" type="CollisionShape2D" parent="South/Open"]
-position = Vector2(800, 1344)
-shape = SubResource("Open_NS_Segment")
-disabled = true
 
 [node name="Door" parent="South" instance=ExtResource("door_scene")]
 position = Vector2(480, 1344)
 
 [node name="West" type="Node2D" parent="."]
 
-[node name="Closed" type="StaticBody2D" parent="West"]
-collision_layer = 8
-collision_mask = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="West/Closed"]
-position = Vector2(0, 672)
-shape = SubResource("Closed_EW")
-
-[node name="Open" type="StaticBody2D" parent="West"]
-collision_layer = 8
-collision_mask = 0
-
-[node name="Top" type="CollisionShape2D" parent="West/Open"]
-position = Vector2(0, 256)
-shape = SubResource("Open_EW_Segment")
-disabled = true
-
-[node name="Bottom" type="CollisionShape2D" parent="West/Open"]
-position = Vector2(0, 1088)
-shape = SubResource("Open_EW_Segment")
-disabled = true
-
 [node name="Door" parent="West" instance=ExtResource("door_vertical_scene")]
 position = Vector2(0, 672)
 
 [node name="East" type="Node2D" parent="."]
-
-[node name="Closed" type="StaticBody2D" parent="East"]
-collision_layer = 8
-collision_mask = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="East/Closed"]
-position = Vector2(960, 672)
-shape = SubResource("Closed_EW")
-
-[node name="Open" type="StaticBody2D" parent="East"]
-collision_layer = 8
-collision_mask = 0
-
-[node name="Top" type="CollisionShape2D" parent="East/Open"]
-position = Vector2(960, 256)
-shape = SubResource("Open_EW_Segment")
-disabled = true
-
-[node name="Bottom" type="CollisionShape2D" parent="East/Open"]
-position = Vector2(960, 1088)
-shape = SubResource("Open_EW_Segment")
-disabled = true
 
 [node name="Door" parent="East" instance=ExtResource("door_vertical_scene")]
 position = Vector2(960, 672)
