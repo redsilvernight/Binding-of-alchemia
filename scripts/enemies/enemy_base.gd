@@ -32,7 +32,7 @@ const AMBIENT_MAX_INTERVAL: float = 10.0
 ## Portée en pixels au-delà de laquelle un mob est jugé "hors de portée
 ## d'écoute" (le son n'est pas spatialisé, cf. AudioManager) -- évite qu'un
 ## mob assis dans une salle pas encore visitée se fasse entendre. Un peu plus
-## d'une salle (cf. game.gd::ROOM_CELL_SIZE, 960x1344).
+## d'une salle (cf. game.gd::ROOM_CELL_SIZE, 1344x960).
 const AMBIENT_RANGE: float = 1400.0
 ## Valeur par défaut = repli générique si un type n'a pas encore reçu son
 ## propre cri (cf. les .tscn qui surchargent cette valeur).

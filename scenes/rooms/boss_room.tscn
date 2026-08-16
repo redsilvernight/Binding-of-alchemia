@@ -6,13 +6,13 @@
 [ext_resource type="PackedScene" path="res://scenes/rooms/door_vertical.tscn" id="door_vertical_scene"]
 
 [sub_resource type="RectangleShape2D" id="Closed_NS"]
-size = Vector2(960, 40)
+size = Vector2(1344, 40)
 
 [sub_resource type="RectangleShape2D" id="Closed_EW"]
-size = Vector2(40, 1344)
+size = Vector2(40, 960)
 
 [sub_resource type="RectangleShape2D" id="RoomTriggerShape"]
-size = Vector2(576, 928)
+size = Vector2(928, 576)
 
 [node name="BossRoom" type="Node2D"]
 script = ExtResource("1_room")
@@ -23,27 +23,27 @@ tile_set = ExtResource("2_tileset")
 [node name="North" type="Node2D" parent="."]
 
 [node name="Door" parent="North" instance=ExtResource("door_scene")]
-position = Vector2(480, 0)
+position = Vector2(672, 0)
 
 [node name="South" type="Node2D" parent="."]
 
 [node name="Door" parent="South" instance=ExtResource("door_scene")]
-position = Vector2(480, 1344)
+position = Vector2(672, 960)
 
 [node name="West" type="Node2D" parent="."]
 
 [node name="Door" parent="West" instance=ExtResource("door_vertical_scene")]
-position = Vector2(0, 672)
+position = Vector2(0, 480)
 
 [node name="East" type="Node2D" parent="."]
 
 [node name="Door" parent="East" instance=ExtResource("door_vertical_scene")]
-position = Vector2(960, 672)
+position = Vector2(1344, 480)
 
 [node name="RoomTrigger" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RoomTrigger"]
-position = Vector2(480, 672)
+position = Vector2(672, 480)
 shape = SubResource("RoomTriggerShape")
 
 [node name="EnemyBoundaries" type="Node2D" parent="."]
@@ -53,7 +53,7 @@ collision_layer = 16
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyBoundaries/North"]
-position = Vector2(480, 0)
+position = Vector2(672, 0)
 shape = SubResource("Closed_NS")
 
 [node name="South" type="StaticBody2D" parent="EnemyBoundaries"]
@@ -61,7 +61,7 @@ collision_layer = 16
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyBoundaries/South"]
-position = Vector2(480, 1344)
+position = Vector2(672, 960)
 shape = SubResource("Closed_NS")
 
 [node name="West" type="StaticBody2D" parent="EnemyBoundaries"]
@@ -69,7 +69,7 @@ collision_layer = 16
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyBoundaries/West"]
-position = Vector2(0, 672)
+position = Vector2(0, 480)
 shape = SubResource("Closed_EW")
 
 [node name="East" type="StaticBody2D" parent="EnemyBoundaries"]
@@ -77,5 +77,5 @@ collision_layer = 16
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyBoundaries/East"]
-position = Vector2(960, 672)
+position = Vector2(1344, 480)
 shape = SubResource("Closed_EW")

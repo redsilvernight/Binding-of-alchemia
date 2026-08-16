@@ -87,11 +87,15 @@ const WANG_ATLAS_BY_CORNERS: Dictionary = {
 ## l'ancienne lecture dynamique de la taille du mur "Closed" (supprimé,
 ## cf. header) maintenant que plus aucun node de la scène ne porte cette
 ## information. Multiple exact de la tuile (64px), cf. _paint_floor().
-const ROOM_WIDTH_PX: int = 960
-const ROOM_HEIGHT_PX: int = 1344
+## Format horizontal (Phase 10.x rework) : plus large que haute, pour
+## correspondre à un viewport 16:9 et éviter que la caméra (sans limit_*,
+## cf. player.gd) ne cadre du vide hors-tuiles sur les côtés d'une salle
+## trop étroite.
+const ROOM_WIDTH_PX: int = 1344
+const ROOM_HEIGHT_PX: int = 960
 ## Largeur/hauteur de chaque porte, en tuiles — doit rester un diviseur commun
 ## qui centre proprement dans _cols/_rows (cf. _paint_walls()). Salles à
-## 15x21 tuiles : (15-5)/2=5 et (21-5)/2=8, donc tout tombe rond.
+## 21x15 tuiles : (21-5)/2=8 et (15-5)/2=5, donc tout tombe rond.
 const DOOR_TILES: int = 5
 ## Tuiles "bord plein" (WANG_ATLAS_BY_CORNERS), utilisées pour forcer un pan
 ## de mur droit aux deux cases qui encadrent une embrasure -- cf.

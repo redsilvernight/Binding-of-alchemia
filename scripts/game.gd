@@ -15,7 +15,7 @@ extends Control
 # Phase 6.1 : toutes les salles ont le même gabarit (modèle grille fixe,
 # cf. DungeonGenerator) — obligatoire pour que les portes de deux salles
 # voisines s'alignent toujours sans avoir à les valider au cas par cas.
-const ROOM_CELL_SIZE: Vector2 = Vector2(960, 1344)
+const ROOM_CELL_SIZE: Vector2 = Vector2(1344, 960)
 # Phase 9 (étages) : BASE_ROOM_COUNT est la taille d'origine (étage 1,
 # inchangée) -- chaque étage suivant ajoute des salles jusqu'à ROOM_COUNT_CAP,
 # cf. _room_count_for_floor. Le plafond évite un donjon ingérable (temps de
