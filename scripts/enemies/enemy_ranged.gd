@@ -26,9 +26,13 @@ func _ready() -> void:
 	# raison que ennemi_test.gd/Player) : seul le nom de l'animation est
 	# répliqué, chaque instance avance ses propres frames localement.
 	sprite.play()
+	health_changed.connect(_on_health_changed)
+	died.connect(_on_death_animation)
 
 func _physics_process(delta: float) -> void:
 	if not multiplayer.is_server():
+		return
+	if is_dead:
 		return
 	state_machine.physics_process(delta)
 	_update_facing(velocity)
@@ -44,7 +48,7 @@ func _update_facing(direction: Vector2) -> void:
 	# EnemyStateRangedAttack qui immobilise l'ennemi pendant le tir
 	# (enemy.move(Vector2.ZERO, 0.0)) la remplace par idle- dès la frame
 	# suivante.
-	if sprite.animation.begins_with("attack") and sprite.is_playing():
+	if (sprite.animation.begins_with("attack") or sprite.animation.begins_with("hit")) and sprite.is_playing():
 		return
 	var is_moving := direction.length() > 0.001
 	if is_moving:
@@ -72,3 +76,19 @@ func fire_at(p_target: Node2D) -> void:
 		"from_position": global_position,
 		"direction": global_position.direction_to(p_target.global_position),
 	})
+
+## Même raisonnement que ennemi_test.gd::_on_health_changed.
+func _on_health_changed(_max_lifepoint: float, lifepoint: float) -> void:
+	if lifepoint <= 0:
+		return
+	if sprite.animation.begins_with("attack"):
+		return
+	sprite.play(StringName("hit-" + FacingDirection.label_for(_last_facing_direction)))
+
+func _on_death_animation() -> void:
+	sprite.play(StringName("death-" + FacingDirection.label_for(_last_facing_direction)))
+
+func _die_and_free() -> void:
+	await sprite.animation_finished
+	if is_instance_valid(self):
+		queue_free()

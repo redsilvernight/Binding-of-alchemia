@@ -17,5 +17,5 @@ shape = SubResource("CircleShape2D_ingr")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(0.4, 1, 0.5, 1)
-scale = Vector2(0.5, 0.5)
+scale = Vector2(1, 1)
 texture = ExtResource("2_tex")

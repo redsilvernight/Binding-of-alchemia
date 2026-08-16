@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="Ingredient" format=3 uid="uid://d3mbfhqltsvht"]
 
 [ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_ytyvu"]
+[ext_resource type="Texture2D" path="res://assets/icons/ingredients/racine_apaisante.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_ytyvu")
+icon = ExtResource("2_icon")
 nom = "Racine Apaisante"
 type_alchimie = 4
 degats_base = -6.0

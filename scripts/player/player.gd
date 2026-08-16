@@ -29,6 +29,10 @@ var unlock_screen: Node = null
 var _spectate_target: Node2D = null
 var _pending_fire_type: String = ""
 var _pending_fire_direction: Vector2 = Vector2.ZERO
+## Phase 9.3 : vrai une fois l'anim death-* terminée -- gate _process_spectating()
+## pour que la caméra reste sur le corps le temps de l'anim au lieu de sauter
+## instantanément sur un coéquipier (cf. _on_died).
+var _death_animation_done: bool = false
 
 func _ready() -> void:
 	super()
@@ -36,6 +40,7 @@ func _ready() -> void:
 	damage_timer.wait_time = invulnerability_duration
 	weapon.projectile_requested.connect(_on_projectile_requested)
 	died.connect(_on_died)
+	health_changed.connect(_on_health_changed)
 	# Doit tourner sur TOUS les pairs (pas seulement l'autorité) : seul le nom
 	# de l'animation est répliqué (Sprite2D:animation), pas l'index de frame --
 	# chaque instance doit faire avancer les frames de sa propre marche
@@ -72,7 +77,10 @@ func _physics_process(_delta: float) -> void:
 	if not is_multiplayer_authority():
 		return
 	if is_dead:
-		_process_spectating()
+		# Caméra figée sur le corps tant que death-* joue (cf. _on_died) --
+		# _process_spectating() ne prend la main qu'une fois l'anim terminée.
+		if _death_animation_done:
+			_process_spectating()
 		return
 	var aim_direction = _get_aim_direction()
 	var input_direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
@@ -150,8 +158,10 @@ func _get_facing_direction(aim_direction: Vector2, input_direction: Vector2) -> 
 ## "Sprite2D:animation", même mécanisme que la position), donc les autres
 ## joueurs voient bien l'orientation, pas seulement le joueur local.
 func _update_facing(direction: Vector2, is_moving: bool) -> void:
-	# Ne pas couper l'animation d'attaque en cours (cf. _try_play_attack_animation).
-	if sprite.animation.begins_with("attack") and sprite.is_playing():
+	# Ne pas couper une animation d'attaque ou de hit en cours (cf.
+	# _try_play_attack_animation / _on_health_changed) : sinon la reprise du
+	# mouvement l'écrase dès la frame suivante (constaté en jeu).
+	if (sprite.animation.begins_with("attack") or sprite.animation.begins_with("hit")) and sprite.is_playing():
 		return
 	if direction.length() < 0.001:
 		return
@@ -307,14 +317,36 @@ func teleport(new_position: Vector2) -> void:
 func kill() -> void:
 	pass
 
+## Tourne sur tous les pairs (died vient de Character._update_health,
+## call_local RPC déjà répliqué identiquement partout). La désactivation de
+## collision reste immédiate (plus aucune interaction physique dès la mort),
+## mais le visuel (sprite caché, bascule spectateur) attend la fin de
+## death-* pour laisser le joueur voir sa propre mort plutôt que de sauter
+## instantanément sur un coéquipier.
 func _on_died() -> void:
-	sprite.visible = false
 	collision_shape.set_deferred("disabled", true)
+	sprite.play(StringName("death-" + FacingDirection.label_for(last_aim_direction)))
+	await sprite.animation_finished
+	if not is_instance_valid(self):
+		return
+	sprite.visible = false
+	_death_animation_done = true
 	if is_multiplayer_authority():
 		_show_spectator_label()
 		_pick_spectate_target()
 		player_camera.position_smoothing_enabled = true
 		player_camera.position_smoothing_speed = 2.5
+
+## Réaction visuelle à un coup non-létal (Phase 9.3). hp<=0 est géré par
+## _on_died via le signal died (émis juste après health_changed dans
+## Character._update_health) -- pas de jouer un hit qui serait de toute façon
+## immédiatement écrasé par l'anim de mort.
+func _on_health_changed(_max_lifepoint: float, lifepoint: float) -> void:
+	if lifepoint <= 0:
+		return
+	if sprite.animation.begins_with("attack"):
+		return
+	sprite.play(StringName("hit-" + FacingDirection.label_for(last_aim_direction)))
 
 func _process_spectating() -> void:
 	if Input.is_action_just_pressed("spectate_next"):

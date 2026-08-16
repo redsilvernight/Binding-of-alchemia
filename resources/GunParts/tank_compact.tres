@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="GunTank" format=3]
 
 [ext_resource type="Script" uid="uid://dnvy32a3exwr" path="res://scripts/weapons/resources/GunTank.gd" id="1_tcomp"]
+[ext_resource type="Texture2D" path="res://assets/icons/weapon_parts/tank_compact.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_tcomp")
+icon = ExtResource("2_icon")
 max_capacity = 60.0
 regen_rate = 6.0
 mixture_cost_per_shot = 10.0

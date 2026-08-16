@@ -2,9 +2,11 @@
 
 [ext_resource type="Resource" uid="uid://bta5wmwxju6di" path="res://resources/Impacts/ImpactDamage.tres" id="1_0yc1r"]
 [ext_resource type="Script" uid="uid://djakeanr5q30h" path="res://scripts/weapons/resources/GunBarrelMixture.gd" id="1_jqy3h"]
+[ext_resource type="Texture2D" path="res://assets/icons/weapon_parts/mixture_barrel_basic.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_jqy3h")
+icon = ExtResource("2_icon")
 fire_rate = 1.0
 damage_multiplier = 1.5
 projectile_speed = 250.0

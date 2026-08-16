@@ -49,4 +49,12 @@ func _update_health(p_max_lifepoint: float, p_lifepoint: float) -> void:
 
 func kill() -> void:
 	if multiplayer.is_server():
-		queue_free()
+		_die_and_free()
+
+## Point d'extension (Phase 9.3) : libère immédiatement par défaut. Les
+## sous-classes avec une animation de mort peuvent surcharger pour l'attendre
+## avant de se libérer réellement -- is_dead bloque déjà toute interaction
+## entre-temps (take_damage, ciblage ennemi via _closest_living_player), donc
+## le nœud peut rester dans l'arbre le temps de l'anim sans risque.
+func _die_and_free() -> void:
+	queue_free()

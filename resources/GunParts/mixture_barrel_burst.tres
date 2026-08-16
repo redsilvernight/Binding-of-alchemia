@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="GunBarrelMixture" format=3]
 
 [ext_resource type="Script" uid="uid://djakeanr5q30h" path="res://scripts/weapons/resources/GunBarrelMixture.gd" id="1_mburst"]
+[ext_resource type="Texture2D" path="res://assets/icons/weapon_parts/mixture_barrel_burst.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_mburst")
+icon = ExtResource("2_icon")
 fire_rate = 0.25
 damage_multiplier = 0.5
 projectile_speed = 320.0

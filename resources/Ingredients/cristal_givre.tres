@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="Ingredient" format=3 uid="uid://c5kfc6v4kdgef"]
 
 [ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_ttp7m"]
+[ext_resource type="Texture2D" path="res://assets/icons/ingredients/cristal_givre.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_ttp7m")
+icon = ExtResource("2_icon")
 nom = "Cristal de Givre"
 type_alchimie = 1
 degats_base = 3.0

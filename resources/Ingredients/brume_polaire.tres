@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="Ingredient" format=3]
 
 [ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_bpola"]
+[ext_resource type="Texture2D" path="res://assets/icons/ingredients/brume_polaire.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_bpola")
+icon = ExtResource("2_icon")
 nom = "Brume Polaire"
 type_alchimie = 1
 degats_base = 4.0

@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="GunBarrelWater" format=3]
 
 [ext_resource type="Script" uid="uid://bhrpkdbq7loqu" path="res://scripts/weapons/resources/GunBarrelWater.gd" id="1_wsnip"]
+[ext_resource type="Texture2D" path="res://assets/icons/weapon_parts/water_barel_sniper.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_wsnip")
+icon = ExtResource("2_icon")
 fire_rate = 0.15
 base_damage = 9.0
 projectile_speed = 550.0

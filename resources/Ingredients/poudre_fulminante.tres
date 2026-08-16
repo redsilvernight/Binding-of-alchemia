@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="Ingredient" format=3]
 
 [ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_pfulm"]
+[ext_resource type="Texture2D" path="res://assets/icons/ingredients/poudre_fulminante.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_pfulm")
+icon = ExtResource("2_icon")
 nom = "Poudre Fulminante"
 type_alchimie = 5
 degats_base = 7.0

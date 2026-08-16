@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="GunBarrelWater" format=3]
 
 [ext_resource type="Script" uid="uid://bhrpkdbq7loqu" path="res://scripts/weapons/resources/GunBarrelWater.gd" id="1_wburst"]
+[ext_resource type="Texture2D" path="res://assets/icons/weapon_parts/water_barel_burst.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_wburst")
+icon = ExtResource("2_icon")
 fire_rate = 0.5
 base_damage = 4.0
 projectile_speed = 380.0

@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="GunCore" format=3]
 
 [ext_resource type="Script" uid="uid://db7vhbef8vqw1" path="res://scripts/weapons/resources/GunCore.gd" id="1_csnipe"]
+[ext_resource type="Texture2D" path="res://assets/icons/weapon_parts/core_sniper.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_csnipe")
+icon = ExtResource("2_icon")
 range_modifier = 200.0
 base_damage = 2.0
 projectile_speed_modifier = 2.2

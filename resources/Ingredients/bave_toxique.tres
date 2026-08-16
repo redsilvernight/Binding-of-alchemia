@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="Ingredient" format=3 uid="uid://coejpfq6frinj"]
 
 [ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_xh3le"]
+[ext_resource type="Texture2D" path="res://assets/icons/ingredients/bave_toxique.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_xh3le")
+icon = ExtResource("2_icon")
 nom = "Bave Toxique"
 type_alchimie = 2
 degats_base = 2.0

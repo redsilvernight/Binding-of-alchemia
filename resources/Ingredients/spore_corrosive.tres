@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="Ingredient" format=3]
 
 [ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_spcor"]
+[ext_resource type="Texture2D" path="res://assets/icons/ingredients/spore_corrosive.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_spcor")
+icon = ExtResource("2_icon")
 nom = "Spore Corrosive"
 type_alchimie = 2
 degats_base = 1.5

@@ -13,13 +13,27 @@ extends Area2D
 ## pas de coordination réseau nécessaire).
 const PICKUP_DELAY: float = 0.3
 
+@onready var sprite: Sprite2D = $Sprite2D
+
 
 func _ready() -> void:
 	monitoring = false
 	body_entered.connect(_on_body_entered)
+	_apply_icon()
 	await get_tree().create_timer(PICKUP_DELAY).timeout
 	if is_instance_valid(self):
 		monitoring = true
+
+
+## item_resource porte son propre icon (Ingredient, Phase 9.3) -- sinon on
+## garde le sprite placeholder déjà posé dans la scène (couleur par item_type).
+func _apply_icon() -> void:
+	if item_resource == null or not ("icon" in item_resource):
+		return
+	var icon: Texture2D = item_resource.icon
+	if icon:
+		sprite.texture = icon
+		sprite.modulate = Color.WHITE
 
 
 func _on_body_entered(body: Node2D) -> void:

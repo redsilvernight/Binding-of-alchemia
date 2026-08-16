@@ -35,9 +35,13 @@ func _ready() -> void:
 	# raison que les autres ennemis) : seul le nom de l'animation est
 	# répliqué, chaque instance avance ses propres frames localement.
 	sprite.play()
+	health_changed.connect(_on_health_changed)
+	died.connect(_on_death_animation)
 
 func _physics_process(delta: float) -> void:
 	if not multiplayer.is_server():
+		return
+	if is_dead:
 		return
 	state_machine.physics_process(delta)
 	_update_facing(velocity)
@@ -48,9 +52,10 @@ func _physics_process(delta: float) -> void:
 ## (EnemyStateRangedAttack) alterne walk-*/idle-* selon qu'il se
 ## positionne ou qu'il s'arrête pour tirer.
 func _update_facing(direction: Vector2) -> void:
-	# Ne pas couper l'animation d'attaque en cours (cf. _on_collision_area_body_entered
-	# phase 1 / fire_at phase 2) — même raisonnement que enemy_ranged.gd.
-	if sprite.animation.begins_with("attack") and sprite.is_playing():
+	# Ne pas couper une animation d'attaque ou de hit en cours (cf.
+	# _on_collision_area_body_entered phase 1 / fire_at phase 2 / _on_health_changed)
+	# — même raisonnement que enemy_ranged.gd.
+	if (sprite.animation.begins_with("attack") or sprite.animation.begins_with("hit")) and sprite.is_playing():
 		return
 	var is_moving := direction.length() > 0.001
 	if is_moving:
@@ -68,6 +73,8 @@ func _update_target() -> void:
 ## produire normalement, mais la garde évite un coup gratuit si un joueur
 ## fonce dedans pendant la transition.
 func _on_collision_area_body_entered(body: Node2D) -> void:
+	if is_dead:
+		return
 	if _phase != 1:
 		return
 	if body.is_in_group("Players"):
@@ -108,3 +115,22 @@ func take_damage(degat: float) -> void:
 func _rpc_notify_phase(phase: int) -> void:
 	if phase == 2:
 		modulate = Color(1.0, 0.55, 0.55)
+
+## Même raisonnement que ennemi_test.gd::_on_health_changed -- un seul jeu de
+## sprites hit/death, pas de variante par phase (même décision que pour
+## attack, cf. direction_artistique.md : create_character_state jugé trop
+## coûteux pour la phase 2, la teinte rouge suffit à la signaler).
+func _on_health_changed(_max_lifepoint: float, lifepoint: float) -> void:
+	if lifepoint <= 0:
+		return
+	if sprite.animation.begins_with("attack"):
+		return
+	sprite.play(StringName("hit-" + FacingDirection.label_for(_last_facing_direction)))
+
+func _on_death_animation() -> void:
+	sprite.play(StringName("death-" + FacingDirection.label_for(_last_facing_direction)))
+
+func _die_and_free() -> void:
+	await sprite.animation_finished
+	if is_instance_valid(self):
+		queue_free()
