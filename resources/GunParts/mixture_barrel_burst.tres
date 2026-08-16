@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("1_mburst")
 icon = ExtResource("2_icon")
-fire_rate = 0.25
-damage_multiplier = 0.5
+fire_rate = 0.7
+damage_multiplier = 3.5
 projectile_speed = 320.0
 metadata/_custom_type_script = "uid://djakeanr5q30h"
