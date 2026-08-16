@@ -4,8 +4,8 @@
 [ext_resource type="SpriteFrames" path="res://resources/sprite_frames/enemy_ranged_gunner.tres" id="2"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_6qewl"]
-radius = 58.0
-height = 188.0
+radius = 52.0
+height = 216.0
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1"]
 properties/0/path = NodePath(".:position")
@@ -37,7 +37,7 @@ animation = &"walk-north"
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=195439243]
-position = Vector2(-2, 6)
+position = Vector2(4, 2)
 shape = SubResource("CapsuleShape2D_6qewl")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=21424727]

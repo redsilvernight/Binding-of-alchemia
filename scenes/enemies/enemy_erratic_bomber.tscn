@@ -3,8 +3,9 @@
 [ext_resource type="Script" uid="uid://c2w5867h8xa7q" path="res://scripts/enemies/enemy_erratic.gd" id="1"]
 [ext_resource type="SpriteFrames" path="res://resources/sprite_frames/enemy_erratic_bomber.tres" id="2"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_vqi5h"]
-radius = 100.07997
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_vqi5h"]
+radius = 73.33333
+height = 209.99998
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1"]
 properties/0/path = NodePath(".:position")
@@ -32,17 +33,17 @@ animation = &"walk-south"
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=62059913]
-position = Vector2(-5, 8.333333)
-shape = SubResource("CircleShape2D_vqi5h")
+position = Vector2(-5, 10)
+shape = SubResource("CapsuleShape2D_vqi5h")
 metadata/_edit_lock_ = true
 
 [node name="CollisionArea" type="Area2D" parent="." unique_id=118175451]
 collision_layer = 2
 metadata/_edit_lock_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea" unique_id=1710211028]
-position = Vector2(-5, 8.333333)
-shape = SubResource("CircleShape2D_vqi5h")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea" unique_id=237224727]
+position = Vector2(-5, 10)
+shape = SubResource("CapsuleShape2D_vqi5h")
 metadata/_edit_lock_ = true
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1109810406]

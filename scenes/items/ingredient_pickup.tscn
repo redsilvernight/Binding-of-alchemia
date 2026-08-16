@@ -6,16 +6,12 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_ingr"]
 radius = 18.0
 
-[node name="IngredientPickup" type="Area2D"]
-collision_layer = 1
-collision_mask = 1
+[node name="IngredientPickup" type="Area2D" unique_id=1398858738]
 script = ExtResource("1_pickup")
-item_type = "ingredient"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=895367891]
 shape = SubResource("CircleShape2D_ingr")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1946038522]
 modulate = Color(0.4, 1, 0.5, 1)
-scale = Vector2(1, 1)
 texture = ExtResource("2_tex")

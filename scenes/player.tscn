@@ -1,183 +1,244 @@
 [gd_scene format=3 uid="uid://dpmrxpsqvhlqr"]
 
 [ext_resource type="Script" uid="uid://b5h016j8mv0m5" path="res://scripts/player/player.gd" id="1_g2els"]
-[ext_resource type="Texture2D" path="res://assets/player/Idle/south.png" id="10_idle_south"]
-[ext_resource type="Texture2D" path="res://assets/player/Idle/south-east.png" id="10_idle_south_east"]
-[ext_resource type="Texture2D" path="res://assets/player/Idle/east.png" id="10_idle_east"]
-[ext_resource type="Texture2D" path="res://assets/player/Idle/north-east.png" id="10_idle_north_east"]
-[ext_resource type="Texture2D" path="res://assets/player/Idle/north.png" id="10_idle_north"]
-[ext_resource type="Texture2D" path="res://assets/player/Idle/north-west.png" id="10_idle_north_west"]
-[ext_resource type="Texture2D" path="res://assets/player/Idle/west.png" id="10_idle_west"]
-[ext_resource type="Texture2D" path="res://assets/player/Idle/south-west.png" id="10_idle_south_west"]
-[ext_resource type="Texture2D" path="res://assets/player/walk/South.png" id="20_walk_south"]
-[ext_resource type="Texture2D" path="res://assets/player/walk/South-East.png" id="20_walk_south_east"]
-[ext_resource type="Texture2D" path="res://assets/player/walk/East.png" id="20_walk_east"]
-[ext_resource type="Texture2D" path="res://assets/player/walk/North-East.png" id="20_walk_north_east"]
-[ext_resource type="Texture2D" path="res://assets/player/walk/North.png" id="20_walk_north"]
-[ext_resource type="Texture2D" path="res://assets/player/walk/North-West.png" id="20_walk_north_west"]
-[ext_resource type="Texture2D" path="res://assets/player/walk/West.png" id="20_walk_west"]
-[ext_resource type="Texture2D" path="res://assets/player/walk/South-West.png" id="20_walk_south_west"]
 [ext_resource type="Script" uid="uid://co8bcau5bgddv" path="res://scripts/weapons/weapon.gd" id="3_qhqgy"]
 [ext_resource type="Resource" uid="uid://bymni02kbmgtn" path="res://resources/GunParts/water_barel_fast.tres" id="4_fjrip"]
 [ext_resource type="Resource" uid="uid://tncetr6q4x53" path="res://resources/GunParts/mixture_barrel_basic.tres" id="5_smehm"]
 [ext_resource type="Resource" uid="uid://mwcvmsgsfh38" path="res://resources/GunParts/tank_basic.tres" id="6_ur7pv"]
 [ext_resource type="Resource" uid="uid://doe4xdbp6v482" path="res://resources/GunParts/core_basic.tres" id="7_y4r1p"]
 [ext_resource type="Script" uid="uid://2jlnyyd5liv1" path="res://scripts/inventory/inventory.gd" id="9_ur7pv"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south/0.png" id="atk_south_0"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south/1.png" id="atk_south_1"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south/2.png" id="atk_south_2"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south/3.png" id="atk_south_3"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south/4.png" id="atk_south_4"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south/5.png" id="atk_south_5"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south-east/0.png" id="atk_south_east_0"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south-east/1.png" id="atk_south_east_1"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south-east/2.png" id="atk_south_east_2"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south-east/3.png" id="atk_south_east_3"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south-east/4.png" id="atk_south_east_4"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south-east/5.png" id="atk_south_east_5"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/east/0.png" id="atk_east_0"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/east/1.png" id="atk_east_1"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/east/2.png" id="atk_east_2"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/east/3.png" id="atk_east_3"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/east/4.png" id="atk_east_4"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/east/5.png" id="atk_east_5"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north-east/0.png" id="atk_north_east_0"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north-east/1.png" id="atk_north_east_1"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north-east/2.png" id="atk_north_east_2"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north-east/3.png" id="atk_north_east_3"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north-east/4.png" id="atk_north_east_4"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north-east/5.png" id="atk_north_east_5"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north/0.png" id="atk_north_0"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north/1.png" id="atk_north_1"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north/2.png" id="atk_north_2"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north/3.png" id="atk_north_3"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north/4.png" id="atk_north_4"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north/5.png" id="atk_north_5"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north-west/0.png" id="atk_north_west_0"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north-west/1.png" id="atk_north_west_1"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north-west/2.png" id="atk_north_west_2"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north-west/3.png" id="atk_north_west_3"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north-west/4.png" id="atk_north_west_4"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/north-west/5.png" id="atk_north_west_5"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/west/0.png" id="atk_west_0"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/west/1.png" id="atk_west_1"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/west/2.png" id="atk_west_2"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/west/3.png" id="atk_west_3"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/west/4.png" id="atk_west_4"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/west/5.png" id="atk_west_5"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south-west/0.png" id="atk_south_west_0"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south-west/1.png" id="atk_south_west_1"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south-west/2.png" id="atk_south_west_2"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south-west/3.png" id="atk_south_west_3"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south-west/4.png" id="atk_south_west_4"]
-[ext_resource type="Texture2D" path="res://assets/player/attack/south-west/5.png" id="atk_south_west_5"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south/0.png" id="hit_south_0"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south/1.png" id="hit_south_1"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south/2.png" id="hit_south_2"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south/3.png" id="hit_south_3"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south/4.png" id="hit_south_4"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south/5.png" id="hit_south_5"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south-east/0.png" id="hit_south_east_0"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south-east/1.png" id="hit_south_east_1"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south-east/2.png" id="hit_south_east_2"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south-east/3.png" id="hit_south_east_3"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south-east/4.png" id="hit_south_east_4"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south-east/5.png" id="hit_south_east_5"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/east/0.png" id="hit_east_0"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/east/1.png" id="hit_east_1"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/east/2.png" id="hit_east_2"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/east/3.png" id="hit_east_3"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/east/4.png" id="hit_east_4"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/east/5.png" id="hit_east_5"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north-east/0.png" id="hit_north_east_0"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north-east/1.png" id="hit_north_east_1"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north-east/2.png" id="hit_north_east_2"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north-east/3.png" id="hit_north_east_3"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north-east/4.png" id="hit_north_east_4"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north-east/5.png" id="hit_north_east_5"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north/0.png" id="hit_north_0"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north/1.png" id="hit_north_1"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north/2.png" id="hit_north_2"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north/3.png" id="hit_north_3"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north/4.png" id="hit_north_4"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north/5.png" id="hit_north_5"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north-west/0.png" id="hit_north_west_0"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north-west/1.png" id="hit_north_west_1"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north-west/2.png" id="hit_north_west_2"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north-west/3.png" id="hit_north_west_3"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north-west/4.png" id="hit_north_west_4"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/north-west/5.png" id="hit_north_west_5"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/west/0.png" id="hit_west_0"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/west/1.png" id="hit_west_1"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/west/2.png" id="hit_west_2"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/west/3.png" id="hit_west_3"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/west/4.png" id="hit_west_4"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/west/5.png" id="hit_west_5"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south-west/0.png" id="hit_south_west_0"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south-west/1.png" id="hit_south_west_1"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south-west/2.png" id="hit_south_west_2"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south-west/3.png" id="hit_south_west_3"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south-west/4.png" id="hit_south_west_4"]
-[ext_resource type="Texture2D" path="res://assets/player/hit/south-west/5.png" id="hit_south_west_5"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south/0.png" id="death_south_0"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south/1.png" id="death_south_1"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south/2.png" id="death_south_2"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south/3.png" id="death_south_3"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south/4.png" id="death_south_4"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south/5.png" id="death_south_5"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south/6.png" id="death_south_6"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south-east/0.png" id="death_south_east_0"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south-east/1.png" id="death_south_east_1"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south-east/2.png" id="death_south_east_2"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south-east/3.png" id="death_south_east_3"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south-east/4.png" id="death_south_east_4"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south-east/5.png" id="death_south_east_5"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south-east/6.png" id="death_south_east_6"]
-[ext_resource type="Texture2D" path="res://assets/player/death/east/0.png" id="death_east_0"]
-[ext_resource type="Texture2D" path="res://assets/player/death/east/1.png" id="death_east_1"]
-[ext_resource type="Texture2D" path="res://assets/player/death/east/2.png" id="death_east_2"]
-[ext_resource type="Texture2D" path="res://assets/player/death/east/3.png" id="death_east_3"]
-[ext_resource type="Texture2D" path="res://assets/player/death/east/4.png" id="death_east_4"]
-[ext_resource type="Texture2D" path="res://assets/player/death/east/5.png" id="death_east_5"]
-[ext_resource type="Texture2D" path="res://assets/player/death/east/6.png" id="death_east_6"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north-east/0.png" id="death_north_east_0"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north-east/1.png" id="death_north_east_1"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north-east/2.png" id="death_north_east_2"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north-east/3.png" id="death_north_east_3"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north-east/4.png" id="death_north_east_4"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north-east/5.png" id="death_north_east_5"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north-east/6.png" id="death_north_east_6"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north/0.png" id="death_north_0"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north/1.png" id="death_north_1"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north/2.png" id="death_north_2"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north/3.png" id="death_north_3"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north/4.png" id="death_north_4"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north/5.png" id="death_north_5"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north/6.png" id="death_north_6"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north-west/0.png" id="death_north_west_0"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north-west/1.png" id="death_north_west_1"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north-west/2.png" id="death_north_west_2"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north-west/3.png" id="death_north_west_3"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north-west/4.png" id="death_north_west_4"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north-west/5.png" id="death_north_west_5"]
-[ext_resource type="Texture2D" path="res://assets/player/death/north-west/6.png" id="death_north_west_6"]
-[ext_resource type="Texture2D" path="res://assets/player/death/west/0.png" id="death_west_0"]
-[ext_resource type="Texture2D" path="res://assets/player/death/west/1.png" id="death_west_1"]
-[ext_resource type="Texture2D" path="res://assets/player/death/west/2.png" id="death_west_2"]
-[ext_resource type="Texture2D" path="res://assets/player/death/west/3.png" id="death_west_3"]
-[ext_resource type="Texture2D" path="res://assets/player/death/west/4.png" id="death_west_4"]
-[ext_resource type="Texture2D" path="res://assets/player/death/west/5.png" id="death_west_5"]
-[ext_resource type="Texture2D" path="res://assets/player/death/west/6.png" id="death_west_6"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south-west/0.png" id="death_south_west_0"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south-west/1.png" id="death_south_west_1"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south-west/2.png" id="death_south_west_2"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south-west/3.png" id="death_south_west_3"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south-west/4.png" id="death_south_west_4"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south-west/5.png" id="death_south_west_5"]
-[ext_resource type="Texture2D" path="res://assets/player/death/south-west/6.png" id="death_south_west_6"]
+[ext_resource type="Texture2D" uid="uid://b51ciqw3xpn74" path="res://assets/player/Idle/east.png" id="10_idle_east"]
+[ext_resource type="Texture2D" uid="uid://dp4rxbpvou06r" path="res://assets/player/Idle/north.png" id="10_idle_north"]
+[ext_resource type="Texture2D" uid="uid://ndwigofxplo3" path="res://assets/player/Idle/north-east.png" id="10_idle_north_east"]
+[ext_resource type="Texture2D" uid="uid://bha7bnxmm6as4" path="res://assets/player/Idle/north-west.png" id="10_idle_north_west"]
+[ext_resource type="Texture2D" uid="uid://buwb8yibbagdm" path="res://assets/player/Idle/south.png" id="10_idle_south"]
+[ext_resource type="Texture2D" uid="uid://1erwoay64tjd" path="res://assets/player/Idle/south-east.png" id="10_idle_south_east"]
+[ext_resource type="Texture2D" uid="uid://vpvarmg0mmww" path="res://assets/player/Idle/south-west.png" id="10_idle_south_west"]
+[ext_resource type="Texture2D" uid="uid://bc76jc7hxhcnn" path="res://assets/player/Idle/west.png" id="10_idle_west"]
+[ext_resource type="Texture2D" uid="uid://1sqvq151hy6" path="res://assets/player/walk/East.png" id="20_walk_east"]
+[ext_resource type="Texture2D" uid="uid://cw1i0kcu86g2q" path="res://assets/player/walk/North.png" id="20_walk_north"]
+[ext_resource type="Texture2D" uid="uid://ihv2hdfepyac" path="res://assets/player/walk/North-East.png" id="20_walk_north_east"]
+[ext_resource type="Texture2D" uid="uid://cgl8f6uowojc7" path="res://assets/player/walk/North-West.png" id="20_walk_north_west"]
+[ext_resource type="Texture2D" uid="uid://bbaqr7vuywo7y" path="res://assets/player/walk/South.png" id="20_walk_south"]
+[ext_resource type="Texture2D" uid="uid://sfuhg4o02pch" path="res://assets/player/walk/South-East.png" id="20_walk_south_east"]
+[ext_resource type="Texture2D" uid="uid://bqwxy48wqp35p" path="res://assets/player/walk/South-West.png" id="20_walk_south_west"]
+[ext_resource type="Texture2D" uid="uid://bv7yre1umnmh2" path="res://assets/player/walk/West.png" id="20_walk_west"]
+[ext_resource type="Texture2D" uid="uid://mg5s1jvp2ux1" path="res://assets/player/attack/east/0.png" id="atk_east_0"]
+[ext_resource type="Texture2D" uid="uid://cth4wp2dvutk0" path="res://assets/player/attack/east/1.png" id="atk_east_1"]
+[ext_resource type="Texture2D" uid="uid://dmnf4nmyu7hi1" path="res://assets/player/attack/east/2.png" id="atk_east_2"]
+[ext_resource type="Texture2D" uid="uid://blx5ah3cjv0dd" path="res://assets/player/attack/east/3.png" id="atk_east_3"]
+[ext_resource type="Texture2D" uid="uid://buje8lqhgbo83" path="res://assets/player/attack/east/4.png" id="atk_east_4"]
+[ext_resource type="Texture2D" uid="uid://dmm8fqko6udlv" path="res://assets/player/attack/east/5.png" id="atk_east_5"]
+[ext_resource type="Texture2D" uid="uid://bp7eajx8hhgbm" path="res://assets/player/attack/north/0.png" id="atk_north_0"]
+[ext_resource type="Texture2D" uid="uid://bspqiesihujbn" path="res://assets/player/attack/north/1.png" id="atk_north_1"]
+[ext_resource type="Texture2D" uid="uid://v0gdgvgnsyp7" path="res://assets/player/attack/north/2.png" id="atk_north_2"]
+[ext_resource type="Texture2D" uid="uid://da0kva7s7xqpv" path="res://assets/player/attack/north/3.png" id="atk_north_3"]
+[ext_resource type="Texture2D" uid="uid://cxlfugruobasv" path="res://assets/player/attack/north/4.png" id="atk_north_4"]
+[ext_resource type="Texture2D" uid="uid://bjjrtcsapv0i7" path="res://assets/player/attack/north/5.png" id="atk_north_5"]
+[ext_resource type="Texture2D" uid="uid://cxqnmi38mibgs" path="res://assets/player/attack/north-east/0.png" id="atk_north_east_0"]
+[ext_resource type="Texture2D" uid="uid://dcfn4t3gw58yo" path="res://assets/player/attack/north-east/1.png" id="atk_north_east_1"]
+[ext_resource type="Texture2D" uid="uid://bj6f3tgageyc" path="res://assets/player/attack/north-east/2.png" id="atk_north_east_2"]
+[ext_resource type="Texture2D" uid="uid://3787urck3w25" path="res://assets/player/attack/north-east/3.png" id="atk_north_east_3"]
+[ext_resource type="Texture2D" uid="uid://bx1maj0wub3k6" path="res://assets/player/attack/north-east/4.png" id="atk_north_east_4"]
+[ext_resource type="Texture2D" uid="uid://se71jen277jd" path="res://assets/player/attack/north-east/5.png" id="atk_north_east_5"]
+[ext_resource type="Texture2D" uid="uid://dmi5l5ijq0j0r" path="res://assets/player/attack/north-west/0.png" id="atk_north_west_0"]
+[ext_resource type="Texture2D" uid="uid://djax6r8gpwcei" path="res://assets/player/attack/north-west/1.png" id="atk_north_west_1"]
+[ext_resource type="Texture2D" uid="uid://dgrsmr2vkcoi1" path="res://assets/player/attack/north-west/2.png" id="atk_north_west_2"]
+[ext_resource type="Texture2D" uid="uid://sowhpgbhcwir" path="res://assets/player/attack/north-west/3.png" id="atk_north_west_3"]
+[ext_resource type="Texture2D" uid="uid://dj2eexdec1iqg" path="res://assets/player/attack/north-west/4.png" id="atk_north_west_4"]
+[ext_resource type="Texture2D" uid="uid://de7ab4pjx4e6n" path="res://assets/player/attack/north-west/5.png" id="atk_north_west_5"]
+[ext_resource type="Texture2D" uid="uid://6hvt06y267ma" path="res://assets/player/attack/south/0.png" id="atk_south_0"]
+[ext_resource type="Texture2D" uid="uid://c41f34rcled2v" path="res://assets/player/attack/south/1.png" id="atk_south_1"]
+[ext_resource type="Texture2D" uid="uid://ci31asb7yoap6" path="res://assets/player/attack/south/2.png" id="atk_south_2"]
+[ext_resource type="Texture2D" uid="uid://dfk6cax4f1at7" path="res://assets/player/attack/south/3.png" id="atk_south_3"]
+[ext_resource type="Texture2D" uid="uid://gp3s3sclo40x" path="res://assets/player/attack/south/4.png" id="atk_south_4"]
+[ext_resource type="Texture2D" uid="uid://c3tnvx052yusp" path="res://assets/player/attack/south/5.png" id="atk_south_5"]
+[ext_resource type="Texture2D" uid="uid://du2qcfl4rac8y" path="res://assets/player/attack/south-east/0.png" id="atk_south_east_0"]
+[ext_resource type="Texture2D" uid="uid://cudedkdmv1w3" path="res://assets/player/attack/south-east/1.png" id="atk_south_east_1"]
+[ext_resource type="Texture2D" uid="uid://ygpfmvu7h6mf" path="res://assets/player/attack/south-east/2.png" id="atk_south_east_2"]
+[ext_resource type="Texture2D" uid="uid://cc4jwspcyyulv" path="res://assets/player/attack/south-east/3.png" id="atk_south_east_3"]
+[ext_resource type="Texture2D" uid="uid://dn5op4det4nos" path="res://assets/player/attack/south-east/4.png" id="atk_south_east_4"]
+[ext_resource type="Texture2D" uid="uid://bljox0m2vk4yq" path="res://assets/player/attack/south-east/5.png" id="atk_south_east_5"]
+[ext_resource type="Texture2D" uid="uid://chj4mkkjkmtnm" path="res://assets/player/attack/south-west/0.png" id="atk_south_west_0"]
+[ext_resource type="Texture2D" uid="uid://b2qffu6k5qtu4" path="res://assets/player/attack/south-west/1.png" id="atk_south_west_1"]
+[ext_resource type="Texture2D" uid="uid://jj58p5olaee1" path="res://assets/player/attack/south-west/2.png" id="atk_south_west_2"]
+[ext_resource type="Texture2D" uid="uid://b6jck445craq2" path="res://assets/player/attack/south-west/3.png" id="atk_south_west_3"]
+[ext_resource type="Texture2D" uid="uid://cutbvuwf6clpc" path="res://assets/player/attack/south-west/4.png" id="atk_south_west_4"]
+[ext_resource type="Texture2D" uid="uid://bfgvep040lo2s" path="res://assets/player/attack/south-west/5.png" id="atk_south_west_5"]
+[ext_resource type="Texture2D" uid="uid://bdsjydvm5uphb" path="res://assets/player/attack/west/0.png" id="atk_west_0"]
+[ext_resource type="Texture2D" uid="uid://pe40fdo32ard" path="res://assets/player/attack/west/1.png" id="atk_west_1"]
+[ext_resource type="Texture2D" uid="uid://btc8ojbx34g1n" path="res://assets/player/attack/west/2.png" id="atk_west_2"]
+[ext_resource type="Texture2D" uid="uid://ce65iqnegvh3j" path="res://assets/player/attack/west/3.png" id="atk_west_3"]
+[ext_resource type="Texture2D" uid="uid://dwgl6bs211ff7" path="res://assets/player/attack/west/4.png" id="atk_west_4"]
+[ext_resource type="Texture2D" uid="uid://8c25fdvyeweh" path="res://assets/player/attack/west/5.png" id="atk_west_5"]
+[ext_resource type="Texture2D" uid="uid://1ub1oqn6uym8" path="res://assets/player/death/east/0.png" id="death_east_0"]
+[ext_resource type="Texture2D" uid="uid://dkemk38b378fp" path="res://assets/player/death/east/1.png" id="death_east_1"]
+[ext_resource type="Texture2D" uid="uid://b87xnbpblps4l" path="res://assets/player/death/east/2.png" id="death_east_2"]
+[ext_resource type="Texture2D" uid="uid://cyr056ddsb4wl" path="res://assets/player/death/east/3.png" id="death_east_3"]
+[ext_resource type="Texture2D" uid="uid://dotv2v4unywcr" path="res://assets/player/death/east/4.png" id="death_east_4"]
+[ext_resource type="Texture2D" uid="uid://dvko87uh1sdb1" path="res://assets/player/death/east/5.png" id="death_east_5"]
+[ext_resource type="Texture2D" uid="uid://yw11uode5r0u" path="res://assets/player/death/east/6.png" id="death_east_6"]
+[ext_resource type="Texture2D" uid="uid://cywi0ipuwkyxv" path="res://assets/player/death/north/0.png" id="death_north_0"]
+[ext_resource type="Texture2D" uid="uid://bdfbwclre5v6s" path="res://assets/player/death/north/1.png" id="death_north_1"]
+[ext_resource type="Texture2D" uid="uid://rc4xeu5knyse" path="res://assets/player/death/north/2.png" id="death_north_2"]
+[ext_resource type="Texture2D" uid="uid://rio03o44dhvp" path="res://assets/player/death/north/3.png" id="death_north_3"]
+[ext_resource type="Texture2D" uid="uid://cb0yvkd7acpcl" path="res://assets/player/death/north/4.png" id="death_north_4"]
+[ext_resource type="Texture2D" uid="uid://dd8hihlx8b48t" path="res://assets/player/death/north/5.png" id="death_north_5"]
+[ext_resource type="Texture2D" uid="uid://cb0is7ghrh25p" path="res://assets/player/death/north/6.png" id="death_north_6"]
+[ext_resource type="Texture2D" uid="uid://btsqjdlpj5f6h" path="res://assets/player/death/north-east/0.png" id="death_north_east_0"]
+[ext_resource type="Texture2D" uid="uid://bdh25qq6v7vd5" path="res://assets/player/death/north-east/1.png" id="death_north_east_1"]
+[ext_resource type="Texture2D" uid="uid://xyxkloq6lqj7" path="res://assets/player/death/north-east/2.png" id="death_north_east_2"]
+[ext_resource type="Texture2D" uid="uid://dkl4m0g1usfrc" path="res://assets/player/death/north-east/3.png" id="death_north_east_3"]
+[ext_resource type="Texture2D" uid="uid://idks2acxepl1" path="res://assets/player/death/north-east/4.png" id="death_north_east_4"]
+[ext_resource type="Texture2D" uid="uid://cvfnrl8202oy4" path="res://assets/player/death/north-east/5.png" id="death_north_east_5"]
+[ext_resource type="Texture2D" uid="uid://2ddb16wej6mn" path="res://assets/player/death/north-east/6.png" id="death_north_east_6"]
+[ext_resource type="Texture2D" uid="uid://dnqx5m1venunm" path="res://assets/player/death/north-west/0.png" id="death_north_west_0"]
+[ext_resource type="Texture2D" uid="uid://dudf6revr3yr7" path="res://assets/player/death/north-west/1.png" id="death_north_west_1"]
+[ext_resource type="Texture2D" uid="uid://bgb5i0vhqhdf5" path="res://assets/player/death/north-west/2.png" id="death_north_west_2"]
+[ext_resource type="Texture2D" uid="uid://fbmna8o38a2n" path="res://assets/player/death/north-west/3.png" id="death_north_west_3"]
+[ext_resource type="Texture2D" uid="uid://bedsgarom0et0" path="res://assets/player/death/north-west/4.png" id="death_north_west_4"]
+[ext_resource type="Texture2D" uid="uid://pt5seovbcf1d" path="res://assets/player/death/north-west/5.png" id="death_north_west_5"]
+[ext_resource type="Texture2D" uid="uid://b70urpcrfl4ul" path="res://assets/player/death/north-west/6.png" id="death_north_west_6"]
+[ext_resource type="Texture2D" uid="uid://dx0pfa28vre5y" path="res://assets/player/death/south/0.png" id="death_south_0"]
+[ext_resource type="Texture2D" uid="uid://bn6p3fnjwtu3w" path="res://assets/player/death/south/1.png" id="death_south_1"]
+[ext_resource type="Texture2D" uid="uid://vv2ljyaxheb0" path="res://assets/player/death/south/2.png" id="death_south_2"]
+[ext_resource type="Texture2D" uid="uid://blyv6cta713p7" path="res://assets/player/death/south/3.png" id="death_south_3"]
+[ext_resource type="Texture2D" uid="uid://c1210wrycmwpj" path="res://assets/player/death/south/4.png" id="death_south_4"]
+[ext_resource type="Texture2D" uid="uid://b01jpfogkiekm" path="res://assets/player/death/south/5.png" id="death_south_5"]
+[ext_resource type="Texture2D" uid="uid://3ailhr06n22b" path="res://assets/player/death/south/6.png" id="death_south_6"]
+[ext_resource type="Texture2D" uid="uid://c3u5onrg1j8ay" path="res://assets/player/death/south-east/0.png" id="death_south_east_0"]
+[ext_resource type="Texture2D" uid="uid://bbgwhipwtbgn4" path="res://assets/player/death/south-east/1.png" id="death_south_east_1"]
+[ext_resource type="Texture2D" uid="uid://cy8mvru5116vc" path="res://assets/player/death/south-east/2.png" id="death_south_east_2"]
+[ext_resource type="Texture2D" uid="uid://mwebie1a4oep" path="res://assets/player/death/south-east/3.png" id="death_south_east_3"]
+[ext_resource type="Texture2D" uid="uid://er1mmdqqcv06" path="res://assets/player/death/south-east/4.png" id="death_south_east_4"]
+[ext_resource type="Texture2D" uid="uid://bxfu0uvviu2f8" path="res://assets/player/death/south-east/5.png" id="death_south_east_5"]
+[ext_resource type="Texture2D" uid="uid://bwawv3k8fh6cj" path="res://assets/player/death/south-east/6.png" id="death_south_east_6"]
+[ext_resource type="Texture2D" uid="uid://y37g78u0qt5a" path="res://assets/player/death/south-west/0.png" id="death_south_west_0"]
+[ext_resource type="Texture2D" uid="uid://dhpcqr4r7u427" path="res://assets/player/death/south-west/1.png" id="death_south_west_1"]
+[ext_resource type="Texture2D" uid="uid://dus6i34uivyld" path="res://assets/player/death/south-west/2.png" id="death_south_west_2"]
+[ext_resource type="Texture2D" uid="uid://dfxvc2glfipwo" path="res://assets/player/death/south-west/3.png" id="death_south_west_3"]
+[ext_resource type="Texture2D" uid="uid://hoang7yn62bo" path="res://assets/player/death/south-west/4.png" id="death_south_west_4"]
+[ext_resource type="Texture2D" uid="uid://66ebv614vhe0" path="res://assets/player/death/south-west/5.png" id="death_south_west_5"]
+[ext_resource type="Texture2D" uid="uid://dbyosaxsdhbtk" path="res://assets/player/death/south-west/6.png" id="death_south_west_6"]
+[ext_resource type="Texture2D" uid="uid://wdlllwlmiyb3" path="res://assets/player/death/west/0.png" id="death_west_0"]
+[ext_resource type="Texture2D" uid="uid://b6jm5r2l8inpw" path="res://assets/player/death/west/1.png" id="death_west_1"]
+[ext_resource type="Texture2D" uid="uid://cqh7k8yg3bgip" path="res://assets/player/death/west/2.png" id="death_west_2"]
+[ext_resource type="Texture2D" uid="uid://cbxwjb87fnacl" path="res://assets/player/death/west/3.png" id="death_west_3"]
+[ext_resource type="Texture2D" uid="uid://8flq4gr4ygoy" path="res://assets/player/death/west/4.png" id="death_west_4"]
+[ext_resource type="Texture2D" uid="uid://bv2ggmsx6n6sf" path="res://assets/player/death/west/5.png" id="death_west_5"]
+[ext_resource type="Texture2D" uid="uid://v8qrwqssqtu3" path="res://assets/player/death/west/6.png" id="death_west_6"]
+[ext_resource type="Texture2D" uid="uid://e7fe5nn7mc75" path="res://assets/player/hit/east/0.png" id="hit_east_0"]
+[ext_resource type="Texture2D" uid="uid://120adh8uhcdf" path="res://assets/player/hit/east/1.png" id="hit_east_1"]
+[ext_resource type="Texture2D" uid="uid://hx0712gtretp" path="res://assets/player/hit/east/2.png" id="hit_east_2"]
+[ext_resource type="Texture2D" uid="uid://ciuj5l8v0w3gr" path="res://assets/player/hit/east/3.png" id="hit_east_3"]
+[ext_resource type="Texture2D" uid="uid://dfqty2vt6givi" path="res://assets/player/hit/east/4.png" id="hit_east_4"]
+[ext_resource type="Texture2D" uid="uid://b144nj4ufqpra" path="res://assets/player/hit/east/5.png" id="hit_east_5"]
+[ext_resource type="Texture2D" uid="uid://ci7bpkaan5tc1" path="res://assets/player/hit/north/0.png" id="hit_north_0"]
+[ext_resource type="Texture2D" uid="uid://q6ibi2dfn7ss" path="res://assets/player/hit/north/1.png" id="hit_north_1"]
+[ext_resource type="Texture2D" uid="uid://d1ouici1kwd65" path="res://assets/player/hit/north/2.png" id="hit_north_2"]
+[ext_resource type="Texture2D" uid="uid://ba1vdnbtdduk1" path="res://assets/player/hit/north/3.png" id="hit_north_3"]
+[ext_resource type="Texture2D" uid="uid://b2mfdojgp2oeo" path="res://assets/player/hit/north/4.png" id="hit_north_4"]
+[ext_resource type="Texture2D" uid="uid://bw1ywodangdur" path="res://assets/player/hit/north/5.png" id="hit_north_5"]
+[ext_resource type="Texture2D" uid="uid://dm1hhic1p6ofg" path="res://assets/player/hit/north-east/0.png" id="hit_north_east_0"]
+[ext_resource type="Texture2D" uid="uid://diugtqdwot4pa" path="res://assets/player/hit/north-east/1.png" id="hit_north_east_1"]
+[ext_resource type="Texture2D" uid="uid://bhprjaiyh2saw" path="res://assets/player/hit/north-east/2.png" id="hit_north_east_2"]
+[ext_resource type="Texture2D" uid="uid://d0t6u10vhnwxu" path="res://assets/player/hit/north-east/3.png" id="hit_north_east_3"]
+[ext_resource type="Texture2D" uid="uid://dcm8mrk0j42uf" path="res://assets/player/hit/north-east/4.png" id="hit_north_east_4"]
+[ext_resource type="Texture2D" uid="uid://2y7cps3rplky" path="res://assets/player/hit/north-east/5.png" id="hit_north_east_5"]
+[ext_resource type="Texture2D" uid="uid://d3y4aecypnose" path="res://assets/player/hit/north-west/0.png" id="hit_north_west_0"]
+[ext_resource type="Texture2D" uid="uid://crv23fxelcpdd" path="res://assets/player/hit/north-west/1.png" id="hit_north_west_1"]
+[ext_resource type="Texture2D" uid="uid://cjrxvkqqxvfht" path="res://assets/player/hit/north-west/2.png" id="hit_north_west_2"]
+[ext_resource type="Texture2D" uid="uid://cxmtypaddq2im" path="res://assets/player/hit/north-west/3.png" id="hit_north_west_3"]
+[ext_resource type="Texture2D" uid="uid://d2h53d4g3xhse" path="res://assets/player/hit/north-west/4.png" id="hit_north_west_4"]
+[ext_resource type="Texture2D" uid="uid://cixvfwus3p7xt" path="res://assets/player/hit/north-west/5.png" id="hit_north_west_5"]
+[ext_resource type="Texture2D" uid="uid://c3j2fugf8n0eb" path="res://assets/player/hit/south/0.png" id="hit_south_0"]
+[ext_resource type="Texture2D" uid="uid://bqt8jxcawevhp" path="res://assets/player/hit/south/1.png" id="hit_south_1"]
+[ext_resource type="Texture2D" uid="uid://cd6dp6ecunqbd" path="res://assets/player/hit/south/2.png" id="hit_south_2"]
+[ext_resource type="Texture2D" uid="uid://dr6qsqulnggiu" path="res://assets/player/hit/south/3.png" id="hit_south_3"]
+[ext_resource type="Texture2D" uid="uid://bj65qdgal2x34" path="res://assets/player/hit/south/4.png" id="hit_south_4"]
+[ext_resource type="Texture2D" uid="uid://bbj74yw6cxdcu" path="res://assets/player/hit/south/5.png" id="hit_south_5"]
+[ext_resource type="Texture2D" uid="uid://bqt4krv6fxaci" path="res://assets/player/hit/south-east/0.png" id="hit_south_east_0"]
+[ext_resource type="Texture2D" uid="uid://bfu1qmqd8d8dd" path="res://assets/player/hit/south-east/1.png" id="hit_south_east_1"]
+[ext_resource type="Texture2D" uid="uid://cf4ji2i0347lf" path="res://assets/player/hit/south-east/2.png" id="hit_south_east_2"]
+[ext_resource type="Texture2D" uid="uid://b4bo03dniv482" path="res://assets/player/hit/south-east/3.png" id="hit_south_east_3"]
+[ext_resource type="Texture2D" uid="uid://bgqcwua5nx7x8" path="res://assets/player/hit/south-east/4.png" id="hit_south_east_4"]
+[ext_resource type="Texture2D" uid="uid://dof07eg0xe22h" path="res://assets/player/hit/south-east/5.png" id="hit_south_east_5"]
+[ext_resource type="Texture2D" uid="uid://bcc8i27ponvav" path="res://assets/player/hit/south-west/0.png" id="hit_south_west_0"]
+[ext_resource type="Texture2D" uid="uid://dug3exyr6xubu" path="res://assets/player/hit/south-west/1.png" id="hit_south_west_1"]
+[ext_resource type="Texture2D" uid="uid://dqvgbjadvgus3" path="res://assets/player/hit/south-west/2.png" id="hit_south_west_2"]
+[ext_resource type="Texture2D" uid="uid://df16nyxy65g1u" path="res://assets/player/hit/south-west/3.png" id="hit_south_west_3"]
+[ext_resource type="Texture2D" uid="uid://bvjn4i8gcm8p5" path="res://assets/player/hit/south-west/4.png" id="hit_south_west_4"]
+[ext_resource type="Texture2D" uid="uid://b1arvh335wxbr" path="res://assets/player/hit/south-west/5.png" id="hit_south_west_5"]
+[ext_resource type="Texture2D" uid="uid://bsk6rw8eh3nl3" path="res://assets/player/hit/west/0.png" id="hit_west_0"]
+[ext_resource type="Texture2D" uid="uid://vkflibh8mbr4" path="res://assets/player/hit/west/1.png" id="hit_west_1"]
+[ext_resource type="Texture2D" uid="uid://dmee3ade7nis" path="res://assets/player/hit/west/2.png" id="hit_west_2"]
+[ext_resource type="Texture2D" uid="uid://dtfesniy4qt71" path="res://assets/player/hit/west/3.png" id="hit_west_3"]
+[ext_resource type="Texture2D" uid="uid://cdabvgi0534tp" path="res://assets/player/hit/west/4.png" id="hit_west_4"]
+[ext_resource type="Texture2D" uid="uid://btuavturneghy" path="res://assets/player/hit/west/5.png" id="hit_west_5"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_3vyb7"]
-size = Vector2(128, 128)
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_east_0"]
+atlas = ExtResource("10_idle_east")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_east_1"]
+atlas = ExtResource("10_idle_east")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_east_2"]
+atlas = ExtResource("10_idle_east")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_east_3"]
+atlas = ExtResource("10_idle_east")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_0"]
+atlas = ExtResource("10_idle_north")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_1"]
+atlas = ExtResource("10_idle_north")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_2"]
+atlas = ExtResource("10_idle_north")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_3"]
+atlas = ExtResource("10_idle_north")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_east_0"]
+atlas = ExtResource("10_idle_north_east")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_east_1"]
+atlas = ExtResource("10_idle_north_east")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_east_2"]
+atlas = ExtResource("10_idle_north_east")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_east_3"]
+atlas = ExtResource("10_idle_north_east")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_west_0"]
+atlas = ExtResource("10_idle_north_west")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_west_1"]
+atlas = ExtResource("10_idle_north_west")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_west_2"]
+atlas = ExtResource("10_idle_north_west")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_west_3"]
+atlas = ExtResource("10_idle_north_west")
+region = Rect2(192, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_idle_south_0"]
 atlas = ExtResource("10_idle_south")
@@ -211,68 +272,20 @@ region = Rect2(128, 0, 64, 64)
 atlas = ExtResource("10_idle_south_east")
 region = Rect2(192, 0, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_east_0"]
-atlas = ExtResource("10_idle_east")
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_south_west_0"]
+atlas = ExtResource("10_idle_south_west")
 region = Rect2(0, 0, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_east_1"]
-atlas = ExtResource("10_idle_east")
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_south_west_1"]
+atlas = ExtResource("10_idle_south_west")
 region = Rect2(64, 0, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_east_2"]
-atlas = ExtResource("10_idle_east")
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_south_west_2"]
+atlas = ExtResource("10_idle_south_west")
 region = Rect2(128, 0, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_east_3"]
-atlas = ExtResource("10_idle_east")
-region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_east_0"]
-atlas = ExtResource("10_idle_north_east")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_east_1"]
-atlas = ExtResource("10_idle_north_east")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_east_2"]
-atlas = ExtResource("10_idle_north_east")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_east_3"]
-atlas = ExtResource("10_idle_north_east")
-region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_0"]
-atlas = ExtResource("10_idle_north")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_1"]
-atlas = ExtResource("10_idle_north")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_2"]
-atlas = ExtResource("10_idle_north")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_3"]
-atlas = ExtResource("10_idle_north")
-region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_west_0"]
-atlas = ExtResource("10_idle_north_west")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_west_1"]
-atlas = ExtResource("10_idle_north_west")
-region = Rect2(64, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_west_2"]
-atlas = ExtResource("10_idle_north_west")
-region = Rect2(128, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_north_west_3"]
-atlas = ExtResource("10_idle_north_west")
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_south_west_3"]
+atlas = ExtResource("10_idle_south_west")
 region = Rect2(192, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_idle_west_0"]
@@ -291,21 +304,133 @@ region = Rect2(128, 0, 64, 64)
 atlas = ExtResource("10_idle_west")
 region = Rect2(192, 0, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_south_west_0"]
-atlas = ExtResource("10_idle_south_west")
-region = Rect2(0, 0, 64, 64)
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_0"]
+atlas = ExtResource("20_walk_east")
+region = Rect2(0, 0, 92, 92)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_south_west_1"]
-atlas = ExtResource("10_idle_south_west")
-region = Rect2(64, 0, 64, 64)
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_1"]
+atlas = ExtResource("20_walk_east")
+region = Rect2(92, 0, 92, 92)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_south_west_2"]
-atlas = ExtResource("10_idle_south_west")
-region = Rect2(128, 0, 64, 64)
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_2"]
+atlas = ExtResource("20_walk_east")
+region = Rect2(184, 0, 92, 92)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_idle_south_west_3"]
-atlas = ExtResource("10_idle_south_west")
-region = Rect2(192, 0, 64, 64)
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_3"]
+atlas = ExtResource("20_walk_east")
+region = Rect2(276, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_4"]
+atlas = ExtResource("20_walk_east")
+region = Rect2(368, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_5"]
+atlas = ExtResource("20_walk_east")
+region = Rect2(460, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_6"]
+atlas = ExtResource("20_walk_east")
+region = Rect2(552, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_7"]
+atlas = ExtResource("20_walk_east")
+region = Rect2(644, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_0"]
+atlas = ExtResource("20_walk_north")
+region = Rect2(0, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_1"]
+atlas = ExtResource("20_walk_north")
+region = Rect2(92, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_2"]
+atlas = ExtResource("20_walk_north")
+region = Rect2(184, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_3"]
+atlas = ExtResource("20_walk_north")
+region = Rect2(276, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_4"]
+atlas = ExtResource("20_walk_north")
+region = Rect2(368, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_5"]
+atlas = ExtResource("20_walk_north")
+region = Rect2(460, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_6"]
+atlas = ExtResource("20_walk_north")
+region = Rect2(552, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_7"]
+atlas = ExtResource("20_walk_north")
+region = Rect2(644, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_0"]
+atlas = ExtResource("20_walk_north_east")
+region = Rect2(0, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_1"]
+atlas = ExtResource("20_walk_north_east")
+region = Rect2(92, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_2"]
+atlas = ExtResource("20_walk_north_east")
+region = Rect2(184, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_3"]
+atlas = ExtResource("20_walk_north_east")
+region = Rect2(276, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_4"]
+atlas = ExtResource("20_walk_north_east")
+region = Rect2(368, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_5"]
+atlas = ExtResource("20_walk_north_east")
+region = Rect2(460, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_6"]
+atlas = ExtResource("20_walk_north_east")
+region = Rect2(552, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_7"]
+atlas = ExtResource("20_walk_north_east")
+region = Rect2(644, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_0"]
+atlas = ExtResource("20_walk_north_west")
+region = Rect2(0, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_1"]
+atlas = ExtResource("20_walk_north_west")
+region = Rect2(92, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_2"]
+atlas = ExtResource("20_walk_north_west")
+region = Rect2(184, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_3"]
+atlas = ExtResource("20_walk_north_west")
+region = Rect2(276, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_4"]
+atlas = ExtResource("20_walk_north_west")
+region = Rect2(368, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_5"]
+atlas = ExtResource("20_walk_north_west")
+region = Rect2(460, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_6"]
+atlas = ExtResource("20_walk_north_west")
+region = Rect2(552, 0, 92, 92)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_7"]
+atlas = ExtResource("20_walk_north_west")
+region = Rect2(644, 0, 92, 92)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_0"]
 atlas = ExtResource("20_walk_south")
@@ -371,132 +496,36 @@ region = Rect2(552, 0, 92, 92)
 atlas = ExtResource("20_walk_south_east")
 region = Rect2(644, 0, 92, 92)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_0"]
-atlas = ExtResource("20_walk_east")
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_0"]
+atlas = ExtResource("20_walk_south_west")
 region = Rect2(0, 0, 92, 92)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_1"]
-atlas = ExtResource("20_walk_east")
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_1"]
+atlas = ExtResource("20_walk_south_west")
 region = Rect2(92, 0, 92, 92)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_2"]
-atlas = ExtResource("20_walk_east")
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_2"]
+atlas = ExtResource("20_walk_south_west")
 region = Rect2(184, 0, 92, 92)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_3"]
-atlas = ExtResource("20_walk_east")
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_3"]
+atlas = ExtResource("20_walk_south_west")
 region = Rect2(276, 0, 92, 92)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_4"]
-atlas = ExtResource("20_walk_east")
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_4"]
+atlas = ExtResource("20_walk_south_west")
 region = Rect2(368, 0, 92, 92)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_5"]
-atlas = ExtResource("20_walk_east")
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_5"]
+atlas = ExtResource("20_walk_south_west")
 region = Rect2(460, 0, 92, 92)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_6"]
-atlas = ExtResource("20_walk_east")
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_6"]
+atlas = ExtResource("20_walk_south_west")
 region = Rect2(552, 0, 92, 92)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_east_7"]
-atlas = ExtResource("20_walk_east")
-region = Rect2(644, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_0"]
-atlas = ExtResource("20_walk_north_east")
-region = Rect2(0, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_1"]
-atlas = ExtResource("20_walk_north_east")
-region = Rect2(92, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_2"]
-atlas = ExtResource("20_walk_north_east")
-region = Rect2(184, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_3"]
-atlas = ExtResource("20_walk_north_east")
-region = Rect2(276, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_4"]
-atlas = ExtResource("20_walk_north_east")
-region = Rect2(368, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_5"]
-atlas = ExtResource("20_walk_north_east")
-region = Rect2(460, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_6"]
-atlas = ExtResource("20_walk_north_east")
-region = Rect2(552, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_east_7"]
-atlas = ExtResource("20_walk_north_east")
-region = Rect2(644, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_0"]
-atlas = ExtResource("20_walk_north")
-region = Rect2(0, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_1"]
-atlas = ExtResource("20_walk_north")
-region = Rect2(92, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_2"]
-atlas = ExtResource("20_walk_north")
-region = Rect2(184, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_3"]
-atlas = ExtResource("20_walk_north")
-region = Rect2(276, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_4"]
-atlas = ExtResource("20_walk_north")
-region = Rect2(368, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_5"]
-atlas = ExtResource("20_walk_north")
-region = Rect2(460, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_6"]
-atlas = ExtResource("20_walk_north")
-region = Rect2(552, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_7"]
-atlas = ExtResource("20_walk_north")
-region = Rect2(644, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_0"]
-atlas = ExtResource("20_walk_north_west")
-region = Rect2(0, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_1"]
-atlas = ExtResource("20_walk_north_west")
-region = Rect2(92, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_2"]
-atlas = ExtResource("20_walk_north_west")
-region = Rect2(184, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_3"]
-atlas = ExtResource("20_walk_north_west")
-region = Rect2(276, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_4"]
-atlas = ExtResource("20_walk_north_west")
-region = Rect2(368, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_5"]
-atlas = ExtResource("20_walk_north_west")
-region = Rect2(460, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_6"]
-atlas = ExtResource("20_walk_north_west")
-region = Rect2(552, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_north_west_7"]
-atlas = ExtResource("20_walk_north_west")
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_7"]
+atlas = ExtResource("20_walk_south_west")
 region = Rect2(644, 0, 92, 92)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_walk_west_0"]
@@ -531,720 +560,162 @@ region = Rect2(552, 0, 92, 92)
 atlas = ExtResource("20_walk_west")
 region = Rect2(644, 0, 92, 92)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_0"]
-atlas = ExtResource("20_walk_south_west")
-region = Rect2(0, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_1"]
-atlas = ExtResource("20_walk_south_west")
-region = Rect2(92, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_2"]
-atlas = ExtResource("20_walk_south_west")
-region = Rect2(184, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_3"]
-atlas = ExtResource("20_walk_south_west")
-region = Rect2(276, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_4"]
-atlas = ExtResource("20_walk_south_west")
-region = Rect2(368, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_5"]
-atlas = ExtResource("20_walk_south_west")
-region = Rect2(460, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_6"]
-atlas = ExtResource("20_walk_south_west")
-region = Rect2(552, 0, 92, 92)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_walk_south_west_7"]
-atlas = ExtResource("20_walk_south_west")
-region = Rect2(644, 0, 92, 92)
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_player_idle"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_south_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_south_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_south_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_south_3")
-}],
-"loop": true,
-"name": &"idle-south",
-"speed": 6.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_south_east_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_south_east_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_south_east_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_south_east_3")
-}],
-"loop": true,
-"name": &"idle-south-east",
-"speed": 6.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_east_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_east_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_east_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_east_3")
-}],
-"loop": true,
-"name": &"idle-east",
-"speed": 6.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_north_east_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_north_east_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_north_east_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_north_east_3")
-}],
-"loop": true,
-"name": &"idle-north-east",
-"speed": 6.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_north_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_north_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_north_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_north_3")
-}],
-"loop": true,
-"name": &"idle-north",
-"speed": 6.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_north_west_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_north_west_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_north_west_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_north_west_3")
-}],
-"loop": true,
-"name": &"idle-north-west",
-"speed": 6.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_west_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_west_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_west_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_west_3")
-}],
-"loop": true,
-"name": &"idle-west",
-"speed": 6.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_south_west_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_south_west_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_south_west_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_idle_south_west_3")
-}],
-"loop": true,
-"name": &"idle-south-west",
-"speed": 6.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_3")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_4")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_5")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_6")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_7")
-}],
-"loop": true,
-"name": &"walk-south",
-"speed": 10.0
-},
-{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_east_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_east_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_east_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_east_3")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_east_4")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_east_5")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_east_6")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_east_7")
-}],
-"loop": true,
-"name": &"walk-south-east",
-"speed": 10.0
-},
-{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_east_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_east_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_east_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_east_3")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_east_4")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_east_5")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_east_6")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_east_7")
-}],
-"loop": true,
-"name": &"walk-east",
-"speed": 10.0
-},
-{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_east_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_east_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_east_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_east_3")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_east_4")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_east_5")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_east_6")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_east_7")
-}],
-"loop": true,
-"name": &"walk-north-east",
-"speed": 10.0
-},
-{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_3")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_4")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_5")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_6")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_7")
-}],
-"loop": true,
-"name": &"walk-north",
-"speed": 10.0
-},
-{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_west_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_west_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_west_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_west_3")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_west_4")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_west_5")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_west_6")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_north_west_7")
-}],
-"loop": true,
-"name": &"walk-north-west",
-"speed": 10.0
-},
-{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_west_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_west_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_west_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_west_3")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_west_4")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_west_5")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_west_6")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_west_7")
-}],
-"loop": true,
-"name": &"walk-west",
-"speed": 10.0
-},
-{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_west_0")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_west_1")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_west_2")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_west_3")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_west_4")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_west_5")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_west_6")
-},
-{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_walk_south_west_7")
-}],
-"loop": true,
-"name": &"walk-south-west",
-"speed": 10.0
-},
-{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("atk_south_0")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("atk_south_1")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("atk_south_2")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("atk_south_3")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("atk_south_4")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("atk_south_5")
-}],
-"loop": false,
-"name": &"attack-south",
-"speed": 10.0
-},
-{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("atk_south_east_0")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("atk_south_east_1")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("atk_south_east_2")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("atk_south_east_3")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("atk_south_east_4")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("atk_south_east_5")
-}],
-"loop": false,
-"name": &"attack-south-east",
-"speed": 10.0
-},
-{
-"frames": [{
-"duration": 1.0,
 "texture": ExtResource("atk_east_0")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_east_1")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_east_2")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_east_3")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_east_4")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_east_5")
 }],
 "loop": false,
 "name": &"attack-east",
 "speed": 10.0
-},
-{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("atk_north_east_0")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("atk_north_east_1")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("atk_north_east_2")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("atk_north_east_3")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("atk_north_east_4")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("atk_north_east_5")
-}],
-"loop": false,
-"name": &"attack-north-east",
-"speed": 10.0
-},
-{
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("atk_north_0")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_north_1")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_north_2")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_north_3")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_north_4")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_north_5")
 }],
 "loop": false,
 "name": &"attack-north",
 "speed": 10.0
-},
-{
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_5")
+}],
+"loop": false,
+"name": &"attack-north-east",
+"speed": 10.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("atk_north_west_0")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_north_west_1")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_north_west_2")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_north_west_3")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_north_west_4")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_north_west_5")
 }],
 "loop": false,
 "name": &"attack-north-west",
 "speed": 10.0
-},
-{
+}, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("atk_west_0")
-},
-{
+"texture": ExtResource("atk_south_0")
+}, {
 "duration": 1.0,
-"texture": ExtResource("atk_west_1")
-},
-{
+"texture": ExtResource("atk_south_1")
+}, {
 "duration": 1.0,
-"texture": ExtResource("atk_west_2")
-},
-{
+"texture": ExtResource("atk_south_2")
+}, {
 "duration": 1.0,
-"texture": ExtResource("atk_west_3")
-},
-{
+"texture": ExtResource("atk_south_3")
+}, {
 "duration": 1.0,
-"texture": ExtResource("atk_west_4")
-},
-{
+"texture": ExtResource("atk_south_4")
+}, {
 "duration": 1.0,
-"texture": ExtResource("atk_west_5")
+"texture": ExtResource("atk_south_5")
 }],
 "loop": false,
-"name": &"attack-west",
+"name": &"attack-south",
 "speed": 10.0
-},
-{
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_5")
+}],
+"loop": false,
+"name": &"attack-south-east",
+"speed": 10.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("atk_south_west_0")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_south_west_1")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_south_west_2")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_south_west_3")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_south_west_4")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("atk_south_west_5")
 }],
@@ -1254,253 +725,150 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("hit_south_0")
-},
-{
+"texture": ExtResource("atk_west_0")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_south_1")
-},
-{
+"texture": ExtResource("atk_west_1")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_south_2")
-},
-{
+"texture": ExtResource("atk_west_2")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_south_3")
-},
-{
+"texture": ExtResource("atk_west_3")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_south_4")
-},
-{
+"texture": ExtResource("atk_west_4")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_south_5")
+"texture": ExtResource("atk_west_5")
 }],
 "loop": false,
-"name": &"hit-south",
+"name": &"attack-west",
 "speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("hit_south_east_0")
-},
-{
+"texture": ExtResource("death_east_0")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_south_east_1")
-},
-{
+"texture": ExtResource("death_east_1")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_south_east_2")
-},
-{
+"texture": ExtResource("death_east_2")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_south_east_3")
-},
-{
+"texture": ExtResource("death_east_3")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_south_east_4")
-},
-{
+"texture": ExtResource("death_east_4")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_south_east_5")
+"texture": ExtResource("death_east_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("death_east_6")
 }],
 "loop": false,
-"name": &"hit-south-east",
+"name": &"death-east",
 "speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("hit_east_0")
-},
-{
+"texture": ExtResource("death_north_0")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_east_1")
-},
-{
+"texture": ExtResource("death_north_1")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_east_2")
-},
-{
+"texture": ExtResource("death_north_2")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_east_3")
-},
-{
+"texture": ExtResource("death_north_3")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_east_4")
-},
-{
+"texture": ExtResource("death_north_4")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_east_5")
+"texture": ExtResource("death_north_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("death_north_6")
 }],
 "loop": false,
-"name": &"hit-east",
+"name": &"death-north",
 "speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("hit_north_east_0")
-},
-{
+"texture": ExtResource("death_north_east_0")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_north_east_1")
-},
-{
+"texture": ExtResource("death_north_east_1")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_north_east_2")
-},
-{
+"texture": ExtResource("death_north_east_2")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_north_east_3")
-},
-{
+"texture": ExtResource("death_north_east_3")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_north_east_4")
-},
-{
+"texture": ExtResource("death_north_east_4")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_north_east_5")
+"texture": ExtResource("death_north_east_5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("death_north_east_6")
 }],
 "loop": false,
-"name": &"hit-north-east",
+"name": &"death-north-east",
 "speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("hit_north_0")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_north_1")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_north_2")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_north_3")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_north_4")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_north_5")
-}],
-"loop": false,
-"name": &"hit-north",
-"speed": 10.0
+"texture": ExtResource("death_north_west_0")
 }, {
-"frames": [{
 "duration": 1.0,
-"texture": ExtResource("hit_north_west_0")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_north_west_1")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_north_west_2")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_north_west_3")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_north_west_4")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_north_west_5")
-}],
-"loop": false,
-"name": &"hit-north-west",
-"speed": 10.0
+"texture": ExtResource("death_north_west_1")
 }, {
-"frames": [{
 "duration": 1.0,
-"texture": ExtResource("hit_west_0")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_west_1")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_west_2")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_west_3")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_west_4")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_west_5")
-}],
-"loop": false,
-"name": &"hit-west",
-"speed": 10.0
+"texture": ExtResource("death_north_west_2")
 }, {
-"frames": [{
 "duration": 1.0,
-"texture": ExtResource("hit_south_west_0")
-},
-{
+"texture": ExtResource("death_north_west_3")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_south_west_1")
-},
-{
+"texture": ExtResource("death_north_west_4")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_south_west_2")
-},
-{
+"texture": ExtResource("death_north_west_5")
+}, {
 "duration": 1.0,
-"texture": ExtResource("hit_south_west_3")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_south_west_4")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("hit_south_west_5")
+"texture": ExtResource("death_north_west_6")
 }],
 "loop": false,
-"name": &"hit-south-west",
+"name": &"death-north-west",
 "speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("death_south_0")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_south_1")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_south_2")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_south_3")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_south_4")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_south_5")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_south_6")
 }],
@@ -1511,28 +879,22 @@ animations = [{
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("death_south_east_0")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_south_east_1")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_south_east_2")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_south_east_3")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_south_east_4")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_south_east_5")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_south_east_6")
 }],
@@ -1542,157 +904,49 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("death_east_0")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_east_1")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_east_2")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_east_3")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_east_4")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_east_5")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_east_6")
-}],
-"loop": false,
-"name": &"death-east",
-"speed": 10.0
+"texture": ExtResource("death_south_west_0")
 }, {
-"frames": [{
 "duration": 1.0,
-"texture": ExtResource("death_north_east_0")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_north_east_1")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_north_east_2")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_north_east_3")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_north_east_4")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_north_east_5")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_north_east_6")
-}],
-"loop": false,
-"name": &"death-north-east",
-"speed": 10.0
+"texture": ExtResource("death_south_west_1")
 }, {
-"frames": [{
 "duration": 1.0,
-"texture": ExtResource("death_north_0")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_north_1")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_north_2")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_north_3")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_north_4")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_north_5")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_north_6")
-}],
-"loop": false,
-"name": &"death-north",
-"speed": 10.0
+"texture": ExtResource("death_south_west_2")
 }, {
-"frames": [{
 "duration": 1.0,
-"texture": ExtResource("death_north_west_0")
-},
-{
+"texture": ExtResource("death_south_west_3")
+}, {
 "duration": 1.0,
-"texture": ExtResource("death_north_west_1")
-},
-{
+"texture": ExtResource("death_south_west_4")
+}, {
 "duration": 1.0,
-"texture": ExtResource("death_north_west_2")
-},
-{
+"texture": ExtResource("death_south_west_5")
+}, {
 "duration": 1.0,
-"texture": ExtResource("death_north_west_3")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_north_west_4")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_north_west_5")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_north_west_6")
+"texture": ExtResource("death_south_west_6")
 }],
 "loop": false,
-"name": &"death-north-west",
+"name": &"death-south-west",
 "speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("death_west_0")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_west_1")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_west_2")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_west_3")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_west_4")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_west_5")
-},
-{
+}, {
 "duration": 1.0,
 "texture": ExtResource("death_west_6")
 }],
@@ -1702,36 +956,560 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("death_south_west_0")
-},
-{
+"texture": ExtResource("hit_east_0")
+}, {
 "duration": 1.0,
-"texture": ExtResource("death_south_west_1")
-},
-{
+"texture": ExtResource("hit_east_1")
+}, {
 "duration": 1.0,
-"texture": ExtResource("death_south_west_2")
-},
-{
+"texture": ExtResource("hit_east_2")
+}, {
 "duration": 1.0,
-"texture": ExtResource("death_south_west_3")
-},
-{
+"texture": ExtResource("hit_east_3")
+}, {
 "duration": 1.0,
-"texture": ExtResource("death_south_west_4")
-},
-{
+"texture": ExtResource("hit_east_4")
+}, {
 "duration": 1.0,
-"texture": ExtResource("death_south_west_5")
-},
-{
-"duration": 1.0,
-"texture": ExtResource("death_south_west_6")
+"texture": ExtResource("hit_east_5")
 }],
 "loop": false,
-"name": &"death-south-west",
+"name": &"hit-east",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("hit_north_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_north_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_north_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_north_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_north_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_north_5")
+}],
+"loop": false,
+"name": &"hit-north",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("hit_north_east_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_north_east_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_north_east_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_north_east_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_north_east_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_north_east_5")
+}],
+"loop": false,
+"name": &"hit-north-east",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("hit_north_west_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_north_west_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_north_west_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_north_west_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_north_west_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_north_west_5")
+}],
+"loop": false,
+"name": &"hit-north-west",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("hit_south_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_south_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_south_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_south_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_south_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_south_5")
+}],
+"loop": false,
+"name": &"hit-south",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("hit_south_east_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_south_east_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_south_east_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_south_east_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_south_east_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_south_east_5")
+}],
+"loop": false,
+"name": &"hit-south-east",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("hit_south_west_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_south_west_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_south_west_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_south_west_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_south_west_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_south_west_5")
+}],
+"loop": false,
+"name": &"hit-south-west",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("hit_west_0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_west_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_west_2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_west_3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_west_4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("hit_west_5")
+}],
+"loop": false,
+"name": &"hit-west",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_east_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_east_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_east_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_east_3")
+}],
+"loop": true,
+"name": &"idle-east",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_north_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_north_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_north_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_north_3")
+}],
+"loop": true,
+"name": &"idle-north",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_north_east_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_north_east_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_north_east_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_north_east_3")
+}],
+"loop": true,
+"name": &"idle-north-east",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_north_west_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_north_west_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_north_west_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_north_west_3")
+}],
+"loop": true,
+"name": &"idle-north-west",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_south_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_south_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_south_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_south_3")
+}],
+"loop": true,
+"name": &"idle-south",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_south_east_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_south_east_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_south_east_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_south_east_3")
+}],
+"loop": true,
+"name": &"idle-south-east",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_south_west_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_south_west_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_south_west_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_south_west_3")
+}],
+"loop": true,
+"name": &"idle-south-west",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_west_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_west_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_west_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_west_3")
+}],
+"loop": true,
+"name": &"idle-west",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_east_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_east_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_east_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_east_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_east_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_east_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_east_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_east_7")
+}],
+"loop": true,
+"name": &"walk-east",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_7")
+}],
+"loop": true,
+"name": &"walk-north",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_east_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_east_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_east_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_east_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_east_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_east_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_east_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_east_7")
+}],
+"loop": true,
+"name": &"walk-north-east",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_west_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_west_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_west_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_west_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_west_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_west_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_west_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_north_west_7")
+}],
+"loop": true,
+"name": &"walk-north-west",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_7")
+}],
+"loop": true,
+"name": &"walk-south",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_east_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_east_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_east_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_east_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_east_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_east_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_east_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_east_7")
+}],
+"loop": true,
+"name": &"walk-south-east",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_west_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_west_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_west_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_west_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_west_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_west_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_west_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_south_west_7")
+}],
+"loop": true,
+"name": &"walk-south-west",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_west_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_west_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_west_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_west_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_west_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_west_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_west_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_west_7")
+}],
+"loop": true,
+"name": &"walk-west",
 "speed": 10.0
 }]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_p5nqv"]
+radius = 33.0
+height = 122.0
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_g2els"]
 properties/0/path = NodePath(".:position")
@@ -1744,6 +1522,7 @@ properties/1/replication_mode = 1
 [node name="CharacterBody2D" type="CharacterBody2D" unique_id=53403318]
 collision_mask = 10
 script = ExtResource("1_g2els")
+max_lifepoint = 30.0
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=1809624338]
 texture_filter = 1
@@ -1752,7 +1531,8 @@ sprite_frames = SubResource("SpriteFrames_player_idle")
 animation = &"idle-south"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103710012]
-shape = SubResource("RectangleShape2D_3vyb7")
+position = Vector2(-1, 2)
+shape = SubResource("CapsuleShape2D_p5nqv")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1385403593]
 replication_config = SubResource("SceneReplicationConfig_g2els")

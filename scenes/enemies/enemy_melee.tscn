@@ -4,8 +4,8 @@
 [ext_resource type="SpriteFrames" path="res://resources/sprite_frames/enemy_melee_walk.tres" id="2"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3xip1"]
-radius = 62.0
-height = 236.0
+radius = 56.0
+height = 224.0
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1"]
 properties/0/path = NodePath(".:position")
@@ -37,7 +37,7 @@ metadata/_edit_lock_ = true
 collision_layer = 2
 metadata/_edit_lock_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea" unique_id=1818174140]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea" unique_id=847131182]
 position = Vector2(-2, -2)
 shape = SubResource("CapsuleShape2D_3xip1")
 metadata/_edit_lock_ = true

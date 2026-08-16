@@ -4,7 +4,7 @@
 [ext_resource type="SpriteFrames" path="res://resources/sprite_frames/boss_01.tres" id="2"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_vys4v"]
-radius = 97.77779
+radius = 90.00001
 height = 268.88892
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1"]
@@ -37,7 +37,7 @@ shape = SubResource("CapsuleShape2D_vys4v")
 collision_layer = 2
 metadata/_edit_lock_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea" unique_id=1480189163]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea" unique_id=254477507]
 position = Vector2(2.2222223, -2.2222223)
 shape = SubResource("CapsuleShape2D_vys4v")
 

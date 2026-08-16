@@ -4,7 +4,7 @@
 [ext_resource type="SpriteFrames" path="res://resources/sprite_frames/enemy_ranged.tres" id="2"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1phqv"]
-radius = 72.0
+radius = 70.0
 height = 240.0
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1"]

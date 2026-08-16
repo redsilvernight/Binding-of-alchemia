@@ -3,8 +3,9 @@
 [ext_resource type="Script" uid="uid://cdw5nd0stmqte" path="res://scripts/mobs/ennemi_test.gd" id="1"]
 [ext_resource type="SpriteFrames" path="res://resources/sprite_frames/enemy_melee_brute.tres" id="2"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
-radius = 109.230774
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ffhfx"]
+radius = 96.92309
+height = 212.30771
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1"]
 properties/0/path = NodePath(".:position")
@@ -32,18 +33,16 @@ animation = &"walk-south"
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=640583942]
-position = Vector2(3.0769234, 4.7683716e-07)
-shape = SubResource("CircleShape2D_1")
-metadata/_edit_lock_ = true
+position = Vector2(1.5384617, 0)
+shape = SubResource("CapsuleShape2D_ffhfx")
 
 [node name="CollisionArea" type="Area2D" parent="." unique_id=1244460595]
 collision_layer = 2
 metadata/_edit_lock_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea" unique_id=1666305817]
-position = Vector2(3.0769234, 4.7683716e-07)
-shape = SubResource("CircleShape2D_1")
-metadata/_edit_lock_ = true
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea" unique_id=733605408]
+position = Vector2(1.5384617, 0)
+shape = SubResource("CapsuleShape2D_ffhfx")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1175933362]
 replication_config = SubResource("SceneReplicationConfig_1")

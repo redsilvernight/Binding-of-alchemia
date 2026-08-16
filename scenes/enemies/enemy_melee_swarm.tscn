@@ -4,7 +4,7 @@
 [ext_resource type="SpriteFrames" path="res://resources/sprite_frames/enemy_melee_swarm.tres" id="2"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_upisi"]
-radius = 72.28571
+radius = 65.71428
 height = 218.2857
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1"]
@@ -33,18 +33,16 @@ animation = &"walk-south"
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=400394197]
-position = Vector2(1.1920929e-07, -9.536743e-07)
+position = Vector2(7.1054274e-15, 2.8571427)
 shape = SubResource("CapsuleShape2D_upisi")
-metadata/_edit_lock_ = true
 
 [node name="CollisionArea" type="Area2D" parent="." unique_id=476981234]
 collision_layer = 2
 metadata/_edit_lock_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea" unique_id=894882010]
-position = Vector2(1.1920929e-07, -9.536743e-07)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea" unique_id=1647506031]
+position = Vector2(7.1054274e-15, 2.8571427)
 shape = SubResource("CapsuleShape2D_upisi")
-metadata/_edit_lock_ = true
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1260983078]
 replication_config = SubResource("SceneReplicationConfig_1")

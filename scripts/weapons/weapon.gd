@@ -133,9 +133,16 @@ func _recalculate_stats():
 		mixture_regen_rate = 0
 	var speed_modifier = 1.0
 	var range_modifier = 0.0
+	var core_damage = 0.0
 	if core:
 		speed_modifier = core.projectile_speed_modifier
 		range_modifier = core.range_modifier
+		core_damage = core.base_damage
+	# Le cœur ajoute ses propres dégâts aux deux tirs (9.5, équilibrage --
+	# jusque-là GunCore.base_damage était renseigné sur chaque pièce mais
+	# jamais lu ici, donc les cœurs n'avaient aucune identité de dégâts).
+	water_damage += core_damage
+	mixture_damage_multiplier += core_damage
 	water_projectile_speed = base_speed_water * speed_modifier
 	mixture_projectile_speed = base_speed_mixture * speed_modifier
 	_range = range_modifier
