@@ -26,6 +26,7 @@ func _ready() -> void:
 
 
 func open() -> void:
+	AudioManager.play_sfx("station_open")
 	result_label.text = ""
 	_refresh_currency()
 	_refresh_list()
@@ -47,7 +48,13 @@ func _on_currency_changed(_new_amount: int) -> void:
 
 
 func _on_unlocks_changed() -> void:
+	# Gardé par root.visible (comme _refresh_list) : unlocks_changed rejoue
+	# aussi au rattrapage d'un pair qui rejoint la partie avec des
+	# déblocages déjà acquis (cf. hub.gd._on_peer_connected -> _rpc_unlocked)
+	# -- sans cette garde, se reconnecter ferait sonner "achat" pour chaque
+	# déblocage déjà possédé, alors que l'écran n'a jamais été ouvert.
 	if root.visible:
+		AudioManager.play_sfx("craft_success")
 		_refresh_list()
 
 
@@ -68,11 +75,13 @@ func _refresh_list() -> void:
 func _on_unlock_pressed() -> void:
 	var selection: PackedInt32Array = unlock_list.get_selected_items()
 	if selection.is_empty():
+		AudioManager.play_sfx("ui_error")
 		result_label.text = "Sélectionne un élément à débloquer."
 		return
 
 	var entry: Dictionary = MetaProgression.UNLOCKABLES[selection[0]]
 	if MetaProgression.is_unlocked(_local_peer_id, entry["item_path"]):
+		AudioManager.play_sfx("ui_error")
 		result_label.text = "Déjà débloqué."
 		return
 

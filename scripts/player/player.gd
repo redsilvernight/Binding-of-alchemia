@@ -215,6 +215,15 @@ func _on_sprite_animation_finished() -> void:
 		return
 	if _pending_fire_type == "":
 		return
+	# SFX joué ici (pas dans weapon.gd, hôte-only) car cette fonction tourne
+	# identiquement sur tous les pairs -- même raisonnement que le swing
+	# d'attaque (cf. commentaire de _try_play_attack_animation). Réservoir
+	# vide détecté localement via can_fire_mixture_locally() (ammo répliqué,
+	# contrairement au cooldown) plutôt que d'attendre un retour de l'hôte.
+	if _pending_fire_type == "mixture" and not weapon.can_fire_mixture_locally():
+		AudioManager.play_sfx("weapon_empty")
+	else:
+		AudioManager.play_sfx("fire_water" if _pending_fire_type == "water" else "fire_mixture")
 	request_fire.rpc_id(1, _pending_fire_type, _pending_fire_direction)
 	_pending_fire_type = ""
 

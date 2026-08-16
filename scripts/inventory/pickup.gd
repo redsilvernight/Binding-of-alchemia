@@ -37,9 +37,15 @@ func _apply_icon() -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
-	if not multiplayer.is_server():
-		return
 	if not body.is_in_group("Players"):
+		return
+	# SFX joué avant la garde hôte (Phase 9.4), même raisonnement que
+	# Bullet._on_body_entered : ce pickup existe réellement chez chaque pair
+	# (spawné via pickup_spawner), sa position est figée dès l'apparition
+	# (pas de mouvement à désynchroniser) donc la détection de collision
+	# locale à chaque pair suffit à faire sonner le ramassage partout.
+	AudioManager.play_sfx("pickup_currency" if item_type == "currency" else "pickup_ingredient")
+	if not multiplayer.is_server():
 		return
 
 	if item_type == "currency":

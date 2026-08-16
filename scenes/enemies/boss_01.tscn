@@ -21,6 +21,7 @@ collision_layer = 2
 collision_mask = 28
 script = ExtResource("1")
 currency_reward = 120
+ambient_sfx_key = "cry_boss"
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=788233991]
 texture_filter = 1

@@ -28,6 +28,7 @@ func bind_inventory(p_inventory: Inventory) -> void:
 
 
 func open() -> void:
+	AudioManager.play_sfx("station_open")
 	_refresh_list()
 	result_label.text = ""
 	root.visible = true
@@ -63,6 +64,7 @@ func _refresh_list() -> void:
 func _on_craft_pressed() -> void:
 	var selection: PackedInt32Array = ingredient_list.get_selected_items()
 	if selection.is_empty():
+		AudioManager.play_sfx("ui_error")
 		result_label.text = "Sélectionne au moins un ingrédient."
 		return
 

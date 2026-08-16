@@ -24,6 +24,7 @@ speed = 100.0
 damage = 12.0
 currency_reward = 9
 max_lifepoint = 14.0
+ambient_sfx_key = "cry_erratic_bomber"
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=914243073]
 texture_filter = 1

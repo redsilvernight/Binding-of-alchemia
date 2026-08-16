@@ -49,6 +49,7 @@ func bind_inventory(p_inventory: Inventory) -> void:
 
 
 func open() -> void:
+	AudioManager.play_sfx("station_open")
 	_refresh_lists()
 	_refresh_equipped_labels()
 	root.visible = true

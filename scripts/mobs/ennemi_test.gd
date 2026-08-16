@@ -63,6 +63,7 @@ func _on_collision_area_body_entered(body: Node2D) -> void:
 	if body.is_in_group("Players"):
 		body.take_damage(damage)
 		_play_attack_animation(body.global_position - global_position)
+		AudioManager.play_sfx("enemy_attack_melee")
 
 ## Direction vers la cible plutôt que la dernière direction de déplacement :
 ## simple et toujours valide, pas besoin de tracker un _last_facing_direction

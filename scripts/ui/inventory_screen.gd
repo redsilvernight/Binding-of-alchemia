@@ -44,6 +44,7 @@ func bind_inventory(p_inventory: Inventory) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_inventory"):
 		root.visible = not root.visible
+		AudioManager.play_sfx("ui_toggle")
 
 
 func _on_ingredient_changed(_ingredient: Ingredient, _new_quantity: int) -> void:

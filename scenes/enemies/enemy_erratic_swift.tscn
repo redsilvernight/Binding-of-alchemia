@@ -24,6 +24,7 @@ speed = 260.0
 damage = 3.0
 currency_reward = 3
 max_lifepoint = 6.0
+ambient_sfx_key = "cry_erratic_swift"
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=959333878]
 texture_filter = 1

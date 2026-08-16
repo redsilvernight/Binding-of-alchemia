@@ -28,6 +28,7 @@ fire_cooldown = 2.5
 projectile_speed = 450.0
 currency_reward = 8
 max_lifepoint = 15.0
+ambient_sfx_key = "cry_ranged_sniper"
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=1737589711]
 texture_filter = 1

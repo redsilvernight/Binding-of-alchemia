@@ -24,6 +24,7 @@ RunManager="*res://scripts/autoload/run_manager.gd"
 MetaProgression="*res://scripts/autoload/meta_progression.gd"
 SaveManager="*res://scripts/autoload/save_manager.gd"
 Settings="*res://scripts/autoload/settings.gd"
+AudioManager="*res://scripts/autoload/audio_manager.gd"
 
 [input]
 

@@ -5,20 +5,38 @@ extends Node
 const SETTINGS_PATH: String = "user://settings.json"
 
 var master_volume: float = 1.0
+var music_volume: float = 1.0
+var sfx_volume: float = 1.0
 var fullscreen: bool = false
 
 var _master_bus_index: int = AudioServer.get_bus_index("Master")
+var _music_bus_index: int = AudioServer.get_bus_index("Music")
+var _sfx_bus_index: int = AudioServer.get_bus_index("SFX")
 
 
 func _ready() -> void:
 	_load()
 	_apply_master_volume()
+	_apply_music_volume()
+	_apply_sfx_volume()
 	_apply_fullscreen()
 
 
 func set_master_volume(value: float) -> void:
 	master_volume = clampf(value, 0.0, 1.0)
 	_apply_master_volume()
+	_save()
+
+
+func set_music_volume(value: float) -> void:
+	music_volume = clampf(value, 0.0, 1.0)
+	_apply_music_volume()
+	_save()
+
+
+func set_sfx_volume(value: float) -> void:
+	sfx_volume = clampf(value, 0.0, 1.0)
+	_apply_sfx_volume()
 	_save()
 
 
@@ -30,6 +48,14 @@ func set_fullscreen(enabled: bool) -> void:
 
 func _apply_master_volume() -> void:
 	AudioServer.set_bus_volume_db(_master_bus_index, linear_to_db(master_volume))
+
+
+func _apply_music_volume() -> void:
+	AudioServer.set_bus_volume_db(_music_bus_index, linear_to_db(music_volume))
+
+
+func _apply_sfx_volume() -> void:
+	AudioServer.set_bus_volume_db(_sfx_bus_index, linear_to_db(sfx_volume))
 
 
 func _apply_fullscreen() -> void:
@@ -50,11 +76,13 @@ func _load() -> void:
 		return
 
 	master_volume = clampf(float(parsed.get("master_volume", 1.0)), 0.0, 1.0)
+	music_volume = clampf(float(parsed.get("music_volume", 1.0)), 0.0, 1.0)
+	sfx_volume = clampf(float(parsed.get("sfx_volume", 1.0)), 0.0, 1.0)
 	fullscreen = bool(parsed.get("fullscreen", false))
 
 
 func _save() -> void:
 	var file: FileAccess = FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
-	var data: Dictionary = {"master_volume": master_volume, "fullscreen": fullscreen}
+	var data: Dictionary = {"master_volume": master_volume, "music_volume": music_volume, "sfx_volume": sfx_volume, "fullscreen": fullscreen}
 	file.store_string(JSON.stringify(data))
 	file.close()

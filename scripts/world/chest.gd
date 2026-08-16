@@ -52,6 +52,7 @@ func _request_open() -> void:
 @rpc("authority", "call_local", "reliable")
 func _rpc_mark_opened() -> void:
 	_opened = true
+	AudioManager.play_sfx("chest_open")
 	interactable.visible = false
 	var tween: Tween = create_tween().set_parallel(true)
 	tween.tween_property(_closed_sprite, "modulate:a", 0.0, FADE_DURATION)

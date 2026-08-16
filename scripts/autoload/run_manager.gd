@@ -145,7 +145,7 @@ func _rpc_change_scene(scene_path: String) -> void:
 func advance_floor() -> void:
 	if not multiplayer.is_server():
 		return
-	_rpc_set_floor.rpc(current_floor + 1)
+	_rpc_set_floor.rpc(current_floor + 1, true)
 
 
 ## Hôte uniquement : remet l'étage à 1, soit au tout début d'une nouvelle
@@ -154,13 +154,18 @@ func advance_floor() -> void:
 func reset_floor() -> void:
 	if not multiplayer.is_server():
 		return
-	_rpc_set_floor.rpc(1)
+	_rpc_set_floor.rpc(1, false) # pas un "avancement" (retour après une défaite) : pas de SFX
 
 
+## play_sound distingue une vraie progression (advance_floor) d'une remise à
+## zéro (reset_floor, après une défaite) -- même RPC toutes deux pour ne pas
+## dupliquer la logique de réplication, seul le SFX diffère.
 @rpc("authority", "call_local", "reliable")
-func _rpc_set_floor(new_floor: int) -> void:
+func _rpc_set_floor(new_floor: int, play_sound: bool = true) -> void:
 	current_floor = new_floor
 	floor_changed.emit(new_floor)
+	if play_sound:
+		AudioManager.play_sfx("floor_advance")
 
 
 ## Hôte uniquement, appelé en tout début de _change_scene_with_handshake.

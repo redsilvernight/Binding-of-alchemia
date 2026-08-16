@@ -82,6 +82,7 @@ func _on_collision_area_body_entered(body: Node2D) -> void:
 		var direction: Vector2 = body.global_position - global_position
 		if direction.length() >= 0.001:
 			sprite.play(StringName("attack-melee-" + FacingDirection.label_for(direction)))
+			AudioManager.play_sfx("enemy_attack_melee")
 
 func fire_at(p_target: Node2D) -> void:
 	var game: Node = get_tree().get_first_node_in_group("Game")
@@ -115,6 +116,7 @@ func take_damage(degat: float) -> void:
 func _rpc_notify_phase(phase: int) -> void:
 	if phase == 2:
 		modulate = Color(1.0, 0.55, 0.55)
+		AudioManager.play_sfx("boss_phase")
 
 ## Même raisonnement que ennemi_test.gd::_on_health_changed -- un seul jeu de
 ## sprites hit/death, pas de variante par phase (même décision que pour
@@ -134,3 +136,6 @@ func _die_and_free() -> void:
 	await sprite.animation_finished
 	if is_instance_valid(self):
 		queue_free()
+
+func _get_death_sfx_key() -> String:
+	return "boss_death"

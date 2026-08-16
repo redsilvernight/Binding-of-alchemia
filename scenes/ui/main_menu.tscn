@@ -70,9 +70,31 @@ alignment = 1
 
 [node name="VolumeLabel" type="Label" parent="OptionsPanel/OptionsVBox"]
 layout_mode = 2
-text = "Volume"
+text = "Volume général"
 
 [node name="VolumeSlider" type="HSlider" parent="OptionsPanel/OptionsVBox"]
+layout_mode = 2
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="MusicVolumeLabel" type="Label" parent="OptionsPanel/OptionsVBox"]
+layout_mode = 2
+text = "Musique"
+
+[node name="MusicVolumeSlider" type="HSlider" parent="OptionsPanel/OptionsVBox"]
+layout_mode = 2
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="SfxVolumeLabel" type="Label" parent="OptionsPanel/OptionsVBox"]
+layout_mode = 2
+text = "Effets sonores"
+
+[node name="SfxVolumeSlider" type="HSlider" parent="OptionsPanel/OptionsVBox"]
 layout_mode = 2
 min_value = 0.0
 max_value = 1.0

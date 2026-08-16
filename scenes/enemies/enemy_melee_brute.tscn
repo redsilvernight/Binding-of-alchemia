@@ -24,6 +24,7 @@ speed = 90.0
 damage = 9.0
 currency_reward = 10
 max_lifepoint = 45.0
+ambient_sfx_key = "cry_melee_brute"
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=2095712374]
 texture_filter = 1

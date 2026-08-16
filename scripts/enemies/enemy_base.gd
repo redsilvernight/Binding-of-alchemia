@@ -17,9 +17,64 @@ var active: bool = false
 ## par mort, cf. _generate_dungeon()). Vide = cet ennemi ne lâche rien.
 var carries_ingredient_path: String = ""
 
+## Cri d'ambiance aléatoire (Phase 9.4), mécanisme commun porté par cette
+## classe de base (plutôt que dupliqué comme _on_collision_area_body_entered,
+## qui préexistait à l'audio et suit la convention "dupliquer jusqu'au 3e
+## besoin réel" déjà établie dans ce projet -- ceci est un mécanisme
+## entièrement nouveau, donc centralisé dès le départ). Le SON lui-même est
+## par contre spécifique à chaque type concret : ambient_sfx_key est surchargé
+## directement sur le nœud de chaque scène .tscn (enemy_melee_brute.tscn,
+## etc.), même mécanisme déjà utilisé pour différencier les stats/la teinte
+## des 9 variantes d'ennemis (cf. roadmap 9.2) -- pas de nouveau script par
+## type, juste une valeur exportée de plus.
+const AMBIENT_MIN_INTERVAL: float = 4.0
+const AMBIENT_MAX_INTERVAL: float = 10.0
+## Portée en pixels au-delà de laquelle un mob est jugé "hors de portée
+## d'écoute" (le son n'est pas spatialisé, cf. AudioManager) -- évite qu'un
+## mob assis dans une salle pas encore visitée se fasse entendre. Un peu plus
+## d'une salle (cf. game.gd::ROOM_CELL_SIZE, 960x1344).
+const AMBIENT_RANGE: float = 1400.0
+## Valeur par défaut = repli générique si un type n'a pas encore reçu son
+## propre cri (cf. les .tscn qui surchargent cette valeur).
+@export var ambient_sfx_key: String = "mob_ambient_1"
+
+var _ambient_timer: float = 0.0
+
 func _ready() -> void:
 	super()
 	add_to_group("Enemies")
+	_reset_ambient_timer()
+
+## Purement local à chaque pair, sans RPC (cosmétique, pas un événement de
+## gameplay à synchroniser) -- même raisonnement que l'avancement des frames
+## de sprite documenté ailleurs dans le projet ("chaque instance avance ses
+## propres frames localement"). Gardé par la DISTANCE au joueur vivant le
+## plus proche plutôt que par `active` : `active` n'est mis à true que côté
+## hôte (cf. Room._activate_enemies_delayed, gardé par is_server()) -- un
+## client ne le verrait jamais passer à true et ses mobs resteraient
+## silencieux. La distance, elle, se calcule identiquement sur chaque pair
+## puisque les positions des joueurs sont répliquées.
+func _process(delta: float) -> void:
+	if is_dead:
+		return
+	_ambient_timer -= delta
+	if _ambient_timer <= 0.0:
+		_reset_ambient_timer()
+		_maybe_play_ambient_sound()
+
+func _reset_ambient_timer() -> void:
+	_ambient_timer = randf_range(AMBIENT_MIN_INTERVAL, AMBIENT_MAX_INTERVAL)
+
+func _maybe_play_ambient_sound() -> void:
+	var player: Node2D = _closest_living_player()
+	if player == null:
+		return
+	if global_position.distance_to(player.global_position) > AMBIENT_RANGE:
+		return
+	AudioManager.play_sfx(ambient_sfx_key)
+
+func _get_hit_sfx_key() -> String:
+	return "hit_enemy"
 
 ## Monnaie et ingrédient (si porté) lâchés comme pickups physiques au sol
 ## (Phase 9.2, dynamisme) -- ramassés individuellement par qui marche

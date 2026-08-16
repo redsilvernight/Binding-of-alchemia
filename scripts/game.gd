@@ -120,6 +120,10 @@ var _run_summary_shown: bool = false
 
 func _ready() -> void:
 	add_to_group("Game")
+	# Tourne localement sur chaque pair (comme tout _ready de scène, pas
+	# besoin de RPC) -- remplacé par la musique de boss dès l'entrée dans sa
+	# salle, cf. _rpc_mark_room_visited.
+	AudioManager.play_music("dungeon")
 	NetworkManager.multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	NetworkManager.multiplayer.peer_connected.connect(_on_peer_connected)
 	room_spawner.spawn_function = _spawn_room
@@ -332,6 +336,8 @@ func _rpc_mark_room_visited(grid_position: Vector2i) -> void:
 		return
 	dungeon_map[grid_position]["visited"] = true
 	dungeon_map_changed.emit()
+	if dungeon_map[grid_position]["is_boss"]:
+		AudioManager.play_music("boss")
 
 func _room_world_rect(room_data: Dictionary) -> Rect2:
 	return Rect2(Vector2(room_data["grid_position"]) * ROOM_CELL_SIZE, ROOM_CELL_SIZE)
@@ -517,6 +523,16 @@ func _spawn_bullet(data: Dictionary) -> Node:
 	var scene_path: String = data.get("scene_path", "res://scenes/projectiles/bullet_water.tscn")
 	var bullet: Bullet = (load(scene_path) as PackedScene).instantiate()
 	bullet.setup(data["damage"], data["speed"], data["lifetime"], data["trajectory"])
+	if scene_path == Weapon.MIXTURE_BULLET_SCENE:
+		bullet.impact_sfx_key = "impact_mixture"
+	elif scene_path == "res://scenes/enemies/enemy_projectile.tscn":
+		# Son de TIR (pas d'impact) joué ici plutôt que dans fire_at() : ce
+		# spawn_function tourne en vrai sur chaque pair (le MultiplayerSpawner
+		# rejoue localement le même appel côté client), contrairement à
+		# fire_at() lui-même qui ne s'exécute que côté hôte (FSM host-only,
+		# cf. enemy_ranged.gd/boss_01.gd) -- même raisonnement que le SFX de
+		# tir du joueur, placé dans player.gd plutôt que weapon.gd.
+		AudioManager.play_sfx("enemy_attack_ranged")
 	if data.has("impact_effect_data"):
 		var effect: ImpactEffect = ImpactEffect.from_dict(data["impact_effect_data"])
 		bullet.set_impact_effect(effect)

@@ -12,6 +12,7 @@ extends Node2D
 
 
 func _ready() -> void:
+	AudioManager.play_music("hub") # local à chaque pair, comme game.gd
 	NetworkManager.multiplayer.peer_connected.connect(_on_peer_connected)
 	player_spawner.spawn_function = _spawn_player
 	if multiplayer.is_server():

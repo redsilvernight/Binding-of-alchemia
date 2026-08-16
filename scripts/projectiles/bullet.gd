@@ -9,6 +9,11 @@ var lifetime: float = 3.0
 var _base_speed: float = 0.0
 var trajectory: TrajectoryType = TrajectoryType.LINEAR
 var impact_effect: ImpactEffect = null
+## Clé SFX jouée à l'impact (Phase 9.4), assignée par game.gd._spawn_bullet
+## selon la scène tirée. Par défaut "impact_water" : les balles ennemies
+## (enemy_projectile.tscn) ne passent pas par ce chemin de sélection mais
+## restent audibles avec un son générique plutôt que muettes.
+var impact_sfx_key: String = "impact_water"
 
 # --- ARC ---
 var _arc_time: float = 0.0
@@ -79,6 +84,12 @@ func _process_homing(delta: float) -> void:
 	global_position += velocity * delta
 
 func _on_body_entered(body: Node) -> void:
+	# SFX joué AVANT la garde hôte (Phase 9.4) : ce noeud existe en vrai chez
+	# chaque pair (spawné via projectile_spawner, cf. game.gd), sa trajectoire
+	# est simulée localement de façon déterministe à partir des mêmes données
+	# de tir -- chaque pair détecte donc sa propre collision indépendamment,
+	# à peu près au même instant. Seule la RÉSOLUTION du dégât reste hôte-only.
+	AudioManager.play_sfx(impact_sfx_key)
 	if not multiplayer.is_server():
 		return
 	if impact_effect != null:

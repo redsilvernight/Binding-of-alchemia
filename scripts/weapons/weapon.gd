@@ -87,6 +87,12 @@ func equip_networked(piece: Resource) -> void:
 @rpc("any_peer", "call_local", "reliable")
 func _rpc_equip(part_path: String) -> void:
 	equip(load(part_path))
+	# is_multiplayer_authority() : chaque pair possède une copie de CHAQUE
+	# arme (la sienne et celles des autres joueurs, cf. _process) -- sans
+	# cette garde, équiper une pièce ferait sonner l'écran de TOUS les
+	# joueurs, pas seulement celui qui vient d'équiper.
+	if is_multiplayer_authority():
+		AudioManager.play_sfx("weapon_equip")
 
 ## Même pattern que equip_networked/_rpc_equip : chaque client possède sa
 ## propre copie du noeud Weapon, donc affecter mixture_ingredient_paths en
@@ -102,6 +108,8 @@ func set_mixture_ingredients_networked(ingredient_paths: Array[String]) -> void:
 @rpc("any_peer", "call_local", "reliable")
 func _rpc_set_mixture_ingredients(ingredient_paths: Array[String]) -> void:
 	mixture_ingredient_paths = ingredient_paths
+	if is_multiplayer_authority(): # même garde que _rpc_equip
+		AudioManager.play_sfx("craft_success")
 
 func _recalculate_stats():
 	var base_speed_water = 0.0
@@ -158,6 +166,15 @@ func _recalculate_stats():
 	# pairs (même Resource exportée), pas besoin de RPC ici. Les changements
 	# ultérieurs (tir, regen) passent par _broadcast_ammo().
 	ammo_changed.emit(current_mixture_ammo, mixture_max_capacity)
+
+## Lecture seule, sans effet de bord (contrairement à try_fire_mixture) --
+## utilisée côté client (Player._on_sprite_animation_finished, Phase 9.4)
+## pour choisir le SFX "tir"/"réservoir vide" avant même que l'hôte ait
+## traité la requête. Sûr sur un client : current_mixture_ammo est répliqué
+## par _update_ammo (call_local), contrairement à mixture_cooldown_accum qui
+## ne progresse que côté hôte (cf. _process) et serait faux ici.
+func can_fire_mixture_locally() -> bool:
+	return can_fire_mixture and tank != null and current_mixture_ammo >= tank.mixture_cost_per_shot
 
 func try_fire_water(direction: Vector2) -> bool:
 	if not can_fire_water:

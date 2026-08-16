@@ -17,6 +17,8 @@ extends Control
 
 @onready var _options_panel: Control = $OptionsPanel
 @onready var _volume_slider: HSlider = $OptionsPanel/OptionsVBox/VolumeSlider
+@onready var _music_volume_slider: HSlider = $OptionsPanel/OptionsVBox/MusicVolumeSlider
+@onready var _sfx_volume_slider: HSlider = $OptionsPanel/OptionsVBox/SfxVolumeSlider
 @onready var _fullscreen_check: CheckButton = $OptionsPanel/OptionsVBox/FullscreenCheck
 @onready var _back_button: Button = $OptionsPanel/OptionsVBox/Back
 
@@ -37,12 +39,25 @@ func _ready() -> void:
 	_quit_button.pressed.connect(_on_quit_pressed)
 
 	_volume_slider.value_changed.connect(_on_volume_changed)
+	_music_volume_slider.value_changed.connect(_on_music_volume_changed)
+	_sfx_volume_slider.value_changed.connect(_on_sfx_volume_changed)
 	_fullscreen_check.toggled.connect(_on_fullscreen_toggled)
 	_back_button.pressed.connect(_on_back_pressed)
 
 	for i in _profile_buttons.size():
 		_profile_buttons[i].pressed.connect(_on_profile_selected.bind(i))
 	_profile_back_button.pressed.connect(_on_profile_back_pressed)
+
+	# Retour sonore générique (Phase 9.4) : aucun pattern de bouton partagé
+	# dans le projet (cf. exploration audio), donc un seul branchement en
+	# boucle ici plutôt qu'un appel répété dans chaque handler _on_*_pressed.
+	var clickable_buttons: Array[Button] = [
+		_play_button, _multiplayer_button, _options_button, _change_profile_button,
+		_quit_button, _back_button, _profile_back_button,
+	]
+	clickable_buttons.append_array(_profile_buttons)
+	for button in clickable_buttons:
+		button.pressed.connect(AudioManager.play_sfx.bind("ui_click"))
 
 	_options_panel.visible = false
 	_profile_panel.visible = false
@@ -59,6 +74,8 @@ func _on_multiplayer_pressed() -> void:
 
 func _on_options_pressed() -> void:
 	_volume_slider.value = Settings.master_volume
+	_music_volume_slider.value = Settings.music_volume
+	_sfx_volume_slider.value = Settings.sfx_volume
 	_fullscreen_check.button_pressed = Settings.fullscreen
 	_options_panel.visible = true
 
@@ -69,6 +86,14 @@ func _on_quit_pressed() -> void:
 
 func _on_volume_changed(value: float) -> void:
 	Settings.set_master_volume(value)
+
+
+func _on_music_volume_changed(value: float) -> void:
+	Settings.set_music_volume(value)
+
+
+func _on_sfx_volume_changed(value: float) -> void:
+	Settings.set_sfx_volume(value)
 
 
 func _on_fullscreen_toggled(enabled: bool) -> void:

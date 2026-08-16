@@ -22,6 +22,11 @@ const FADE_DURATION: float = 0.3
 
 var _open: bool = false
 var _tween: Tween
+## Phase 9.4 : la toute première application d'état (dungeon_generator, via
+## Room.set_open_sides -> _apply_walls) ouvrirait sinon TOUTES les portes du
+## donjon fraîchement généré en même temps -- silencieuse, seuls les VRAIS
+## verrouillages/déverrouillages de combat (appels suivants) sonnent.
+var _initialized: bool = false
 
 
 func _ready() -> void:
@@ -31,9 +36,13 @@ func _ready() -> void:
 
 
 func set_state(effectively_open: bool) -> void:
-	if effectively_open == _open:
+	if effectively_open == _open and _initialized:
 		return
+	var should_play_sound: bool = _initialized
+	_initialized = true
 	_open = effectively_open
+	if should_play_sound:
+		AudioManager.play_sfx("door_open" if effectively_open else "door_close")
 	_collision.set_deferred("disabled", effectively_open)
 	if _tween:
 		_tween.kill()
