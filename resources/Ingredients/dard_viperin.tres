@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Ingredient" format=3]
+
+[ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_dvipe"]
+[ext_resource type="Texture2D" path="res://assets/icons/ingredients/dard_viperin.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_dvipe")
+icon = ExtResource("2_icon")
+nom = "Dard Vipérin"
+type_alchimie = 2
+degats_base = 7.0
+duree_base = 4.0
+metadata/_custom_type_script = "uid://bja0da4fhu872"

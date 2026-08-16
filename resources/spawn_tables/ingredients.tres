@@ -135,8 +135,58 @@ script = ExtResource("2_entry")
 item_path = "res://resources/Ingredients/eclat_cryogene.tres"
 weight = 1.0
 
+[sub_resource type="Resource" id="Resource_magma_rampant"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/magma_rampant.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_souffle_hivernal"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/souffle_hivernal.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_moisissure_noire"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/moisissure_noire.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_dard_viperin"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/dard_viperin.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_griffe_orage"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/griffe_orage.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_etincelle_vive"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/etincelle_vive.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_rosee_bienfaisante"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/rosee_bienfaisante.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_coeur_phenix"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/coeur_phenix.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_eclat_shrapnel"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/eclat_shrapnel.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_charge_sismique"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/charge_sismique.tres"
+weight = 1.0
+
 [resource]
 script = ExtResource("1_table")
-entries = Array[ExtResource("2_entry")]([SubResource("Resource_braise"), SubResource("Resource_cristal_givre"), SubResource("Resource_bave_toxique"), SubResource("Resource_cendre_ardente"), SubResource("Resource_racine_apaisante"), SubResource("Resource_sang_hydre"), SubResource("Resource_eclair_zeus"), SubResource("Resource_poudre_fulminante"), SubResource("Resource_baril_poudre"), SubResource("Resource_eclat_meteore"), SubResource("Resource_larme_banquise"), SubResource("Resource_poussiere_diamant_gele"), SubResource("Resource_nerf_foudre"), SubResource("Resource_resine_conductrice"), SubResource("Resource_pollen_curatif"), SubResource("Resource_seve_de_vie"), SubResource("Resource_huile_enflammee"), SubResource("Resource_spore_corrosive"), SubResource("Resource_ecorce_brulante"), SubResource("Resource_brume_polaire"), SubResource("Resource_venin_necrosant"), SubResource("Resource_orage_captif"), SubResource("Resource_baume_regenerant"), SubResource("Resource_noyau_instable"), SubResource("Resource_cendre_vive"), SubResource("Resource_eclat_cryogene")])
+entries = Array[ExtResource("2_entry")]([SubResource("Resource_braise"), SubResource("Resource_cristal_givre"), SubResource("Resource_bave_toxique"), SubResource("Resource_cendre_ardente"), SubResource("Resource_racine_apaisante"), SubResource("Resource_sang_hydre"), SubResource("Resource_eclair_zeus"), SubResource("Resource_poudre_fulminante"), SubResource("Resource_baril_poudre"), SubResource("Resource_eclat_meteore"), SubResource("Resource_larme_banquise"), SubResource("Resource_poussiere_diamant_gele"), SubResource("Resource_nerf_foudre"), SubResource("Resource_resine_conductrice"), SubResource("Resource_pollen_curatif"), SubResource("Resource_seve_de_vie"), SubResource("Resource_huile_enflammee"), SubResource("Resource_spore_corrosive"), SubResource("Resource_ecorce_brulante"), SubResource("Resource_brume_polaire"), SubResource("Resource_venin_necrosant"), SubResource("Resource_orage_captif"), SubResource("Resource_baume_regenerant"), SubResource("Resource_noyau_instable"), SubResource("Resource_cendre_vive"), SubResource("Resource_eclat_cryogene"), SubResource("Resource_magma_rampant"), SubResource("Resource_souffle_hivernal"), SubResource("Resource_moisissure_noire"), SubResource("Resource_dard_viperin"), SubResource("Resource_griffe_orage"), SubResource("Resource_etincelle_vive"), SubResource("Resource_rosee_bienfaisante"), SubResource("Resource_coeur_phenix"), SubResource("Resource_eclat_shrapnel"), SubResource("Resource_charge_sismique")])
 min_count = 4
 max_count = 6

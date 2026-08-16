@@ -115,8 +115,58 @@ script = ExtResource("2_entry")
 item_path = "res://resources/GunParts/core_bulwark.tres"
 weight = 1.0
 
+[sub_resource type="Resource" id="Resource_water_barel_pulse"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/water_barel_pulse.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_water_barel_torrent"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/water_barel_torrent.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_mixture_barrel_volley"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/mixture_barrel_volley.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_mixture_barrel_overload"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/mixture_barrel_overload.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_tank_endurance"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/tank_endurance.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_tank_overcharge"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/tank_overcharge.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_tank_fortress"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/tank_fortress.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_core_juggernaut"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/core_juggernaut.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_core_swift_strike"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/core_swift_strike.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_core_vanguard"]
+script = ExtResource("2_entry")
+item_path = "res://resources/GunParts/core_vanguard.tres"
+weight = 1.0
+
 [resource]
 script = ExtResource("1_table")
-entries = Array[ExtResource("2_entry")]([SubResource("Resource_water_barel_basic"), SubResource("Resource_water_barel_fast"), SubResource("Resource_mixture_barrel_basic"), SubResource("Resource_mixture_barrel_heavy"), SubResource("Resource_tank_basic"), SubResource("Resource_tank_large"), SubResource("Resource_core_basic"), SubResource("Resource_core_range"), SubResource("Resource_core_apollo"), SubResource("Resource_tank_titan"), SubResource("Resource_water_barel_sniper"), SubResource("Resource_mixture_barrel_rapid"), SubResource("Resource_tank_compact"), SubResource("Resource_core_glass_cannon"), SubResource("Resource_water_barel_burst"), SubResource("Resource_water_barel_heavy"), SubResource("Resource_mixture_barrel_precision"), SubResource("Resource_mixture_barrel_burst"), SubResource("Resource_tank_reservoir"), SubResource("Resource_tank_swift"), SubResource("Resource_core_sniper"), SubResource("Resource_core_bulwark")])
+entries = Array[ExtResource("2_entry")]([SubResource("Resource_water_barel_basic"), SubResource("Resource_water_barel_fast"), SubResource("Resource_mixture_barrel_basic"), SubResource("Resource_mixture_barrel_heavy"), SubResource("Resource_tank_basic"), SubResource("Resource_tank_large"), SubResource("Resource_core_basic"), SubResource("Resource_core_range"), SubResource("Resource_core_apollo"), SubResource("Resource_tank_titan"), SubResource("Resource_water_barel_sniper"), SubResource("Resource_mixture_barrel_rapid"), SubResource("Resource_tank_compact"), SubResource("Resource_core_glass_cannon"), SubResource("Resource_water_barel_burst"), SubResource("Resource_water_barel_heavy"), SubResource("Resource_mixture_barrel_precision"), SubResource("Resource_mixture_barrel_burst"), SubResource("Resource_tank_reservoir"), SubResource("Resource_tank_swift"), SubResource("Resource_core_sniper"), SubResource("Resource_core_bulwark"), SubResource("Resource_water_barel_pulse"), SubResource("Resource_water_barel_torrent"), SubResource("Resource_mixture_barrel_volley"), SubResource("Resource_mixture_barrel_overload"), SubResource("Resource_tank_endurance"), SubResource("Resource_tank_overcharge"), SubResource("Resource_tank_fortress"), SubResource("Resource_core_juggernaut"), SubResource("Resource_core_swift_strike"), SubResource("Resource_core_vanguard")])
 min_count = 8
 max_count = 8

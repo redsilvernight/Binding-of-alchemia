@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Ingredient" format=3]
+
+[ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_mnoir"]
+[ext_resource type="Texture2D" path="res://assets/icons/ingredients/moisissure_noire.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_mnoir")
+icon = ExtResource("2_icon")
+nom = "Moisissure Noire"
+type_alchimie = 2
+degats_base = 3.0
+duree_base = 8.0
+zone_base = 0.6
+metadata/_custom_type_script = "uid://bja0da4fhu872"
