@@ -106,6 +106,29 @@ func _spawn_player() -> void:
 	# ici simplement laissé à false en permanence.
 	player.can_take_damage = false
 	_player = player
+	_add_mixture_reset_button(player)
+
+
+## Retour utilisateur : bouton "Réinitialiser la mixture" injecté dans
+## l'écran d'alchimie du joueur, uniquement dans ce bac à sable -- la scène
+## scenes/ui/alchemy_crafting.tscn elle-même n'est PAS modifiée (partagée
+## avec le vrai jeu) : ce bouton est ajouté à l'instance déjà créée par
+## Player._ready() (alchemy_crafting_screen), donc invisible partout
+## ailleurs. Ramène la mixture chargée à son état d'origine (aucune
+## mixture crée), identique à un Weapon fraîchement spawné.
+func _add_mixture_reset_button(player: Node) -> void:
+	var screen: Node = player.alchemy_crafting_screen
+	if screen == null:
+		return
+	var content: Node = screen.get_node("Root/Content")
+	var reset_button := Button.new()
+	reset_button.text = "Réinitialiser la mixture"
+	content.add_child(reset_button)
+	reset_button.pressed.connect(func() -> void:
+		player.weapon.mixture_impact_effect = null
+		player.weapon.set_mixture_ingredients_networked([])
+		screen.result_label.text = "Mixture réinitialisée."
+	)
 
 
 ## Retour utilisateur : accès à tous les ingrédients UNIQUEMENT dans cette
