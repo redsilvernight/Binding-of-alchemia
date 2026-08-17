@@ -523,6 +523,7 @@ func _spawn_bullet(data: Dictionary) -> Node:
 	var scene_path: String = data.get("scene_path", "res://scenes/projectiles/bullet_water.tscn")
 	var bullet: Bullet = (load(scene_path) as PackedScene).instantiate()
 	bullet.setup(data["damage"], data["speed"], data["lifetime"], data["trajectory"])
+	bullet.shooter_id = data.get("shooter_id", 0)
 	if scene_path == Weapon.MIXTURE_BULLET_SCENE:
 		bullet.impact_sfx_key = "impact_mixture"
 	elif scene_path == "res://scenes/enemies/enemy_projectile.tscn":

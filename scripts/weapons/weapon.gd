@@ -221,6 +221,14 @@ func _update_ammo(current: float, max_ammo: float) -> void:
 	ammo_changed.emit(current_mixture_ammo, mixture_max_capacity)
 
 func _fire_bullet(damage: float, speed: float, direction: Vector2, trajectory: Bullet.TrajectoryType, effect: ImpactEffect, scene_path: String) -> void:
+	# get_parent() est le Player propriétaire de cette arme (Weapon est
+	# toujours $Weapon d'un player.tscn en jeu réel) ; is_valid_int() protège
+	# le cas d'un Weapon de test instancié hors arbre (cf. is_inside_tree()
+	# ailleurs dans ce fichier), qui n'a pas de vrai peer_id pour nom.
+	var shooter_id: int = 0
+	var parent_node := get_parent()
+	if parent_node != null and parent_node.name.is_valid_int():
+		shooter_id = int(parent_node.name)
 	var data: Dictionary = {
 		"damage": damage,
 		"speed": speed,
@@ -229,6 +237,7 @@ func _fire_bullet(damage: float, speed: float, direction: Vector2, trajectory: B
 		"from_position": global_position,
 		"direction": direction,
 		"scene_path": scene_path,
+		"shooter_id": shooter_id,
 	}
 	if effect != null:
 		# On sérialise les données de l'effet plutôt que son resource_path :

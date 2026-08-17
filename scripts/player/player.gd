@@ -350,8 +350,10 @@ func _on_died() -> void:
 ## _on_died via le signal died (émis juste après health_changed dans
 ## Character._update_health) -- pas de jouer un hit qui serait de toute façon
 ## immédiatement écrasé par l'anim de mort.
-func _on_health_changed(_max_lifepoint: float, lifepoint: float) -> void:
+func _on_health_changed(_max_lifepoint: float, lifepoint: float, delta: float) -> void:
 	if lifepoint <= 0:
+		return
+	if delta >= 0.0: # soin (ex: mixture Soin) : pas de réaction "coup reçu"
 		return
 	if sprite.animation.begins_with("attack"):
 		return

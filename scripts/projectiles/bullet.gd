@@ -9,6 +9,10 @@ var lifetime: float = 3.0
 var _base_speed: float = 0.0
 var trajectory: TrajectoryType = TrajectoryType.LINEAR
 var impact_effect: ImpactEffect = null
+## peer_id du tireur (assigné par game.gd._spawn_bullet) -- transmis à
+## impact_effect.apply() pour les effets qui agissent sur le tireur plutôt
+## que sur la cible touchée (ex: ImpactHeal, vol de vie d'une mixture Soin).
+var shooter_id: int = 0
 ## Clé SFX jouée à l'impact (Phase 9.4), assignée par game.gd._spawn_bullet
 ## selon la scène tirée. Par défaut "impact_water" : les balles ennemies
 ## (enemy_projectile.tscn) ne passent pas par ce chemin de sélection mais
@@ -92,8 +96,13 @@ func _on_body_entered(body: Node) -> void:
 	AudioManager.play_sfx(impact_sfx_key)
 	if not multiplayer.is_server():
 		return
-	if impact_effect != null:
-		impact_effect.apply(body, global_position)
-	elif body.has_method("take_damage"):
+	# Les dégâts d'arme (canon+cœur) et l'effet alchimique de la mixture
+	# S'ADDITIONNENT au lieu de s'exclure -- esprit "Rounds" : chaque
+	# ingrédient de la mixture ajoute son propre pouvoir au tir de base
+	# plutôt que de le remplacer. Sans mixture chargée, impact_effect est
+	# null (comportement inchangé : seuls les dégâts d'arme s'appliquent).
+	if body.has_method("take_damage"):
 		body.take_damage(damage)
+	if impact_effect != null:
+		impact_effect.apply(body, global_position, shooter_id)
 	queue_free()

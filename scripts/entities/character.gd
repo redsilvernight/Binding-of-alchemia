@@ -1,7 +1,9 @@
 class_name Character
 extends CharacterBody2D
 
-signal health_changed(max_lifepoint: float, lifepoint: float)
+## delta > 0 = soin, delta < 0 = dégâts -- permet aux écouteurs (ex: anim
+## "hit" du joueur) de distinguer les deux sans dupliquer la RPC/le signal.
+signal health_changed(max_lifepoint: float, lifepoint: float, delta: float)
 signal died
 @export var max_lifepoint: float = 20.0
 var lifepoint: float
@@ -34,12 +36,26 @@ func take_damage(degat: float) -> void:
 func _start_invulnerability() -> void:
 	pass
 
+## Réutilise _update_health/health_changed (même RPC, même mise à jour de
+## barre de vie) plutôt qu'un chemin séparé -- seul le signe de `delta` dans
+## health_changed change pour les écouteurs. Pas de garde can_take_damage
+## (les i-frames ne concernent que les dégâts entrants, pas les soins).
+func heal(amount: float) -> void:
+	if not multiplayer.is_server():
+		return
+	if is_dead:
+		return
+	if amount <= 0.0:
+		return
+	lifepoint = min(lifepoint + amount, max_lifepoint)
+	_update_health.rpc(max_lifepoint, lifepoint)
+
 @rpc("any_peer", "call_local", "reliable")
 func _update_health(p_max_lifepoint: float, p_lifepoint: float) -> void:
 	var previous_lifepoint: float = lifepoint
 	max_lifepoint = p_max_lifepoint
 	lifepoint = p_lifepoint
-	health_changed.emit(max_lifepoint, lifepoint)
+	health_changed.emit(max_lifepoint, lifepoint, lifepoint - previous_lifepoint)
 	# is_dead/died sont dérivés ici plutôt que dans take_damage (hôte
 	# uniquement) pour se répliquer identiquement chez tous les pairs via ce
 	# même RPC (call_local, y compris l'hôte) — cf. Player._on_died (8.1) qui
