@@ -89,6 +89,11 @@ func _spawn_player() -> void:
 	players_container.add_child(player)
 	player.position = Vector2(ROOM_WIDTH_PX / 2.0, ROOM_HEIGHT_PX * 0.75)
 	_grant_all_ingredients(player.inventory)
+	# Retour utilisateur : joueur invulnérable dans ce bac à sable uniquement
+	# (rien de partagé touché) -- can_take_damage est le même champ que
+	# Character.take_damage() vérifie déjà pour les i-frames temporaires,
+	# ici simplement laissé à false en permanence.
+	player.can_take_damage = false
 
 
 ## Retour utilisateur : accès à tous les ingrédients UNIQUEMENT dans cette
