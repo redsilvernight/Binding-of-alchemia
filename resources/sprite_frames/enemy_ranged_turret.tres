@@ -1,0 +1,1236 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south/0.png" id="1_south_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south/1.png" id="1_south_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south/2.png" id="1_south_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south/3.png" id="1_south_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south/4.png" id="1_south_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south/5.png" id="1_south_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south-east/0.png" id="1_south_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south-east/1.png" id="1_south_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south-east/2.png" id="1_south_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south-east/3.png" id="1_south_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south-east/4.png" id="1_south_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south-east/5.png" id="1_south_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/east/0.png" id="1_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/east/1.png" id="1_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/east/2.png" id="1_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/east/3.png" id="1_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/east/4.png" id="1_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/east/5.png" id="1_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north-east/0.png" id="1_north_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north-east/1.png" id="1_north_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north-east/2.png" id="1_north_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north-east/3.png" id="1_north_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north-east/4.png" id="1_north_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north-east/5.png" id="1_north_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north/0.png" id="1_north_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north/1.png" id="1_north_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north/2.png" id="1_north_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north/3.png" id="1_north_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north/4.png" id="1_north_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north/5.png" id="1_north_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north-west/0.png" id="1_north_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north-west/1.png" id="1_north_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north-west/2.png" id="1_north_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north-west/3.png" id="1_north_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north-west/4.png" id="1_north_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/north-west/5.png" id="1_north_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/west/0.png" id="1_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/west/1.png" id="1_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/west/2.png" id="1_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/west/3.png" id="1_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/west/4.png" id="1_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/west/5.png" id="1_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south-west/0.png" id="1_south_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south-west/1.png" id="1_south_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south-west/2.png" id="1_south_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south-west/3.png" id="1_south_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south-west/4.png" id="1_south_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/walk/south-west/5.png" id="1_south_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south/0.png" id="atk_south_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south/1.png" id="atk_south_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south/2.png" id="atk_south_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south/3.png" id="atk_south_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south/4.png" id="atk_south_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south/5.png" id="atk_south_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south-east/0.png" id="atk_south_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south-east/1.png" id="atk_south_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south-east/2.png" id="atk_south_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south-east/3.png" id="atk_south_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south-east/4.png" id="atk_south_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south-east/5.png" id="atk_south_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/east/0.png" id="atk_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/east/1.png" id="atk_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/east/2.png" id="atk_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/east/3.png" id="atk_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/east/4.png" id="atk_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/east/5.png" id="atk_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north-east/0.png" id="atk_north_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north-east/1.png" id="atk_north_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north-east/2.png" id="atk_north_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north-east/3.png" id="atk_north_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north-east/4.png" id="atk_north_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north-east/5.png" id="atk_north_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north/0.png" id="atk_north_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north/1.png" id="atk_north_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north/2.png" id="atk_north_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north/3.png" id="atk_north_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north/4.png" id="atk_north_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north/5.png" id="atk_north_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north-west/0.png" id="atk_north_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north-west/1.png" id="atk_north_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north-west/2.png" id="atk_north_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north-west/3.png" id="atk_north_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north-west/4.png" id="atk_north_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/north-west/5.png" id="atk_north_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/west/0.png" id="atk_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/west/1.png" id="atk_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/west/2.png" id="atk_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/west/3.png" id="atk_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/west/4.png" id="atk_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/west/5.png" id="atk_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south-west/0.png" id="atk_south_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south-west/1.png" id="atk_south_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south-west/2.png" id="atk_south_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south-west/3.png" id="atk_south_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south-west/4.png" id="atk_south_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/attack/south-west/5.png" id="atk_south_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south/0.png" id="hit_south_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south/1.png" id="hit_south_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south/2.png" id="hit_south_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south/3.png" id="hit_south_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south/4.png" id="hit_south_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south/5.png" id="hit_south_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south-east/0.png" id="hit_south_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south-east/1.png" id="hit_south_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south-east/2.png" id="hit_south_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south-east/3.png" id="hit_south_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south-east/4.png" id="hit_south_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south-east/5.png" id="hit_south_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/east/0.png" id="hit_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/east/1.png" id="hit_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/east/2.png" id="hit_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/east/3.png" id="hit_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/east/4.png" id="hit_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/east/5.png" id="hit_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north-east/0.png" id="hit_north_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north-east/1.png" id="hit_north_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north-east/2.png" id="hit_north_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north-east/3.png" id="hit_north_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north-east/4.png" id="hit_north_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north-east/5.png" id="hit_north_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north/0.png" id="hit_north_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north/1.png" id="hit_north_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north/2.png" id="hit_north_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north/3.png" id="hit_north_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north/4.png" id="hit_north_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north/5.png" id="hit_north_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north-west/0.png" id="hit_north_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north-west/1.png" id="hit_north_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north-west/2.png" id="hit_north_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north-west/3.png" id="hit_north_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north-west/4.png" id="hit_north_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/north-west/5.png" id="hit_north_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/west/0.png" id="hit_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/west/1.png" id="hit_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/west/2.png" id="hit_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/west/3.png" id="hit_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/west/4.png" id="hit_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/west/5.png" id="hit_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south-west/0.png" id="hit_south_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south-west/1.png" id="hit_south_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south-west/2.png" id="hit_south_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south-west/3.png" id="hit_south_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south-west/4.png" id="hit_south_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/hit/south-west/5.png" id="hit_south_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south/0.png" id="death_south_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south/1.png" id="death_south_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south/2.png" id="death_south_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south/3.png" id="death_south_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south/4.png" id="death_south_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south/5.png" id="death_south_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south/6.png" id="death_south_6"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south-east/0.png" id="death_south_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south-east/1.png" id="death_south_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south-east/2.png" id="death_south_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south-east/3.png" id="death_south_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south-east/4.png" id="death_south_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south-east/5.png" id="death_south_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south-east/6.png" id="death_south_east_6"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/east/0.png" id="death_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/east/1.png" id="death_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/east/2.png" id="death_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/east/3.png" id="death_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/east/4.png" id="death_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/east/5.png" id="death_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/east/6.png" id="death_east_6"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north-east/0.png" id="death_north_east_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north-east/1.png" id="death_north_east_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north-east/2.png" id="death_north_east_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north-east/3.png" id="death_north_east_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north-east/4.png" id="death_north_east_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north-east/5.png" id="death_north_east_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north-east/6.png" id="death_north_east_6"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north/0.png" id="death_north_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north/1.png" id="death_north_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north/2.png" id="death_north_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north/3.png" id="death_north_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north/4.png" id="death_north_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north/5.png" id="death_north_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north/6.png" id="death_north_6"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north-west/0.png" id="death_north_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north-west/1.png" id="death_north_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north-west/2.png" id="death_north_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north-west/3.png" id="death_north_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north-west/4.png" id="death_north_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north-west/5.png" id="death_north_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/north-west/6.png" id="death_north_west_6"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/west/0.png" id="death_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/west/1.png" id="death_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/west/2.png" id="death_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/west/3.png" id="death_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/west/4.png" id="death_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/west/5.png" id="death_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/west/6.png" id="death_west_6"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south-west/0.png" id="death_south_west_0"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south-west/1.png" id="death_south_west_1"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south-west/2.png" id="death_south_west_2"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south-west/3.png" id="death_south_west_3"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south-west/4.png" id="death_south_west_4"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south-west/5.png" id="death_south_west_5"]
+[ext_resource type="Texture2D" path="res://assets/enemies/ranged_turret_v2/death/south-west/6.png" id="death_south_west_6"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_south_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_south_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_south_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_south_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_south_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_south_5")
+}],
+"loop": true,
+"name": &"walk-south",
+"speed": 8.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_south_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_south_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_south_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_south_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_south_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_south_east_5")
+}],
+"loop": true,
+"name": &"walk-south-east",
+"speed": 8.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_east_5")
+}],
+"loop": true,
+"name": &"walk-east",
+"speed": 8.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_north_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_north_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_north_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_north_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_north_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_north_east_5")
+}],
+"loop": true,
+"name": &"walk-north-east",
+"speed": 8.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_north_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_north_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_north_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_north_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_north_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_north_5")
+}],
+"loop": true,
+"name": &"walk-north",
+"speed": 8.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_north_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_north_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_north_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_north_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_north_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_north_west_5")
+}],
+"loop": true,
+"name": &"walk-north-west",
+"speed": 8.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_west_5")
+}],
+"loop": true,
+"name": &"walk-west",
+"speed": 8.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_south_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_south_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_south_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_south_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_south_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("1_south_west_5")
+}],
+"loop": true,
+"name": &"walk-south-west",
+"speed": 8.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_south_0")
+}],
+"loop": true,
+"name": &"idle-south",
+"speed": 5.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_south_east_0")
+}],
+"loop": true,
+"name": &"idle-south-east",
+"speed": 5.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_east_0")
+}],
+"loop": true,
+"name": &"idle-east",
+"speed": 5.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_north_east_0")
+}],
+"loop": true,
+"name": &"idle-north-east",
+"speed": 5.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_north_0")
+}],
+"loop": true,
+"name": &"idle-north",
+"speed": 5.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_north_west_0")
+}],
+"loop": true,
+"name": &"idle-north-west",
+"speed": 5.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_west_0")
+}],
+"loop": true,
+"name": &"idle-west",
+"speed": 5.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_south_west_0")
+}],
+"loop": true,
+"name": &"idle-south-west",
+"speed": 5.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_south_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_5")
+}],
+"loop": false,
+"name": &"attack-south",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_east_5")
+}],
+"loop": false,
+"name": &"attack-south-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_east_5")
+}],
+"loop": false,
+"name": &"attack-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_east_5")
+}],
+"loop": false,
+"name": &"attack-north-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_north_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_5")
+}],
+"loop": false,
+"name": &"attack-north",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_north_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_north_west_5")
+}],
+"loop": false,
+"name": &"attack-north-west",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_west_5")
+}],
+"loop": false,
+"name": &"attack-west",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("atk_south_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("atk_south_west_5")
+}],
+"loop": false,
+"name": &"attack-south-west",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("hit_south_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_south_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_south_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_south_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_south_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_south_5")
+}],
+"loop": false,
+"name": &"hit-south",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("hit_south_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_south_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_south_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_south_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_south_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_south_east_5")
+}],
+"loop": false,
+"name": &"hit-south-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("hit_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_east_5")
+}],
+"loop": false,
+"name": &"hit-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("hit_north_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_north_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_north_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_north_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_north_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_north_east_5")
+}],
+"loop": false,
+"name": &"hit-north-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("hit_north_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_north_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_north_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_north_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_north_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_north_5")
+}],
+"loop": false,
+"name": &"hit-north",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("hit_north_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_north_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_north_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_north_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_north_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_north_west_5")
+}],
+"loop": false,
+"name": &"hit-north-west",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("hit_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_west_5")
+}],
+"loop": false,
+"name": &"hit-west",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("hit_south_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_south_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_south_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_south_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_south_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("hit_south_west_5")
+}],
+"loop": false,
+"name": &"hit-south-west",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("death_south_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_5")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_6")
+}],
+"loop": false,
+"name": &"death-south",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("death_south_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_east_5")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_east_6")
+}],
+"loop": false,
+"name": &"death-south-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("death_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_east_5")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_east_6")
+}],
+"loop": false,
+"name": &"death-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("death_north_east_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_east_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_east_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_east_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_east_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_east_5")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_east_6")
+}],
+"loop": false,
+"name": &"death-north-east",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("death_north_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_5")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_6")
+}],
+"loop": false,
+"name": &"death-north",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("death_north_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_west_5")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_north_west_6")
+}],
+"loop": false,
+"name": &"death-north-west",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("death_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_west_5")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_west_6")
+}],
+"loop": false,
+"name": &"death-west",
+"speed": 10.0
+},
+{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("death_south_west_0")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_west_1")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_west_2")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_west_3")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_west_4")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_west_5")
+},
+{
+"duration": 1.0,
+"texture": ExtResource("death_south_west_6")
+}],
+"loop": false,
+"name": &"death-south-west",
+"speed": 10.0
+}]

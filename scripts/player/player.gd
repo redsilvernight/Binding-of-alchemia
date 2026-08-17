@@ -9,6 +9,10 @@ signal instance_projectile(data: Dictionary)
 @export var alchemy_crafting_scene: PackedScene = preload("res://scenes/ui/alchemy_crafting.tscn")
 @export var weapon_crafting_scene: PackedScene = preload("res://scenes/ui/weapon_crafting.tscn")
 @export var unlock_screen_scene: PackedScene = preload("res://scenes/ui/unlock_screen.tscn")
+## Facteur de zoom-in supplémentaire au-delà du strict nécessaire pour que la
+## zone visible tienne dans une salle (cf. _update_camera_zoom()) -- évite
+## qu'un pixel de la salle voisine ne dépasse au bord de l'écran par arrondi.
+const CAMERA_ZOOM_MARGIN: float = 1.05
 @onready var player_camera: Camera2D = $Camera2D
 @onready var damage_timer: Timer = $DamageTimer
 @onready var weapon: Weapon = $Weapon
@@ -33,6 +37,11 @@ var _pending_fire_direction: Vector2 = Vector2.ZERO
 ## pour que la caméra reste sur le corps le temps de l'anim au lieu de sauter
 ## instantanément sur un coéquipier (cf. _on_died).
 var _death_animation_done: bool = false
+## Vrai uniquement dans le donjon (activé par game.gd via
+## enable_dungeon_camera_mode(), cf. _spawn_player) -- le Hub (hub.gd) est une
+## scène à part, sans grille de salles Room.ROOM_WIDTH_PX/HEIGHT_PX, donc le
+## zoom/clamp caméra basé sur cette grille ne doit jamais s'y appliquer.
+var _dungeon_camera_mode: bool = false
 
 func _ready() -> void:
 	super()
@@ -50,6 +59,7 @@ func _ready() -> void:
 	sprite.animation_finished.connect(_on_sprite_animation_finished)
 	if is_multiplayer_authority():
 		player_camera.enabled = true
+		get_viewport().size_changed.connect(_on_viewport_size_changed)
 		var hud = hud_scene.instantiate()
 		health_changed.connect(hud.get_node("VBoxBar").get_node("LifeBar")._on_heal_changed)
 		var mixture_bar = hud.get_node("VBoxBar").get_node("MixtureBar")
@@ -72,6 +82,29 @@ func _ready() -> void:
 		unlock_screen = unlock
 	else:
 		player_camera.enabled = false
+
+## Appelée par game.gd après avoir positionné le joueur dans le donjon (cf.
+## _spawn_player) -- jamais par hub.gd. Active le zoom/clamp caméra basé sur
+## la grille de salles, avec un calcul immédiat pour la position de spawn.
+## _spawn_player est la spawn_function du MultiplayerSpawner du joueur : à cet
+## instant précis le noeud n'est PAS encore dans l'arbre (le MultiplayerSpawner
+## fait l'add_child juste après, pas avant) -- is_multiplayer_authority() a
+## besoin d'être dans l'arbre pour répondre correctement, d'où le report en
+## call_deferred le temps que l'add_child ait eu lieu (même classe de piège
+## que le add_child-avant-setup() documenté ailleurs dans le projet).
+func enable_dungeon_camera_mode() -> void:
+	_dungeon_camera_mode = true
+	if not is_inside_tree():
+		call_deferred("enable_dungeon_camera_mode")
+		return
+	if not is_multiplayer_authority():
+		return
+	_update_camera_zoom()
+	_update_camera_room_limits(global_position)
+
+func _on_viewport_size_changed() -> void:
+	if _dungeon_camera_mode:
+		_update_camera_zoom()
 
 func _physics_process(_delta: float) -> void:
 	if not is_multiplayer_authority():
@@ -104,6 +137,8 @@ func _physics_process(_delta: float) -> void:
 	was_water_pressed = water_pressed
 	was_mixture_pressed = mixture_pressed
 	move(input_direction, speed)
+	if _dungeon_camera_mode:
+		_update_camera_room_limits(global_position)
 
 @rpc("any_peer", "call_local", "reliable")
 func request_fire(fire_type: String, direction: Vector2) -> void:
@@ -350,14 +385,40 @@ func _on_died() -> void:
 ## _on_died via le signal died (émis juste après health_changed dans
 ## Character._update_health) -- pas de jouer un hit qui serait de toute façon
 ## immédiatement écrasé par l'anim de mort.
-func _on_health_changed(_max_lifepoint: float, lifepoint: float, delta: float) -> void:
+func _on_health_changed(_max_lifepoint: float, lifepoint: float) -> void:
 	if lifepoint <= 0:
-		return
-	if delta >= 0.0: # soin (ex: mixture Soin) : pas de réaction "coup reçu"
 		return
 	if sprite.animation.begins_with("attack"):
 		return
 	sprite.play(StringName("hit-" + FacingDirection.label_for(last_aim_direction)))
+
+## Le projet n'impose aucune résolution/stretch fixe (cf. project.godot) : la
+## taille du viewport suit donc la fenêtre réelle du joueur. Un zoom fixe
+## calculé pour une résolution de référence laisserait voir au-delà de la
+## salle sur un écran plus large -- on recalcule ici le zoom pour que la zone
+## visible tienne toujours dans les dimensions d'une salle, quelle que soit
+## la taille de fenêtre (rappelée à chaque redimensionnement, cf.
+## _on_viewport_size_changed()). N'est jamais appelée hors donjon (cf.
+## _dungeon_camera_mode).
+func _update_camera_zoom() -> void:
+	var viewport_size: Vector2 = get_viewport_rect().size
+	var zoom_x: float = viewport_size.x / float(Room.ROOM_WIDTH_PX)
+	var zoom_y: float = viewport_size.y / float(Room.ROOM_HEIGHT_PX)
+	var target_zoom: float = max(zoom_x, zoom_y) * CAMERA_ZOOM_MARGIN
+	player_camera.zoom = Vector2(target_zoom, target_zoom)
+
+## Empêche la caméra de montrer au-delà de la salle courante (couloir/salle
+## voisine visible par une porte ouverte) : les salles sont juxtaposées sans
+## marge dans la grille du donjon (cf. game.gd::ROOM_CELL_SIZE, identique à
+## Room.ROOM_WIDTH_PX/HEIGHT_PX), donc une simple division entière de la
+## position retrouve la salle qui contient reference_position.
+func _update_camera_room_limits(reference_position: Vector2) -> void:
+	var room_col := floori(reference_position.x / Room.ROOM_WIDTH_PX)
+	var room_row := floori(reference_position.y / Room.ROOM_HEIGHT_PX)
+	player_camera.limit_left = room_col * Room.ROOM_WIDTH_PX
+	player_camera.limit_top = room_row * Room.ROOM_HEIGHT_PX
+	player_camera.limit_right = (room_col + 1) * Room.ROOM_WIDTH_PX
+	player_camera.limit_bottom = (room_row + 1) * Room.ROOM_HEIGHT_PX
 
 func _process_spectating() -> void:
 	if Input.is_action_just_pressed("spectate_next"):
@@ -366,6 +427,8 @@ func _process_spectating() -> void:
 		_pick_spectate_target()
 	if is_instance_valid(_spectate_target):
 		player_camera.global_position = _spectate_target.global_position
+		if _dungeon_camera_mode:
+			_update_camera_room_limits(_spectate_target.global_position)
 
 func _pick_spectate_target(cycle: bool = false) -> void:
 	var candidates: Array = []

@@ -48,8 +48,38 @@ script = ExtResource("2_entry")
 item_path = "res://scenes/enemies/enemy_erratic_swift.tscn"
 weight = 1.0
 
+[sub_resource type="Resource" id="Resource_enemy_melee_juggernaut"]
+script = ExtResource("2_entry")
+item_path = "res://scenes/enemies/enemy_melee_juggernaut.tscn"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_enemy_ranged_turret"]
+script = ExtResource("2_entry")
+item_path = "res://scenes/enemies/enemy_ranged_turret.tscn"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_enemy_erratic_phantom"]
+script = ExtResource("2_entry")
+item_path = "res://scenes/enemies/enemy_erratic_phantom.tscn"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_enemy_ranged_artillery"]
+script = ExtResource("2_entry")
+item_path = "res://scenes/enemies/enemy_ranged_artillery.tscn"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_enemy_healer"]
+script = ExtResource("2_entry")
+item_path = "res://scenes/enemies/enemy_healer.tscn"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_enemy_charger"]
+script = ExtResource("2_entry")
+item_path = "res://scenes/enemies/enemy_charger.tscn"
+weight = 1.0
+
 [resource]
 script = ExtResource("1_table")
-entries = Array[ExtResource("2_entry")]([SubResource("Resource_enemy_melee"), SubResource("Resource_enemy_ranged"), SubResource("Resource_enemy_erratic"), SubResource("Resource_enemy_melee_brute"), SubResource("Resource_enemy_melee_swarm"), SubResource("Resource_enemy_ranged_sniper"), SubResource("Resource_enemy_ranged_gunner"), SubResource("Resource_enemy_erratic_bomber"), SubResource("Resource_enemy_erratic_swift")])
+entries = Array[ExtResource("2_entry")]([SubResource("Resource_enemy_melee"), SubResource("Resource_enemy_ranged"), SubResource("Resource_enemy_erratic"), SubResource("Resource_enemy_melee_brute"), SubResource("Resource_enemy_melee_swarm"), SubResource("Resource_enemy_ranged_sniper"), SubResource("Resource_enemy_ranged_gunner"), SubResource("Resource_enemy_erratic_bomber"), SubResource("Resource_enemy_erratic_swift"), SubResource("Resource_enemy_melee_juggernaut"), SubResource("Resource_enemy_ranged_turret"), SubResource("Resource_enemy_erratic_phantom"), SubResource("Resource_enemy_ranged_artillery"), SubResource("Resource_enemy_healer"), SubResource("Resource_enemy_charger")])
 min_count = 1
 max_count = 2

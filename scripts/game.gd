@@ -509,6 +509,9 @@ func _spawn_player(id: int) -> Node:
 	# La salle de départ est toujours à la cellule de grille (0,0), donc
 	# son centre monde est constant : pas besoin de connaître la layout ici.
 	player.position = ROOM_CELL_SIZE / 2
+	# Active le zoom/clamp caméra sur la grille de salles -- jamais fait dans
+	# le Hub (hub.gd), qui n'a pas cette grille (cf. player.gd).
+	player.enable_dungeon_camera_mode()
 	player.instance_hud.connect(_hud_instance)
 	player.instance_projectile.connect(_on_projectile_requested)
 	if multiplayer.is_server():
