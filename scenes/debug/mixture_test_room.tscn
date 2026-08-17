@@ -71,6 +71,8 @@ text = "Appuyer sur E pour l'atelier d'arme"
 
 [node name="Enemies" type="Node2D" parent="."]
 
+[node name="Projectiles" type="Node2D" parent="."]
+
 [node name="HUD" type="Node2D" parent="."]
 
 [node name="TestController" type="Node" parent="."]
