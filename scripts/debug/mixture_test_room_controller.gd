@@ -38,6 +38,15 @@ const ROOM_SPAWN_MARGIN: float = 100.0
 const ROOM_WIDTH_PX: float = 1344.0
 const ROOM_HEIGHT_PX: float = 960.0
 
+## minimap.gd (instanciée par hud.tscn) lit ces 3 membres sur le premier
+## noeud du groupe "Game" sans garde de nullité (dungeon_map_changed.connect,
+## ROOM_CELL_SIZE, dungeon_map.keys()) -- il n'y a pas de vrai donjon ici,
+## donc dungeon_map reste vide en permanence : la minimap s'affiche juste
+## blanche au lieu de planter à l'ouverture du HUD.
+signal dungeon_map_changed
+var dungeon_map: Dictionary = {}
+const ROOM_CELL_SIZE: Vector2 = Vector2(ROOM_WIDTH_PX, ROOM_HEIGHT_PX)
+
 @onready var room: Room = get_parent() as Room
 @onready var players_container: Node2D = $"../Players"
 @onready var enemies_container: Node2D = $"../Enemies"
