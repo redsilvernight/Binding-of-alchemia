@@ -14,5 +14,3 @@ texture_glace = ExtResource("3_glace")
 texture_poison = ExtResource("4_poison")
 texture_electrique = ExtResource("5_electrique")
 texture_explosif = ExtResource("6_explosif")
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
