@@ -314,7 +314,6 @@ func request_craft_mixture(ingredient_paths: Array[String]) -> void:
 	for path in ingredient_paths:
 		required_counts[path] = required_counts.get(path, 0) + 1
 
-	var ingredients_for_recipe: Array[Ingredient] = []
 	for path in required_counts.keys():
 		var ingredient: Ingredient = load(path) as Ingredient
 		if ingredient == null:
@@ -322,24 +321,33 @@ func request_craft_mixture(ingredient_paths: Array[String]) -> void:
 			return
 		if inventory.get_ingredient_count(ingredient) < required_counts[path]:
 			return # stock insuffisant (désync UI/inventaire) : on abandonne sans rien consommer
-		for i in range(required_counts[path]):
-			ingredients_for_recipe.append(ingredient)
 
 	for path in required_counts.keys():
 		inventory.remove_ingredient(load(path) as Ingredient, required_counts[path])
 
+	# La mixture chargée ACCUMULE au lieu de se remplacer à chaque craft
+	# (retour utilisateur, esprit "Rounds") : les ingrédients déjà présents
+	# dans weapon.mixture_ingredient_paths (crafts précédents, toujours
+	# chargés puisqu'aucun tir/mort n'a eu lieu entre-temps) sont rejoués aux
+	# côtés des nouveaux avant résolution -- AlchemyResolver additionne déjà
+	# degats/duree/zone par TypeAlchimie pour plusieurs ingrédients d'un seul
+	# coup, donc la même logique s'étend naturellement à travers plusieurs
+	# crafts successifs sans rien dupliquer. Seule la mort (nouveau Player/
+	# Weapon recréés, cf. PlayerManager.spawnPlayer) remet mixture_ingredient_paths
+	# à vide.
+	var combined_ingredient_paths: Array[String] = weapon.mixture_ingredient_paths.duplicate()
+	combined_ingredient_paths.append_array(ingredient_paths)
+
+	var full_recipe: Array[Ingredient] = []
+	for path in combined_ingredient_paths:
+		full_recipe.append(load(path) as Ingredient)
+
 	# Résolution et conversion en effet : appelées uniquement depuis ce
 	# chemin autoritaire côté hôte (cf. architecture_reseau.md, 4.2).
-	var mixture: Mixture = AlchemyResolver.resoudre(ingredients_for_recipe)
+	var mixture: Mixture = AlchemyResolver.resoudre(full_recipe)
 	var effect: ImpactEffect = MixtureToEffect.convertir(mixture)
-	# Limite connue : ceci écrase l'effet de la mixture active tant que
-	# l'inventaire ne stocke pas plusieurs mixtures en parallèle (5.5 ne
-	# prévoit qu'une mixture "chargée" à la fois pour l'instant). Un futur
-	# equip() sur l'arme (changement de pièce) réinitialise ce champ à
-	# barrel_mixture.impact_effect — dette acceptée, à traiter si le besoin
-	# de stockage multi-mixtures se confirme.
 	weapon.mixture_impact_effect = effect
-	weapon.set_mixture_ingredients_networked(ingredient_paths)
+	weapon.set_mixture_ingredients_networked(combined_ingredient_paths)
 	print("Mixture appliquée pour %s: %s" % [name, effect])
 
 func _on_projectile_requested(data: Dictionary) -> void:
