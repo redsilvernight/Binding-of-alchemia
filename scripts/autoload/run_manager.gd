@@ -15,6 +15,18 @@ const HUB_SCENE_PATH: String = "res://scenes/world/hub.tscn"
 signal floor_changed(new_floor: int)
 var current_floor: int = 1
 
+# Persistance des objets de run entre étages (hors scope roadmap, retour
+# utilisateur) : Inventory/Weapon sont des enfants de Player, recréés à
+# chaque changement de scène (cf. PlayerManager.spawnPlayer) -- sans ce
+# cache, une victoire de boss (donjon -> hub -> donjon suivant) perdait
+# ingrédients et mixture chargée exactement comme une mort, ce qui n'est
+# pas voulu : seule une mort doit faire perdre les objets de la run.
+# peer_id -> Dictionary (cf. game.gd._capture_run_state), pris juste avant
+# le retour au hub après un boss vaincu (_on_boss_defeated), consommé une
+# fois au spawn du joueur sur le donjon suivant (_spawn_player) pour ne
+# jamais réappliquer un instantané périmé à une run ultérieure.
+var _saved_run_state: Dictionary = {}
+
 # Phase 9 (loader) : écran de chargement plein écran affiché pendant toute
 # transition de scène gérée ici (hub <-> donjon) -- instancié une seule fois
 # et gardé en enfant permanent de cet Autoload (donc jamais détruit par
@@ -154,7 +166,31 @@ func advance_floor() -> void:
 func reset_floor() -> void:
 	if not multiplayer.is_server():
 		return
+	# Une mort doit faire perdre les objets de la run -- vide tout instantané
+	# encore en attente (ex : un joueur n'a jamais atteint le prochain donjon
+	# après un précédent floor_advance, cas limite improbable mais on ne veut
+	# jamais qu'un vieil instantané fuite dans une run ultérieure).
+	_saved_run_state.clear()
 	_rpc_set_floor.rpc(1, false) # pas un "avancement" (retour après une défaite) : pas de SFX
+
+
+## Hôte uniquement, appelé depuis game.gd._on_boss_defeated pour chaque
+## joueur encore vivant (cf. _capture_run_state) juste avant le retour au hub.
+func save_run_state(peer_id: int, snapshot: Dictionary) -> void:
+	if not multiplayer.is_server():
+		return
+	_saved_run_state[peer_id] = snapshot
+
+
+## Hôte uniquement, appelé depuis game.gd._spawn_player sur le donjon suivant.
+## Consomme l'instantané (erase) : une restauration ne doit jamais se
+## répéter pour la même transition.
+func take_saved_run_state(peer_id: int) -> Dictionary:
+	if not _saved_run_state.has(peer_id):
+		return {}
+	var snapshot: Dictionary = _saved_run_state[peer_id]
+	_saved_run_state.erase(peer_id)
+	return snapshot
 
 
 ## play_sound distingue une vraie progression (advance_floor) d'une remise à

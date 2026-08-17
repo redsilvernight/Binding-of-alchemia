@@ -56,6 +56,24 @@ func get_ingredient_count(ingredient: Ingredient) -> int:
 	return ingredients.get(ingredient.resource_path, 0)
 
 
+## Restaure un instantané pris avant un changement de scène (cf.
+## RunManager.save_run_state, game.gd._on_boss_defeated/_spawn_player) --
+## réutilise les mêmes chemins d'application/notification que
+## add_ingredient/add_weapon_part plutôt que de dupliquer la logique RPC.
+func restore_snapshot(ingredients_snapshot: Dictionary, weapon_part_paths: Array) -> void:
+	if not multiplayer.is_server():
+		return
+	for key in ingredients_snapshot.keys():
+		var quantity: int = ingredients_snapshot[key]
+		if quantity <= 0:
+			continue
+		_apply_ingredient_update(key, quantity)
+		_notify_owner_ingredient_update(key, quantity)
+	for part_path in weapon_part_paths:
+		_apply_weapon_part_added(part_path)
+		_notify_owner_weapon_part_added(part_path)
+
+
 func add_weapon_part(part: Resource) -> void:
 	if not multiplayer.is_server():
 		return

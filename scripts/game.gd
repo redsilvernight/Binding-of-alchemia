@@ -516,7 +516,28 @@ func _spawn_player(id: int) -> Node:
 	player.instance_projectile.connect(_on_projectile_requested)
 	if multiplayer.is_server():
 		player.died.connect(_check_all_players_dead)
+		# call_deferred : player n'est pas encore dans l'arbre ici (le
+		# MultiplayerSpawner fait l'add_child juste après le retour de cette
+		# spawn_function, pas avant) -- restore_snapshot()/set_mixture_ingredients_networked()
+		# ont besoin d'un noeud en arbre pour leurs RPC (même piège que
+		# enable_dungeon_camera_mode() ci-dessus).
+		_restore_run_state.call_deferred(id, player)
 	return player
+
+## Cf. _capture_run_state / RunManager.save_run_state : restaure l'inventaire
+## et la mixture chargée du joueur si un instantané a été pris avant le
+## dernier changement de donjon (victoire de boss) -- no-op silencieux sinon
+## (première run, run après une mort, ou nouveau joueur qui rejoint en cours
+## de partie : aucun instantané à restaurer dans ces trois cas).
+func _restore_run_state(id: int, player: Node) -> void:
+	var snapshot: Dictionary = RunManager.take_saved_run_state(id)
+	if snapshot.is_empty():
+		return
+	player.inventory.restore_snapshot(snapshot.get("ingredients", {}), snapshot.get("weapon_part_paths", []))
+	var mixture_paths: Array = snapshot.get("mixture_ingredient_paths", [])
+	if not mixture_paths.is_empty():
+		player.weapon.mixture_impact_effect = snapshot.get("mixture_impact_effect")
+		player.weapon.set_mixture_ingredients_networked(mixture_paths)
 
 ## scene_path optionnel (Phase 7.3) : les projectiles ennemis (voir
 ## enemy_ranged.gd) passent leur propre scène (layer/mask pour toucher les
@@ -606,8 +627,25 @@ func _show_run_summary() -> void:
 ## RunManager.current_floor soit déjà à jour si un autre système le lit entre-
 ## temps (ex : affichage du panneau de résumé, non concerné aujourd'hui).
 func _on_boss_defeated() -> void:
+	# Instantané pris AVANT le retour au hub (cf. _restore_run_state, consommé
+	# au spawn du joueur sur le donjon suivant) : une victoire de boss ne doit
+	# pas faire perdre les objets de la run, contrairement à une mort. Un
+	# joueur mort pendant ce combat (spectateur, cf. Character.is_dead) n'est
+	# volontairement pas sauvegardé : lui a bien perdu ses objets en mourant,
+	# même si le reste de l'équipe a fini par vaincre le boss.
+	for player in players.get_children():
+		if not player.is_dead:
+			RunManager.save_run_state(int(player.name), _capture_run_state(player))
 	RunManager.advance_floor()
 	get_tree().create_timer(BOSS_DEFEAT_TO_HUB_DELAY).timeout.connect(RunManager.end_run)
+
+func _capture_run_state(player: Node) -> Dictionary:
+	return {
+		"ingredients": player.inventory.ingredients.duplicate(),
+		"weapon_part_paths": player.inventory.weapon_parts.map(func(part: Resource) -> String: return part.resource_path),
+		"mixture_impact_effect": player.weapon.mixture_impact_effect,
+		"mixture_ingredient_paths": player.weapon.mixture_ingredient_paths.duplicate(),
+	}
 
 
 ## Phase 9 : +1 salle par étage au-delà de la taille de base (étage 1 = donjon
