@@ -126,7 +126,10 @@ func _add_mixture_reset_button(player: Node) -> void:
 	content.add_child(reset_button)
 	reset_button.pressed.connect(func() -> void:
 		player.weapon.mixture_impact_effect = null
-		player.weapon.set_mixture_ingredients_networked([])
+		# set_mixture_ingredients_networked attend un Array[String] typé --
+		# le littéral [] est un Array générique non typé, rejeté à l'appel.
+		var empty_paths: Array[String] = []
+		player.weapon.set_mixture_ingredients_networked(empty_paths)
 		screen.result_label.text = "Mixture réinitialisée."
 	)
 
