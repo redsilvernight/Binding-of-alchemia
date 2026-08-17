@@ -27,7 +27,7 @@ func physics_process(delta: float) -> void:
 	var to_target: Vector2 = enemy.heal_target.global_position - enemy.global_position
 	var distance: float = to_target.length()
 	if distance > enemy.heal_range:
-		enemy.move(to_target.normalized(), enemy.speed)
+		enemy.move_toward_position(enemy.heal_target.global_position, enemy.speed)
 		return
 	enemy.move(Vector2.ZERO, 0.0)
 	_time_until_heal -= delta

@@ -97,6 +97,12 @@ const ROOM_HEIGHT_PX: int = 960
 ## qui centre proprement dans _cols/_rows (cf. _paint_walls()). Salles à
 ## 21x15 tuiles : (21-5)/2=8 et (15-5)/2=5, donc tout tombe rond.
 const DOOR_TILES: int = 5
+## Taille de tuile de dungeon_stone_terrain.tres (déjà supposée fixe par le
+## calcul en dur dans le commentaire de DOOR_TILES ci-dessus) -- exposée en
+## constante publique pour que game.gd puisse calculer des zones d'exclusion
+## de porte (Phase 11.2, placement des props) sans attendre l'entrée en arbre
+## de cette Room (_cols/_rows ne sont connus qu'après _paint_floor()).
+const TILE_SIZE_PX: float = 64.0
 ## Tuiles "bord plein" (WANG_ATLAS_BY_CORNERS), utilisées pour forcer un pan
 ## de mur droit aux deux cases qui encadrent une embrasure -- cf.
 ## _flatten_door_frame().
@@ -129,11 +135,210 @@ var _alive_enemies: Array[Node] = []
 var _enemies_activation_scheduled: bool = false
 var _cols: int = 0
 var _rows: int = 0
+var _nav_region: NavigationRegion2D
+## Props purement décoratifs (pas de collision, cf. game.gd::_prepare_room_props) :
+## peints comme des tuiles dans ce layer plutôt qu'instanciés en scène +
+## MultiplayerSpawner un par un -- un brin de mousse n'a aucun comportement à
+## exécuter, un TileMapLayer est fait pour ça (retour utilisateur : le
+## précédent système coûtait un load()+instantiate()+spawn réseau par prop
+## décoratif, ce qui alourdissait le temps de chargement pour rien).
+var _props_decor: TileMapLayer
+## Renseignées par set_decor_props() avant l'entrée dans l'arbre, peintes dès
+## que _props_decor existe (cf. _setup_props_decor_layer()) -- Array simple
+## plutôt que Array[Vector2i]/Array[int], même choix que _open_sides : ces
+## valeurs traversent room_data (cf. game.gd::_spawn_room), donc le
+## mécanisme de réplication du RoomSpawner plutôt qu'un typage strict.
+var _pending_decor_cells: Array = []
+var _pending_decor_source_ids: Array = []
+## Props bloquants sans script (caisses, piliers, gravats...) migrés en
+## tuiles avec collision peinte sur physics_layer_0 (cf.
+## resources/tilesets/dungeon_*_terrain.tres) -- même raisonnement que
+## _props_decor, mais AVEC collision cette fois : plus besoin d'un
+## StaticBody2D+NavigationObstacle2D par instance, le physics layer du
+## TileSet et le bake de _nav_region (cf. _setup_navigation()) suffisent.
+var _props_blocking: TileMapLayer
+var _pending_blocking_cells: Array = []
+var _pending_blocking_source_ids: Array = []
 
 
 func _ready() -> void:
 	_trigger.body_entered.connect(_on_trigger_body_entered)
 	_paint_floor()
+	_setup_props_decor_layer()
+	_setup_props_blocking_layer()
+	_setup_navigation()
+
+
+## Permet à game.gd d'assigner un tileset différent selon la pool thématique
+## de l'étage (Phase 11.4, un tileset dédié par pool de props) -- DOIT être
+## appelée AVANT que cette salle rejoigne l'arbre (donc avant _ready()),
+## contrairement à set_open_sides()/_setup_navigation() qui dépendent des
+## @onready et tournent après coup : _paint_floor() (dans _ready()) lit déjà
+## _floor.tile_set pour peindre, donc le tileset doit être en place avant. Un
+## get_node() direct plutôt que le _floor @onready, qui n'est pas encore
+## assigné à ce stade.
+func set_floor_tileset(tile_set: TileSet) -> void:
+	(get_node("Floor") as TileMapLayer).tile_set = tile_set
+
+
+## Pathfinding : un NavigationPolygon baké par salle (PARSED_GEOMETRY_
+## STATIC_COLLIDERS) plutôt que le rectangle fixe d'avant -- ce rectangle
+## ignorait délibérément les props bloquants (cf. commentaire disparu : "ceux-
+## ci utilisent l'évitement dynamique NavigationObstacle2D + RVO plutôt qu'un
+## re-bake par salle"), qui étaient alors chacun sa propre scène avec son
+## propre NavigationObstacle2D. Depuis leur migration en tuiles (cf.
+## _setup_props_blocking_layer()), ce node d'évitement dynamique n'existe
+## plus par prop -- seul un vrai bake fait apparaître les trous correspondants
+## dans le maillage de navigation.
+## SOURCE_GEOMETRY_ROOT_NODE_CHILDREN ne scanne QUE les enfants DIRECTS de
+## _nav_region lui-même (pas de Room) -- Floor/PropsDecor/PropsBlocking sont
+## définis comme enfants de la salle (template ou _setup_props_*_layer() plus
+## haut), donc migrés ici sous _nav_region pour être vus par le parseur. Le
+## repositionnement ne change rien visuellement : _nav_region est ajouté à
+## Room avec position par défaut (0,0), donc la position locale de chaque
+## layer (déjà (0,0) pour Floor, cf. _paint_floor()) reste équivalente en
+## position globale.
+## Pas de bake ici (juste la config) : les tuiles de mur ne sont peintes
+## qu'après, via _paint_walls() (appelée depuis set_open_sides(), en
+## call_deferred par game.gd::_spawn_room une fois la salle entrée dans
+## l'arbre) -- baker maintenant ne verrait qu'un Floor tout en sol, sans mur.
+## cf. _bake_navigation(), appelée depuis set_open_sides() une fois les murs
+## (et les props bloquants, déjà peints avant _ready()) en place.
+## EnemyBoundaries (StaticBody2D layer 16, cf. header du fichier) n'est PAS
+## inclus ici : il bloque en permanence les 4 côtés même à une porte ouverte
+## (spécifique aux ennemis, qui ne doivent jamais quitter leur salle) --
+## l'inclure ferait disparaître toute embrasure de porte du maillage.
+func _setup_navigation() -> void:
+	if _floor == null or _floor.tile_set == null:
+		return
+	_nav_region = NavigationRegion2D.new()
+	add_child(_nav_region)
+	# move_child(0) : add_child() ajoute _nav_region en DERNIER enfant de Room,
+	# alors que Floor était le TOUT PREMIER enfant dans les templates (cf.
+	# room_template_a.tscn) -- même z_index (0) partout ici, donc l'ordre du
+	# tree fait foi pour le dessin, dernier = par-dessus. Sans ce move_child,
+	# Floor/PropsDecor/PropsBlocking (déplacés sous _nav_region juste en
+	# dessous) se retrouvent dessinés PAR-DESSUS Chest/AlchemyStation/
+	# WeaponStation (définis après Floor dans les templates, donc censés
+	# rester visuellement au-dessus) -- bug constaté en jeu (meubles invisibles,
+	# masqués sous la tilemap) après l'introduction de ce reparentage.
+	move_child(_nav_region, 0)
+	for layer in [_floor, _props_decor, _props_blocking]:
+		if layer != null:
+			remove_child(layer)
+			_nav_region.add_child(layer)
+	var nav_poly := NavigationPolygon.new()
+	nav_poly.parsed_geometry_type = NavigationPolygon.PARSED_GEOMETRY_STATIC_COLLIDERS
+	nav_poly.source_geometry_mode = NavigationPolygon.SOURCE_GEOMETRY_ROOT_NODE_CHILDREN
+	# Marge au-delà du rayon RVO des ennemis (cf. EnemyBase.nav_agent.radius =
+	# 28px, scripts/enemies/enemy_base.gd) : sans marge, le bake érode le
+	# maillage jusqu'au bord EXACT des tuiles bloquantes, donc le chemin peut
+	# longer un pilier à distance zéro. Un agent_radius pile égal à 28px
+	# (première tentative, cf. historique du fichier) réduisait déjà beaucoup
+	# les blocages mais en laissait aux angles des props (constaté en jeu) :
+	# la vélocité RVO réelle suit le chemin de façon approximative, pas au
+	# pixel près, donc un chemin à distance zéro de la collision suffit à
+	# accrocher le corps de l'ennemi dans un virage serré. +6px de coussin
+	# (34px au total) absorbe cet écart sans trop mordre sur les passages
+	# étroits (embrasure de porte = DOOR_TILES*TILE_SIZE_PX = 320px de large,
+	# largement au-dessus de 2*34). Les anciens NavigationObstacle2D par prop
+	# (42-50px de rayon, supprimés avec la scène de chaque prop) donnaient une
+	# marge encore plus large ; à réévaluer en playtest si des blocages
+	# persistent ou si des passages deviennent trop étroits.
+	nav_poly.agent_radius = 34.0
+	nav_poly.add_outline(PackedVector2Array([
+		Vector2(0.0, 0.0),
+		Vector2(ROOM_WIDTH_PX, 0.0),
+		Vector2(ROOM_WIDTH_PX, ROOM_HEIGHT_PX),
+		Vector2(0.0, ROOM_HEIGHT_PX),
+	]))
+	_nav_region.navigation_polygon = nav_poly
+
+
+## Appelée depuis set_open_sides(), une fois _paint_walls() (murs) passée --
+## les props bloquants sont déjà peints à ce stade (cf. _ready(), qui tourne
+## avant : _setup_props_blocking_layer() précède _setup_navigation()). true
+## = bake sur un thread à part (cf. NavigationRegion2D.bake_navigation_polygon) :
+## asynchrone, le maillage à jour arrive dans les frames suivantes plutôt que
+## bloquer -- sans conséquence ici, la navigation n'est pas répliquée
+## réseau, chaque pair la calcule localement à partir des mêmes données de
+## salle (cf. set_decor_props()/set_blocking_props() pour le même
+## raisonnement sur la réplication).
+## update_internals() AVANT le bake : set_cell() (peinture des murs et des
+## props bloquants) ne crée pas les shapes de collision immédiatement --
+## Godot les construit en différé, à la prochaine mise à jour interne du
+## TileMapLayer. Le parseur PARSED_GEOMETRY_STATIC_COLLIDERS/
+## SOURCE_GEOMETRY_ROOT_NODE_CHILDREN lit l'état RÉEL des corps physiques au
+## moment de l'appel -- sans ce update_internals(), le bake tournait donc
+## sur des tuiles fraîchement peintes mais encore sans collision créée côté
+## PhysicsServer, d'où des trous manquants dans le maillage et des ennemis
+## qui pathaient tout droit dans un prop bloquant (bug constaté en jeu).
+func _bake_navigation() -> void:
+	if _nav_region == null:
+		return
+	_floor.update_internals()
+	if _props_blocking != null:
+		_props_blocking.update_internals()
+	_nav_region.bake_navigation_polygon(true)
+
+
+## Permet à game.gd de fournir les tuiles de décor choisies pour cette salle
+## (cf. game.gd::_prepare_room_props) -- même contrainte de timing que
+## set_floor_tileset() : DOIT être appelée avant l'entrée dans l'arbre, ces
+## valeurs sont peintes dès _setup_props_decor_layer() (_ready()). Portées
+## par room_data (cf. RoomSpawner), donc répliquées nativement avec le reste
+## du spawn de la salle -- contrairement à un RPC séparé et one-shot, un pair
+## qui rejoint en cours de partie les reçoit automatiquement avec le spawn de
+## la salle elle-même (cf. game.gd::_on_peer_connected pour le problème
+## inverse déjà rencontré avec un RPC one-shot, sur la vie du boss).
+func set_decor_props(cells: Array, source_ids: Array) -> void:
+	_pending_decor_cells = cells
+	_pending_decor_source_ids = source_ids
+
+
+## Même contrat que set_decor_props() juste au-dessus (timing, réplication
+## via room_data) mais pour les props bloquants (cf. _setup_props_blocking_layer()).
+func set_blocking_props(cells: Array, source_ids: Array) -> void:
+	_pending_blocking_cells = cells
+	_pending_blocking_source_ids = source_ids
+
+
+## Créé en code plutôt qu'un node dans chaque template (cf. header) : évite de
+## toucher tous les .tscn de salle pour un layer qui n'existe que pour peindre
+## des tuiles décoratives choisies par game.gd::_prepare_room_props. Réutilise
+## le TileSet de Floor (déjà celui de la pool du thème courant, cf.
+## set_floor_tileset()) -- les sources de props décoratifs y sont ajoutées à
+## côté du terrain (cf. resources/tilesets/dungeon_*_terrain.tres). Ajouté
+## APRÈS Floor dans l'arbre : à z_index égal (par défaut 0 pour les deux),
+## l'ordre du tree suffit à dessiner les décors par-dessus le sol.
+func _setup_props_decor_layer() -> void:
+	if _floor == null or _floor.tile_set == null:
+		return
+	_props_decor = TileMapLayer.new()
+	_props_decor.name = "PropsDecor"
+	_props_decor.tile_set = _floor.tile_set
+	add_child(_props_decor)
+	for i in _pending_decor_cells.size():
+		_props_decor.set_cell(_pending_decor_cells[i], _pending_decor_source_ids[i], Vector2i.ZERO)
+
+
+## Même principe que _setup_props_decor_layer() juste au-dessus, mais pour
+## les props bloquants (cf. game.gd::_prepare_room_props) -- couche séparée
+## de PropsDecor et de Floor plutôt que peints sur l'une d'elles : Floor est
+## réécrit en bloc par _paint_walls()/_set_door_gap_tiles() (qui ignorent
+## tout ce qui n'est pas mur/sol), et PropsDecor n'a pas de collision --
+## mélanger l'un ou l'autre risquerait un prop bloquant écrasé par une
+## repeinte de mur, ou une collision qui se retrouve sans le vouloir sur un
+## layer sans intention de bloquer.
+func _setup_props_blocking_layer() -> void:
+	if _floor == null or _floor.tile_set == null:
+		return
+	_props_blocking = TileMapLayer.new()
+	_props_blocking.name = "PropsBlocking"
+	_props_blocking.tile_set = _floor.tile_set
+	add_child(_props_blocking)
+	for i in _pending_blocking_cells.size():
+		_props_blocking.set_cell(_pending_blocking_cells[i], _pending_blocking_source_ids[i], Vector2i.ZERO)
 
 
 ## Templates sans node "Floor" (pas encore passés au tileset) : no-op silencieux.
@@ -219,6 +424,7 @@ func set_open_sides(open_sides: Array) -> void:
 	_open_sides = open_sides
 	_paint_walls()
 	_apply_walls()
+	_bake_navigation()
 
 
 ## À appeler côté hôte uniquement, juste après avoir spawné un ennemi

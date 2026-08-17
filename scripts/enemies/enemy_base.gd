@@ -40,10 +40,47 @@ const AMBIENT_RANGE: float = 1400.0
 
 var _ambient_timer: float = 0.0
 
+## Pathfinding (Phase 11.1) : un agent par ennemi, créé en code plutôt que
+## posé dans chaque .tscn -- une quinzaine de scènes ennemis réutilisent ces
+## quelques scripts de base (cf. commentaire plus bas sur les 9 variantes),
+## un seul point d'ajout couvre tout le roster sans éditer chaque scène.
+## avoidance_enabled : les props bloquants sont maintenant des tuiles creusées
+## dans le NavigationPolygon de la salle (cf. Room._setup_navigation(), qui
+## utilise `radius` ci-dessous comme agent_radius du bake pour garder le
+## chemin brut à distance de sécurité) -- avoidance_enabled reste nécessaire
+## pour l'évitement RVO entre agents mobiles (autres ennemis, joueurs), pas
+## pour les props qui n'ont plus leur propre NavigationObstacle2D.
+var nav_agent: NavigationAgent2D
+
 func _ready() -> void:
 	super()
+	nav_agent = NavigationAgent2D.new()
+	nav_agent.path_desired_distance = 8.0
+	nav_agent.target_desired_distance = 8.0
+	nav_agent.avoidance_enabled = true
+	nav_agent.radius = 28.0
+	add_child(nav_agent)
+	nav_agent.velocity_computed.connect(_on_nav_velocity_computed)
 	add_to_group("Enemies")
 	_reset_ambient_timer()
+
+## Remplace le `move(direction_to(target), speed)` en ligne droite historique
+## dans les états qui poursuivent un point (Chase, approche de
+## RangedAttack/Charge/Support) -- calcule le prochain point du chemin plutôt
+## que de foncer droit sur la cible. La vitesse réelle appliquée passe par
+## _on_nav_velocity_computed() (RVO, cf. commentaire sur nav_agent) : ce n'est
+## qu'une demande, pas la vélocité finale.
+func move_toward_position(target_position: Vector2, speed: float) -> void:
+	nav_agent.target_position = target_position
+	if nav_agent.is_navigation_finished():
+		move(Vector2.ZERO, 0.0)
+		return
+	var next_point: Vector2 = nav_agent.get_next_path_position()
+	nav_agent.set_velocity(global_position.direction_to(next_point) * speed)
+
+func _on_nav_velocity_computed(safe_velocity: Vector2) -> void:
+	velocity = safe_velocity
+	move_and_slide()
 
 ## Purement local à chaque pair, sans RPC (cosmétique, pas un événement de
 ## gameplay à synchroniser) -- même raisonnement que l'avancement des frames

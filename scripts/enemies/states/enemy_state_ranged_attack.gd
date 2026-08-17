@@ -19,9 +19,11 @@ func physics_process(delta: float) -> void:
 	var to_target: Vector2 = enemy.target.global_position - enemy.global_position
 	var distance: float = to_target.length()
 	if distance < enemy.preferred_range:
+		# Recul en ligne droite, pas via nav_agent : fuir un point n'est pas du
+		# pathfinding vers une destination (Phase 11.1).
 		enemy.move(-to_target.normalized(), enemy.speed)
 	elif distance > enemy.attack_range:
-		enemy.move(to_target.normalized(), enemy.speed)
+		enemy.move_toward_position(enemy.target.global_position, enemy.speed)
 	else:
 		enemy.move(Vector2.ZERO, 0.0)
 		_time_until_shot -= delta

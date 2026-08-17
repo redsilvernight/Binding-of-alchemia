@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="SpawnTable" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon/spawn_table.gd" id="1_table"]
+[ext_resource type="Script" path="res://scripts/dungeon/spawn_table_entry.gd" id="2_entry"]
+
+[sub_resource type="Resource" id="Resource_mousse_luminescente"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/mousse_luminescente.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_champignons_phosphorescents"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/champignons_phosphorescents.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_flaque_eau_souterraine"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/flaque_eau_souterraine.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_petits_cailloux"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/petits_cailloux.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_stalagmite"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/stalagmite.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_amas_cristaux"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/amas_cristaux.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_rocher_eboulis"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/rocher_eboulis.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_colonne_calcaire"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/colonne_calcaire.png"
+weight = 1.0
+
+[resource]
+script = ExtResource("1_table")
+entries = Array[ExtResource("2_entry")]([SubResource("Resource_mousse_luminescente"), SubResource("Resource_champignons_phosphorescents"), SubResource("Resource_flaque_eau_souterraine"), SubResource("Resource_petits_cailloux"), SubResource("Resource_stalagmite"), SubResource("Resource_amas_cristaux"), SubResource("Resource_rocher_eboulis"), SubResource("Resource_colonne_calcaire")])
+min_count = 2
+max_count = 4

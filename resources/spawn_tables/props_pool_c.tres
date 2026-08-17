@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="SpawnTable" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon/spawn_table.gd" id="1_table"]
+[ext_resource type="Script" path="res://scripts/dungeon/spawn_table_entry.gd" id="2_entry"]
+
+[sub_resource type="Resource" id="Resource_flaque_toxique"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/flaque_toxique.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_fioles_brisees_eparses"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/fioles_brisees_eparses.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_taches_acide"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/taches_acide.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_vapeur_residuelle"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/vapeur_residuelle.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_alambic_abandonne"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/alambic_abandonne.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_cage_rouillee"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/cage_rouillee.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_fiole_geante_brisee"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/fiole_geante_brisee.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_tonneau_chimique_fuyant"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/tonneau_chimique_fuyant.png"
+weight = 1.0
+
+[resource]
+script = ExtResource("1_table")
+entries = Array[ExtResource("2_entry")]([SubResource("Resource_flaque_toxique"), SubResource("Resource_fioles_brisees_eparses"), SubResource("Resource_taches_acide"), SubResource("Resource_vapeur_residuelle"), SubResource("Resource_alambic_abandonne"), SubResource("Resource_cage_rouillee"), SubResource("Resource_fiole_geante_brisee"), SubResource("Resource_tonneau_chimique_fuyant")])
+min_count = 2
+max_count = 4

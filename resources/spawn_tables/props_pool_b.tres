@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="SpawnTable" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/dungeon/spawn_table.gd" id="1_table"]
+[ext_resource type="Script" path="res://scripts/dungeon/spawn_table_entry.gd" id="2_entry"]
+
+[sub_resource type="Resource" id="Resource_toile_araignee"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/toile_araignee.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_ossements_epars"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/ossements_epars.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_flaque_sang_seche"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/flaque_sang_seche.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_gravats_pierre"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/gravats_pierre.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_sarcophage_brise"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/sarcophage_brise.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_pilier_fissure"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/pilier_fissure.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_statue_effondree"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/statue_effondree.png"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_cage_ossements"]
+script = ExtResource("2_entry")
+item_path = "res://assets/tiles/props/cage_ossements.png"
+weight = 1.0
+
+[resource]
+script = ExtResource("1_table")
+entries = Array[ExtResource("2_entry")]([SubResource("Resource_toile_araignee"), SubResource("Resource_ossements_epars"), SubResource("Resource_flaque_sang_seche"), SubResource("Resource_gravats_pierre"), SubResource("Resource_sarcophage_brise"), SubResource("Resource_pilier_fissure"), SubResource("Resource_statue_effondree"), SubResource("Resource_cage_ossements")])
+min_count = 2
+max_count = 4

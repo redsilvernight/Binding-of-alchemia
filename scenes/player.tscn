@@ -1520,7 +1520,7 @@ properties/1/spawn = true
 properties/1/replication_mode = 1
 
 [node name="CharacterBody2D" type="CharacterBody2D" unique_id=53403318]
-collision_mask = 10
+collision_mask = 74
 script = ExtResource("1_g2els")
 max_lifepoint = 30.0
 

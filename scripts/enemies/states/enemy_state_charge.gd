@@ -44,7 +44,10 @@ func _process_approach() -> void:
 		_timer = enemy.telegraph_duration
 		_phase = Phase.TELEGRAPH
 		return
-	enemy.move(to_target.normalized(), enemy.speed)
+	# Approche via pathfinding (Phase 11.1) ; le dash lui-même reste en ligne
+	# droite figée (voir _process_dash) -- un charge engagé va jusqu'au bout,
+	# contournement d'obstacle ou non.
+	enemy.move_toward_position(enemy.target.global_position, enemy.speed)
 
 func _process_telegraph(delta: float) -> void:
 	enemy.move(Vector2.ZERO, 0.0)

@@ -18,7 +18,7 @@ properties/1/replication_mode = 1
 [node name="EnemyMeleeSwarm" type="CharacterBody2D" unique_id=2077570567]
 scale = Vector2(0.35, 0.35)
 collision_layer = 2
-collision_mask = 28
+collision_mask = 92
 script = ExtResource("1")
 speed = 220.0
 damage = 3.0
