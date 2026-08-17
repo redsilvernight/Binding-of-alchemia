@@ -36,6 +36,7 @@ static func _creer_impact(type: Ingredient.TypeAlchimie, effet_par_type: Mixture
 		impact_area.damage = effet_par_type.degats
 		impact_area.radius = effet_par_type.zone * ZONE_SCALE
 		impact_area.duration = effet_par_type.duree
+		impact_area.type_alchimie = type
 		return impact_area
 
 	var impact_damage := ImpactDamage.new()

@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/effects/area_effect_vfx.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/effects/area_feu.png" id="2_feu"]
+[ext_resource type="Texture2D" path="res://assets/effects/area_glace.png" id="3_glace"]
+[ext_resource type="Texture2D" path="res://assets/effects/area_poison.png" id="4_poison"]
+[ext_resource type="Texture2D" path="res://assets/effects/area_electrique.png" id="5_electrique"]
+[ext_resource type="Texture2D" path="res://assets/effects/area_explosif.png" id="6_explosif"]
+
+[node name="AreaEffectVfx" type="Node2D"]
+script = ExtResource("1_script")
+texture_feu = ExtResource("2_feu")
+texture_glace = ExtResource("3_glace")
+texture_poison = ExtResource("4_poison")
+texture_electrique = ExtResource("5_electrique")
+texture_explosif = ExtResource("6_explosif")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]

@@ -94,6 +94,10 @@ func _on_body_entered(body: Node) -> void:
 	# de tir -- chaque pair détecte donc sa propre collision indépendamment,
 	# à peu près au même instant. Seule la RÉSOLUTION du dégât reste hôte-only.
 	AudioManager.play_sfx(impact_sfx_key)
+	# Même raisonnement que le SFX ci-dessus : feedback visuel pur, doit
+	# jouer sur chaque pair indépendamment (pas de RPC), pas seulement l'hôte.
+	if impact_effect != null:
+		impact_effect.spawn_visual(get_tree(), global_position)
 	if not multiplayer.is_server():
 		return
 	# Les dégâts d'arme (canon+cœur) et l'effet alchimique de la mixture

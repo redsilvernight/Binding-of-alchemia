@@ -7,6 +7,14 @@ class_name ImpactEffect
 func apply(_target: Node, _source_position: Vector2, _shooter_id: int = 0) -> void:
 	pass
 
+## Feedback visuel pur (pas de gameplay) : à surcharger dans les sous-classes
+## qui en ont un (aujourd'hui : ImpactArea uniquement). Appelée par
+## Bullet._on_body_entered AVANT la garde hôte (comme le SFX d'impact) --
+## chaque pair simule sa propre collision indépendamment, donc chacun doit
+## afficher l'effet lui-même plutôt que d'attendre une RPC dédiée.
+func spawn_visual(_tree: SceneTree, _source_position: Vector2) -> void:
+	pass
+
 ## Sérialise cet effet en Dictionary de types de base (String/float/Array),
 ## pour pouvoir le transmettre via RPC sans dépendre d'un resource_path.
 ## À surcharger dans chaque sous-classe.
@@ -26,6 +34,7 @@ static func from_dict(data: Dictionary) -> ImpactEffect:
 			e.damage = data.get("damage", 0.0)
 			e.radius = data.get("radius", 0.0)
 			e.duration = data.get("duration", 0.0)
+			e.type_alchimie = data.get("type_alchimie", Ingredient.TypeAlchimie.FEU)
 			return e
 		"heal":
 			var e := ImpactHeal.new()
