@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" path="res://assets/tiles/props/amas_cristaux.png" id="7_block_cristaux"]
 [ext_resource type="Texture2D" path="res://assets/tiles/props/rocher_eboulis.png" id="8_block_rocher"]
 [ext_resource type="Texture2D" path="res://assets/tiles/props/colonne_calcaire.png" id="9_block_colonne"]
+[ext_resource type="Texture2D" path="res://assets/tiles/props/cristaux_lumineux.png" id="10_decor_torche"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1"]
 texture = ExtResource("1_tex")
@@ -145,32 +146,55 @@ texture = ExtResource("5_decor_cailloux")
 texture_region_size = Vector2i(96, 96)
 0:0/0 = 0
 
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_stalagmite"]
+polygon = PackedVector2Array(-36, -36, 36, -36, 36, 36, -36, 36)
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_block_stalagmite"]
 texture = ExtResource("6_block_stalagmite")
 texture_region_size = Vector2i(128, 160)
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-36, -36, 36, -36, 36, 36, -36, 36)
+0:0/0/occlusion_layer_0/polygon = SubResource("OccluderPolygon2D_stalagmite")
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_cristaux"]
+polygon = PackedVector2Array(-38, -38, 38, -38, 38, 38, -38, 38)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_block_cristaux"]
 texture = ExtResource("7_block_cristaux")
 texture_region_size = Vector2i(128, 128)
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-38, -38, 38, -38, 38, 38, -38, 38)
+0:0/0/occlusion_layer_0/polygon = SubResource("OccluderPolygon2D_cristaux")
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_rocher"]
+polygon = PackedVector2Array(-44, -44, 44, -44, 44, 44, -44, 44)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_block_rocher"]
 texture = ExtResource("8_block_rocher")
 texture_region_size = Vector2i(160, 160)
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-44, -44, 44, -44, 44, 44, -44, 44)
+0:0/0/occlusion_layer_0/polygon = SubResource("OccluderPolygon2D_rocher")
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_colonne"]
+polygon = PackedVector2Array(-40, -40, 40, -40, 40, 40, -40, 40)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_block_colonne"]
 texture = ExtResource("9_block_colonne")
 texture_region_size = Vector2i(128, 160)
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-40, -40, 40, -40, 40, 40, -40, 40)
+0:0/0/occlusion_layer_0/polygon = SubResource("OccluderPolygon2D_colonne")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_decor_torche"]
+texture = ExtResource("10_decor_torche")
+texture_region_size = Vector2i(64, 80)
+0:0/0 = 0
 
 [resource]
 tile_size = Vector2i(64, 64)
+occlusion_layer_0/light_mask = 1
+occlusion_layer_0/sdf_collision = true
 physics_layer_0/collision_layer = 8
 physics_layer_0/collision_mask = 0
 terrain_set_0/mode = 0
@@ -187,3 +211,4 @@ sources/5 = SubResource("TileSetAtlasSource_block_stalagmite")
 sources/6 = SubResource("TileSetAtlasSource_block_cristaux")
 sources/7 = SubResource("TileSetAtlasSource_block_rocher")
 sources/8 = SubResource("TileSetAtlasSource_block_colonne")
+sources/9 = SubResource("TileSetAtlasSource_decor_torche")

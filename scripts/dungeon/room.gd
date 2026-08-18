@@ -159,6 +159,16 @@ var _pending_decor_source_ids: Array = []
 var _props_blocking: TileMapLayer
 var _pending_blocking_cells: Array = []
 var _pending_blocking_source_ids: Array = []
+## Cellules des tuiles de torche murale peintes par set_decor_props() (cf.
+## game.gd::_prepare_room_props(), WALL_LIGHT_COUNT) -- tableau vide = aucune.
+## Séparé de _pending_decor_cells : ces cellules servent deux fois (peinture
+## de la tuile ET position de chaque WallLight), donc gardées à part plutôt
+## que retrouvées en refouillant _pending_decor_cells/_pending_decor_source_ids.
+## Array simple plutôt que Array[Vector2i], même raisonnement que
+## _pending_decor_cells juste au-dessus : ces valeurs traversent room_data,
+## donc le mécanisme de réplication du RoomSpawner plutôt qu'un typage strict.
+var _pending_wall_light_cells: Array = []
+var _pending_wall_light_color: Color = Color.WHITE
 
 
 func _ready() -> void:
@@ -167,6 +177,7 @@ func _ready() -> void:
 	_setup_props_decor_layer()
 	_setup_props_blocking_layer()
 	_setup_navigation()
+	_setup_wall_light()
 
 
 ## Permet à game.gd d'assigner un tileset différent selon la pool thématique
@@ -303,6 +314,15 @@ func set_blocking_props(cells: Array, source_ids: Array) -> void:
 	_pending_blocking_source_ids = source_ids
 
 
+## Même contrat de timing que set_decor_props() -- cells doit contenir LES
+## MÊMES cellules que les tuiles de torche murale déjà présentes dans
+## decor_cells (cf. game.gd::_prepare_room_props()), pour que chaque
+## WallLight tombe exactement sur sa tuile plutôt qu'à côté.
+func set_wall_light(cells: Array, color: Color) -> void:
+	_pending_wall_light_cells = cells
+	_pending_wall_light_color = color
+
+
 ## Créé en code plutôt qu'un node dans chaque template (cf. header) : évite de
 ## toucher tous les .tscn de salle pour un layer qui n'existe que pour peindre
 ## des tuiles décoratives choisies par game.gd::_prepare_room_props. Réutilise
@@ -336,9 +356,41 @@ func _setup_props_blocking_layer() -> void:
 	_props_blocking = TileMapLayer.new()
 	_props_blocking.name = "PropsBlocking"
 	_props_blocking.tile_set = _floor.tile_set
+	# light_mask sur une valeur que PlayerLight n'éclaire pas (retour
+	# utilisateur, éclairage 2D) : occlusion_layer_0/light_mask (qui décide si
+	# CE layer bloque une lumière) est un masque à part de CanvasItem.light_mask
+	# (qui décide si CE layer est lui-même éclairé) -- les deux valaient 1 par
+	# défaut, donc un prop bloquant recevait sa PROPRE ombre sur son propre
+	# socle (son polygone d'occlusion l'assombrissant lui-même), visible comme
+	# un carré sombre incohérent avec sa silhouette réelle. En le sortant du
+	# range_item_cull_mask par défaut (1) des lumières, le prop garde son
+	# apparence normale tout en projetant toujours une ombre correcte sur ce
+	# qu'il y a derrière (Floor, resté sur le masque 1).
+	_props_blocking.light_mask = 2
 	add_child(_props_blocking)
 	for i in _pending_blocking_cells.size():
 		_props_blocking.set_cell(_pending_blocking_cells[i], _pending_blocking_source_ids[i], Vector2i.ZERO)
+
+
+## WallLight (cf. scripts/props/wall_light.gd) : purement une PointLight2D,
+## aucun sprite -- la tuile de torche/cristal/brasero elle-même est déjà
+## peinte sur PropsDecor (cf. _setup_props_decor_layer(), _pending_wall_light_cells
+## correspond toujours à un sous-ensemble de _pending_decor_cells, cf.
+## game.gd::_prepare_room_props()). Une instance par cellule -- WALL_LIGHT_COUNT
+## torches par salle (retour utilisateur), toutes de la même couleur de thème.
+## Position au CENTRE de la cellule -- même formule que set_cell() (coin
+## haut-gauche = cell * TILE_SIZE_PX), + une demi-tuile pour retomber au
+## centre visuel de la tuile peinte. Construites et configurées localement
+## sur CHAQUE pair (comme Floor/PropsDecor juste au-dessus) : purement
+## visuel, pas d'état à répliquer en plus de _pending_wall_light_cells/
+## _pending_wall_light_color, déjà portés par room_data comme le reste des
+## données de spawn de la salle.
+func _setup_wall_light() -> void:
+	for cell in _pending_wall_light_cells:
+		var light: WallLight = WallLight.new()
+		light.set_color(_pending_wall_light_color)
+		light.position = Vector2(cell) * TILE_SIZE_PX + Vector2.ONE * (TILE_SIZE_PX / 2.0)
+		add_child(light)
 
 
 ## Templates sans node "Floor" (pas encore passés au tileset) : no-op silencieux.
@@ -464,7 +516,9 @@ func _activate_enemies_delayed() -> void:
 	if _enemies_activation_scheduled or _alive_enemies.is_empty():
 		return
 	_enemies_activation_scheduled = true
-	await get_tree().create_timer(1.0).timeout
+	# process_always=false (retour utilisateur, menu pause) : sans lui ce
+	# délai continue de décompter même arbre en pause, cf. bullet.gd::launch().
+	await get_tree().create_timer(1.0, false).timeout
 	for enemy in _alive_enemies:
 		if is_instance_valid(enemy):
 			enemy.active = true

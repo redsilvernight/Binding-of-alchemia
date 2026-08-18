@@ -1,5 +1,7 @@
 # game.gd
 extends Control
+@onready var _canvas_modulate: CanvasModulate = $CanvasModulate
+@onready var _ambient_light: DirectionalLight2D = $AmbientLight
 @onready var rooms: Node2D = $Rooms
 @onready var room_spawner: MultiplayerSpawner = $RoomSpawner
 @onready var players: Node2D = $Players
@@ -103,6 +105,75 @@ const ROOM_TILESET_PATHS: Array[String] = [
 	"res://resources/tilesets/dungeon_crypt_terrain.tres",
 	"res://resources/tilesets/dungeon_alchemy_terrain.tres",
 ]
+# Teinte ambiante de CanvasModulate par pool thématique (retour utilisateur,
+# ambiance visuelle des salles) -- même ordre que ROOM_TILESET_PATHS/
+# PROP_SPAWN_TABLE_PATHS. Variations resserrées autour de la teinte neutre
+# d'origine de game.tscn (0.75, 0.73, 0.8) pour rester dans la même gamme de
+# luminosité (pas d'étage qui devienne subitement trop sombre/clair), seule
+# la dominante de teinte change : bleu-froid humide (cavernes), vert-gris
+# maladif (crypte), violet mystique (alchimie).
+const ROOM_AMBIENT_COLORS: Array[Color] = [
+	Color(0.62, 0.7, 0.8, 1.0),
+	Color(0.68, 0.74, 0.64, 1.0),
+	Color(0.76, 0.66, 0.85, 1.0),
+]
+# Couleur d'AmbientLight (DirectionalLight2D, $AmbientLight) par pool
+# thématique -- retour utilisateur : CanvasModulate MULTIPLIE le rendu, donc
+# sur les tuiles déjà quasi noires en dehors de la torche du joueur (art très
+# sombre + assombrissement du dynamic_lighting), une teinte proche du blanc
+# reste noire quel que soit sa dominante (blanc * presque-zéro = toujours
+# presque-zéro) -- ROOM_AMBIENT_COLORS ci-dessus ne se voyait donc jamais
+# dans les zones non éclairées, seulement (à peine) dans le halo du joueur.
+# Une DirectionalLight2D ADDITIONNE sa couleur à la scène entière (pas de
+# position/rayon à gérer, uniforme comme CanvasModulate) : c'est ce qui rend
+# la dominante de thème visible dans le noir. shadow_enabled=false sur ce
+# node (cf. game.tscn) -- une lumière directionnelle avec ombres projetterait
+# des ombres de TOUS les occluders du donjon entier simultanément (pas de
+# culling par salle), en plus de dupliquer visuellement les ombres nettes déjà
+# portées par PlayerLight ; celle-ci ne doit rester qu'un halo de couleur plat.
+const AMBIENT_LIGHT_COLORS: Array[Color] = [
+	Color(0.4, 0.65, 0.9, 1.0),
+	Color(0.55, 0.7, 0.45, 1.0),
+	Color(0.7, 0.4, 0.9, 1.0),
+]
+const AMBIENT_LIGHT_ENERGY: float = 0.35
+# Torche/cristal/brasero murale selon le thème (retour utilisateur : "ça doit
+# être sur le mur, comme une vraie torche" -- pas un prop qui flotte au sol).
+# Désormais une TUILE (comme tout le reste des props décoratifs, cf.
+# Room._props_decor) enregistrée directement dans les 3 tilesets de thème
+# (resources/tilesets/dungeon_*_terrain.tres, source "decor_torche") plutôt
+# qu'une scène instanciée -- son source_id est retrouvé via
+# _prop_tile_sources_by_texture() comme n'importe quel autre décor. La
+# LUMIÈRE qu'elle projette reste un noeud séparé (cf. WallLight,
+# scripts/props/wall_light.gd, posé par Room._setup_wall_light() sur cette
+# même cellule) : une tuile n'a pas de PointLight2D, cf. le raisonnement déjà
+# établi pour _props_decor/_props_blocking (aucun comportement/script sur une
+# tuile). Garanti une fois par salle (cf. _prepare_room_props()) plutôt que
+# tiré depuis une SpawnTable -- une apparition aléatoire noyée parmi 8 autres
+# props (poids égal) se voyait trop rarement pour lire comme de l'ambiance
+# (retour utilisateur).
+# Même ordre que ROOM_TILESET_PATHS/AMBIENT_LIGHT_COLORS (A=cavernes,
+# B=cryptes, C=alchimie). La couleur de la lumière réutilise directement
+# AMBIENT_LIGHT_COLORS (même dominante que le halo ambiant de la salle,
+# cohérence visuelle) -- seule la texture de la tuile change par thème.
+# Uniquement nord/sud (cf. WALL_LIGHT_SIDES) : ce sprite est dessiné pour un
+# mur HORIZONTAL avec un vrai bandeau visible -- essayé sur est/ouest avec
+# une variante pré-tournée de 90°, mais ce tileset n'a qu'un fin bord de sol
+# sur ces côtés (pas de bandeau de mur équivalent), donc la torche flottait
+# sans rien à quoi s'accrocher visuellement (retour utilisateur, écran à
+# l'appui) -- retiré plutôt que gardé pour une "cohérence" purement théorique.
+const WALL_LIGHT_TEXTURE_PATHS: Array[String] = [
+	"res://assets/tiles/props/cristaux_lumineux.png",
+	"res://assets/tiles/props/torche_murale.png",
+	"res://assets/tiles/props/brasero_alchimique.png",
+]
+# Dimensions fixes de toutes les salles en tuiles -- dérivées des mêmes
+# constantes publiques que Room._paint_floor()/_paint_walls() (ROOM_WIDTH_PX/
+# TILE_SIZE_PX), qui ne sont pas accessibles ici : la Room n'existe pas
+# encore à ce stade (cf. _prepare_room_props(), appelée avant
+# room_spawner.spawn() dans _generate_dungeon()). Cf. le commentaire de
+# Room.DOOR_TILES : ce calcul retombe toujours sur 21x15 tuiles.
+const ROOM_COLS: int = 21
 # Profondeur (en pixels) de la zone gardée libre devant une embrasure de
 # porte structurellement ouverte -- calculée depuis room_data directement
 # (cf. _prop_exclusion_rects), sans attendre le set_open_sides() déféré de la
@@ -166,6 +237,24 @@ var _run_summary_shown: bool = false
 
 func _ready() -> void:
 	add_to_group("Game")
+	# Option "Éclairage dynamique" (retour utilisateur) : purement visuel/
+	# local à ce pair, pas d'état à répliquer. Annule l'assombrissement
+	# ambiant ; cf. player.gd pour le pendant "coupe la torche du joueur"
+	# (les deux ensemble = plus aucune trace visible du système d'éclairage).
+	# Connecté au signal (pas juste lu une fois) : peut être re-basculé en
+	# cours de partie depuis le menu pause, cf. Settings.dynamic_lighting_changed.
+	_canvas_modulate.visible = Settings.dynamic_lighting
+	Settings.dynamic_lighting_changed.connect(func(enabled: bool) -> void: _canvas_modulate.visible = enabled)
+	_ambient_light.visible = Settings.dynamic_lighting
+	Settings.dynamic_lighting_changed.connect(func(enabled: bool) -> void: _ambient_light.visible = enabled)
+	# Teinte par thème de l'étage (Phase 11, ambiance visuelle) -- même calcul
+	# que Room.set_floor_tileset() (_spawn_room()) : pure fonction de
+	# RunManager.current_floor, déjà répliqué à ce stade, donc identique sur
+	# chaque pair sans RPC dédiée.
+	var pool_index_ambient: int = _pool_index_for_floor(RunManager.current_floor)
+	_canvas_modulate.color = ROOM_AMBIENT_COLORS[pool_index_ambient]
+	_ambient_light.color = AMBIENT_LIGHT_COLORS[pool_index_ambient]
+	_ambient_light.energy = AMBIENT_LIGHT_ENERGY
 	# Tourne localement sur chaque pair (comme tout _ready de scène, pas
 	# besoin de RPC) -- remplacé par la musique de boss dès l'entrée dans sa
 	# salle, cf. _rpc_mark_room_visited.
@@ -244,7 +333,7 @@ func _generate_dungeon() -> void:
 	var prop_tile_sources: Dictionary = _prop_tile_sources_by_texture(room_tile_set)
 	var room_nodes: Dictionary = {} # Vector2i (grid_position) -> Room
 	for room_data in dungeon_layout:
-		_prepare_room_props(room_data, prop_table, prop_tile_sources)
+		_prepare_room_props(room_data, prop_table, prop_tile_sources, pool_index)
 		var room: Room = room_spawner.spawn(room_data)
 		room_nodes[room_data["grid_position"]] = room
 
@@ -344,6 +433,11 @@ func _spawn_room(data: Dictionary) -> Node:
 	# _prepare_room_props() avant le spawn de la salle (cf. _generate_dungeon()).
 	room.set_decor_props(data["decor_cells"], data["decor_source_ids"])
 	room.set_blocking_props(data["blocking_cells"], data["blocking_source_ids"])
+	# Même thème que set_floor_tileset() ci-dessus (pool_index recalculé
+	# localement, pure fonction de RunManager.current_floor) -- la torche
+	# murale prend la même dominante de couleur que l'AmbientLight de la
+	# salle (cf. AMBIENT_LIGHT_COLORS, cohérence visuelle globale du thème).
+	room.set_wall_light(data["wall_light_cells"], AMBIENT_LIGHT_COLORS[_pool_index_for_floor(RunManager.current_floor)])
 	# set_open_sides() lit des noeuds enfants via @onready : le noeud doit
 	# être entré dans l'arbre (donc _ready() déjà passé) avant qu'on
 	# l'appelle, sans quoi les références sont encore nulles (même piège
@@ -434,15 +528,19 @@ func _random_position_in_room(room_data: Dictionary) -> Vector2:
 ## pair qui rejoint en cours de partie les reçoit alors automatiquement avec
 ## le spawn de la salle. Seuls les props qui n'ont ni tuile décorative ni
 ## tuile bloquante enregistrée dans ce TileSet (cf. prop_tile_sources --
-## aucun cas actuel, tous les props de ce projet sont convertis en tuile,
-## mais le mécanisme reste nécessaire pour un futur prop avec script/
-## comportement propre) passent encore par prop_spawner (MultiplayerSpawner
-## classique, déjà rattrapé nativement pour un rejoin tardif).
-func _prepare_room_props(room_data: Dictionary, prop_table: SpawnTable, prop_tile_sources: Dictionary) -> void:
+## aucun cas actuel, tous les props de ce projet -- y compris la torche
+## murale, cf. WALL_LIGHT_TEXTURE_PATHS -- sont des tuiles) passent encore
+## par prop_spawner (MultiplayerSpawner classique, déjà rattrapé nativement
+## pour un rejoin
+## tardif).
+func _prepare_room_props(room_data: Dictionary, prop_table: SpawnTable, prop_tile_sources: Dictionary, pool_index: int) -> void:
 	var decor_cells: Array[Vector2i] = []
 	var decor_source_ids: Array[int] = []
 	var blocking_cells: Array[Vector2i] = []
 	var blocking_source_ids: Array[int] = []
+	# Tableau vide = pas de torche murale pour cette salle (start/boss, cf.
+	# garde ci-dessous) -- lu par Room.set_wall_light() dans _spawn_room().
+	var wall_light_cells: Array[Vector2i] = []
 	if not (room_data["is_start"] or room_data["is_boss"]):
 		var room_origin: Vector2 = _room_world_rect(room_data).position
 		var placed_positions: Array[Vector2] = []
@@ -462,10 +560,25 @@ func _prepare_room_props(room_data: Dictionary, prop_table: SpawnTable, prop_til
 					"scene_path": prop_path,
 					"position": prop_position,
 				})
+		# Torche/cristal/brasero murale garantie sur les murs nord ET sud
+		# (retour utilisateur : "ça doit être sur le mur, comme une vraie
+		# torche" -- cf. WALL_LIGHT_SIDES pour pourquoi est/ouest sont exclus)
+		# -- des TUILES peintes comme les autres décors ci-dessus, une par
+		# côté (cf. _wall_light_cell_for_side()). La lumière elle-même
+		# (WallLight) est un noeud séparé par cellule, posé par
+		# Room._setup_wall_light() (cf. set_wall_light() dans _spawn_room()) --
+		# une tuile n'a pas de PointLight2D.
+		var wall_light_source_id: int = prop_tile_sources["decor"][WALL_LIGHT_TEXTURE_PATHS[pool_index]]
+		for side in WALL_LIGHT_SIDES:
+			for cell in _wall_light_cell_for_side(room_data, side):
+				wall_light_cells.append(cell)
+				decor_cells.append(cell)
+				decor_source_ids.append(wall_light_source_id)
 	room_data["decor_cells"] = decor_cells
 	room_data["decor_source_ids"] = decor_source_ids
 	room_data["blocking_cells"] = blocking_cells
 	room_data["blocking_source_ids"] = blocking_source_ids
+	room_data["wall_light_cells"] = wall_light_cells
 
 ## Table texture (res://assets/tiles/props/xxx.png, cf. item_path des entrées
 ## dans props_pool_*.tres) -> id de source d'atlas dans ce TileSet, scindée
@@ -534,6 +647,41 @@ func _random_prop_position_in_room(room_data: Dictionary, placed_positions: Arra
 			return candidate
 		candidate = _random_position_in_room(room_data)
 	return candidate
+
+## Une torche murale sur les murs nord ET sud (retour utilisateur : est/ouest
+## retirés -- cf. header ci-dessus, ce tileset n'a pas de bandeau de mur
+## visible sur ces côtés, seulement un fin bord de sol, donc rien pour y
+## "accrocher" une torche). ROOM_ROWS même raisonnement que ROOM_COLS
+## (Room.ROOM_HEIGHT_PX / Room.TILE_SIZE_PX, cf. le commentaire de
+## Room.DOOR_TILES : toujours 21x15 tuiles).
+const ROOM_ROWS: int = 15
+const WALL_LIGHT_SIDES: Array[String] = ["north", "south"]
+
+## Choisit UNE cellule (pas une position monde) pour la torche murale de ce
+## côté -- rangée de bord (cf. Room._paint_walls(), même repère que
+## WANG_ATLAS_BY_CORNERS/DOOR_TILES). Room n'existe pas encore à cet instant
+## (cf. _prepare_room_props(), appelée avant room_spawner.spawn() dans
+## _generate_dungeon()), donc ce calcul ne peut pas lire les champs privés de
+## la Room -- il reproduit la même formule que _paint_walls() à partir des
+## constantes publiques de Room (ROOM_COLS, DOOR_TILES). Exclut les 2 coins
+## et, si ce côté est structurellement ouvert, l'embrasure de porte (+ les 2
+## cases de bord plein qui l'encadrent, cf. Room._flatten_door_frame()).
+## Tableau vide si aucune cellule valide (salle trop petite ou porte trop
+## large) -- mieux qu'un blocage de génération, même philosophie que
+## _random_prop_position_in_room().
+func _wall_light_cell_for_side(room_data: Dictionary, side: String) -> Array[Vector2i]:
+	var door_col_start: int = (ROOM_COLS - Room.DOOR_TILES) / 2
+	var door_col_end: int = door_col_start + Room.DOOR_TILES
+	var open_here: bool = side in room_data["open_sides"]
+	var y: int = 0 if side == "north" else ROOM_ROWS - 1
+	var candidates: Array[Vector2i] = []
+	for x in range(1, ROOM_COLS - 1):
+		if open_here and x >= door_col_start - 1 and x <= door_col_end:
+			continue
+		candidates.append(Vector2i(x, y))
+	if candidates.is_empty():
+		return []
+	return [candidates[randi() % candidates.size()]]
 
 func _is_valid_prop_position(candidate: Vector2, exclusions: Array[Rect2], placed_positions: Array[Vector2]) -> bool:
 	for zone in exclusions:
@@ -701,12 +849,12 @@ func _spawn_pickup(data: Dictionary) -> Node:
 	
 ## N'est plus emprunté par aucun prop de ce projet à ce jour : les props
 ## décoratifs ET bloquants sont désormais tous des tuiles (cf.
-## _prepare_room_props()/Room.set_decor_props()/set_blocking_props()).
-## Conservé pour un futur prop avec script/comportement propre (interaction,
-## animation, physique non-statique) -- celui-là devra rester une scène,
-## cf. _prop_tile_sources_by_texture(). Même pattern minimal que
-## _spawn_enemy pour la partie instanciation, mais sans aucune donnée à
-## câbler après coup.
+## _prepare_room_props()/Room.set_decor_props()/set_blocking_props()), y
+## compris la torche/cristal/brasero murale (cf. WALL_LIGHT_TEXTURE_PATHS) --
+## sa lumière (WallLight, cf. scripts/props/wall_light.gd) est posée par
+## Room._setup_wall_light(), pas via prop_spawner. Conservé pour un futur
+## prop avec script/comportement propre (interaction, physique non-statique)
+## -- celui-là devra rester une scène, cf. _prop_tile_sources_by_texture().
 func _spawn_prop(data: Dictionary) -> Node:
 	var prop: Node2D = (load(data["scene_path"]) as PackedScene).instantiate()
 	prop.position = data["position"]
@@ -845,7 +993,9 @@ func _on_boss_defeated() -> void:
 		if not player.is_dead:
 			RunManager.save_run_state(int(player.name), _capture_run_state(player))
 	RunManager.advance_floor()
-	get_tree().create_timer(BOSS_DEFEAT_TO_HUB_DELAY).timeout.connect(RunManager.end_run)
+	# process_always=false (retour utilisateur, menu pause) : sans lui ce
+	# délai continue de décompter même arbre en pause, cf. bullet.gd::launch().
+	get_tree().create_timer(BOSS_DEFEAT_TO_HUB_DELAY, false).timeout.connect(RunManager.end_run)
 
 func _capture_run_state(player: Node) -> Dictionary:
 	return {

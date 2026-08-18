@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" path="res://assets/tiles/props/pilier_fissure.png" id="7_block_pilier"]
 [ext_resource type="Texture2D" path="res://assets/tiles/props/statue_effondree.png" id="8_block_statue"]
 [ext_resource type="Texture2D" path="res://assets/tiles/props/cage_ossements.png" id="9_block_cage"]
+[ext_resource type="Texture2D" path="res://assets/tiles/props/torche_murale.png" id="10_decor_torche"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1"]
 texture = ExtResource("1_tex")
@@ -145,32 +146,55 @@ texture = ExtResource("5_decor_gravats")
 texture_region_size = Vector2i(128, 128)
 0:0/0 = 0
 
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_sarcophage"]
+polygon = PackedVector2Array(-48, -32, 48, -32, 48, 32, -48, 32)
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_block_sarcophage"]
 texture = ExtResource("6_block_sarcophage")
 texture_region_size = Vector2i(160, 96)
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-48, -32, 48, -32, 48, 32, -48, 32)
+0:0/0/occlusion_layer_0/polygon = SubResource("OccluderPolygon2D_sarcophage")
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_pilier"]
+polygon = PackedVector2Array(-40, -40, 40, -40, 40, 40, -40, 40)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_block_pilier"]
 texture = ExtResource("7_block_pilier")
 texture_region_size = Vector2i(128, 160)
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-40, -40, 40, -40, 40, 40, -40, 40)
+0:0/0/occlusion_layer_0/polygon = SubResource("OccluderPolygon2D_pilier")
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_statue"]
+polygon = PackedVector2Array(-48, -32, 48, -32, 48, 32, -48, 32)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_block_statue"]
 texture = ExtResource("8_block_statue")
 texture_region_size = Vector2i(160, 128)
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-48, -32, 48, -32, 48, 32, -48, 32)
+0:0/0/occlusion_layer_0/polygon = SubResource("OccluderPolygon2D_statue")
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_cage"]
+polygon = PackedVector2Array(-40, -40, 40, -40, 40, 40, -40, 40)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_block_cage"]
 texture = ExtResource("9_block_cage")
 texture_region_size = Vector2i(128, 128)
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-40, -40, 40, -40, 40, 40, -40, 40)
+0:0/0/occlusion_layer_0/polygon = SubResource("OccluderPolygon2D_cage")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_decor_torche"]
+texture = ExtResource("10_decor_torche")
+texture_region_size = Vector2i(64, 80)
+0:0/0 = 0
 
 [resource]
 tile_size = Vector2i(64, 64)
+occlusion_layer_0/light_mask = 1
+occlusion_layer_0/sdf_collision = true
 physics_layer_0/collision_layer = 8
 physics_layer_0/collision_mask = 0
 terrain_set_0/mode = 0
@@ -187,3 +211,4 @@ sources/5 = SubResource("TileSetAtlasSource_block_sarcophage")
 sources/6 = SubResource("TileSetAtlasSource_block_pilier")
 sources/7 = SubResource("TileSetAtlasSource_block_statue")
 sources/8 = SubResource("TileSetAtlasSource_block_cage")
+sources/9 = SubResource("TileSetAtlasSource_decor_torche")
