@@ -63,6 +63,50 @@ func _ready() -> void:
 	nav_agent.velocity_computed.connect(_on_nav_velocity_computed)
 	add_to_group("Enemies")
 	_reset_ambient_timer()
+	_setup_shadow()
+
+## Rayon de repli si CollisionShape2D est absente ou n'utilise pas de capsule
+## (aucun cas connu actuellement, cf. _setup_shadow(), mais évite un ombre de
+## taille nulle si un futur type d'ennemi change de forme de collision).
+const DEFAULT_SHADOW_CAPSULE_RADIUS: float = 32.0
+
+## Ombre projetée, même traitement que les props/le coffre/les établis (cf.
+## Room._setup_props_blocking_layer(), room_alchemy.tscn/room_treasure.tscn) :
+## un LightOccluder2D générique créé en code plutôt qu'ajouté à chacune des
+## quinze scènes ennemis -- même raisonnement que nav_agent plus haut, un
+## seul point d'ajout couvre tout le roster (elles n'ont pas de scène de base
+## commune). "Sprite2D" est un nom de node fiable sur toutes ces scènes : la
+## réplication réseau en dépend déjà (SceneReplicationConfig, path
+## "Sprite2D:animation"). light_mask=2 sur ce sprite (pas la valeur par
+## défaut 1, qui matcherait range_item_cull_mask des lumières) : sans ça
+## l'ennemi se retrouverait dans SA PROPRE ombre plutôt que de garder son
+## apparence normale en ne projetant l'ombre que sur ce qu'il y a derrière
+## lui. Taille dérivée du rayon de CollisionShape2D (une CapsuleShape2D sur
+## les 15 scènes ennemis + le boss, vérifié) plutôt qu'une valeur fixe :
+## contrairement à nav_agent.radius (qui sert l'évitement, un compromis
+## uniforme reste acceptable), une ombre trop petite sous un boss ou trop
+## grande sous un ennemi léger se voit immédiatement à l'écran.
+func _setup_shadow() -> void:
+	var sprite: CanvasItem = get_node_or_null("Sprite2D")
+	if sprite != null:
+		sprite.light_mask = 2
+	var capsule_radius: float = DEFAULT_SHADOW_CAPSULE_RADIUS
+	var collision: CollisionShape2D = get_node_or_null("CollisionShape2D")
+	if collision != null and collision.shape is CapsuleShape2D:
+		capsule_radius = (collision.shape as CapsuleShape2D).radius
+	var radius_x: float = capsule_radius * 0.55
+	var radius_y: float = capsule_radius * 0.32
+	var points := PackedVector2Array()
+	const POINT_COUNT: int = 8
+	for i in POINT_COUNT:
+		var angle: float = TAU * i / POINT_COUNT
+		points.append(Vector2(cos(angle) * radius_x, sin(angle) * radius_y))
+	var occluder_polygon := OccluderPolygon2D.new()
+	occluder_polygon.polygon = points
+	var occluder := LightOccluder2D.new()
+	occluder.occluder = occluder_polygon
+	occluder.position = Vector2(0, radius_y * 1.4)
+	add_child(occluder)
 
 ## Remplace le `move(direction_to(target), speed)` en ligne droite historique
 ## dans les états qui poursuivent un point (Chase, approche de

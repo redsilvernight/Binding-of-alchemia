@@ -9,6 +9,7 @@ signal instance_projectile(data: Dictionary)
 @export var alchemy_crafting_scene: PackedScene = preload("res://scenes/ui/alchemy_crafting.tscn")
 @export var weapon_crafting_scene: PackedScene = preload("res://scenes/ui/weapon_crafting.tscn")
 @export var unlock_screen_scene: PackedScene = preload("res://scenes/ui/unlock_screen.tscn")
+@export var pause_menu_scene: PackedScene = preload("res://scenes/ui/pause_menu.tscn")
 ## Facteur de zoom-in supplémentaire au-delà du strict nécessaire pour que la
 ## zone visible tienne dans une salle (cf. _update_camera_zoom()) -- évite
 ## qu'un pixel de la salle voisine ne dépasse au bord de l'écran par arrondi.
@@ -19,6 +20,7 @@ const CAMERA_ZOOM_MARGIN: float = 1.05
 @onready var inventory: Inventory = $Inventory
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var sprite: AnimatedSprite2D = $Sprite2D
+@onready var _light: PointLight2D = $PlayerLight
 var was_water_pressed: bool = false
 var was_mixture_pressed: bool = false
 var last_aim_direction: Vector2 = Vector2.RIGHT
@@ -46,6 +48,18 @@ var _dungeon_camera_mode: bool = false
 func _ready() -> void:
 	super()
 	add_to_group("Players")
+	# Option "Éclairage dynamique" (retour utilisateur) : cf. game.gd pour le
+	# pendant CanvasModulate -- purement visuel/local, chaque pair applique
+	# indépendamment son propre réglage sur sa propre instance du joueur (pas
+	# de sens à répliquer "ma torche est éteinte" aux autres pairs). Pas de
+	# garde is_multiplayer_authority() volontairement : mon réglage local
+	# s'applique à TOUTE torche affichée sur MON écran, y compris celle des
+	# coéquipiers -- si je désactive l'éclairage, je ne veux voir aucune
+	# torche, pas seulement la mienne. Connecté au signal (pas juste lu une
+	# fois) : re-basculable en cours de partie depuis le menu pause, cf.
+	# Settings.dynamic_lighting_changed.
+	_light.visible = Settings.dynamic_lighting
+	Settings.dynamic_lighting_changed.connect(func(enabled: bool) -> void: _light.visible = enabled)
 	damage_timer.wait_time = invulnerability_duration
 	weapon.projectile_requested.connect(_on_projectile_requested)
 	died.connect(_on_died)
@@ -80,6 +94,7 @@ func _ready() -> void:
 		var unlock = unlock_screen_scene.instantiate()
 		add_child(unlock)
 		unlock_screen = unlock
+		add_child(pause_menu_scene.instantiate())
 	else:
 		player_camera.enabled = false
 
@@ -264,15 +279,15 @@ func _on_sprite_animation_finished() -> void:
 
 func open_alchemy_crafting() -> void:
 	if alchemy_crafting_screen:
-		alchemy_crafting_screen.open()
+		alchemy_crafting_screen.toggle()
 
 func open_weapon_crafting() -> void:
 	if weapon_crafting_screen:
-		weapon_crafting_screen.open()
+		weapon_crafting_screen.toggle()
 
 func open_unlock_screen() -> void:
 	if unlock_screen:
-		unlock_screen.open()
+		unlock_screen.toggle()
 
 @rpc("any_peer", "call_local", "reliable")
 func request_equip_weapon_part(part_path: String) -> void:

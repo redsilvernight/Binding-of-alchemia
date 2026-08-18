@@ -20,7 +20,9 @@ func _ready() -> void:
 	monitoring = false
 	body_entered.connect(_on_body_entered)
 	_apply_icon()
-	await get_tree().create_timer(PICKUP_DELAY).timeout
+	# process_always=false (retour utilisateur, menu pause) : sans lui ce
+	# délai continue de décompter même arbre en pause, cf. bullet.gd::launch().
+	await get_tree().create_timer(PICKUP_DELAY, false).timeout
 	if is_instance_valid(self):
 		monitoring = true
 

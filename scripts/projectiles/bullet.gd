@@ -54,7 +54,11 @@ func launch(from_position: Vector2, aim_direction: Vector2) -> void:
 	velocity = _arc_direction * _base_speed
 	rotation = velocity.angle()
 	if multiplayer.is_server():
-		var timer := get_tree().create_timer(lifetime)
+		# process_always=false (retour utilisateur, menu pause) : par défaut
+		# create_timer() continue de décompter même arbre en pause -- un
+		# projectile gelé visuellement (_physics_process respecte bien la
+		# pause) disparaissait quand même à l'expiration de ce minuteur.
+		var timer := get_tree().create_timer(lifetime, false)
 		timer.timeout.connect(queue_free)
 
 func _physics_process(delta: float) -> void:

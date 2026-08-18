@@ -77,7 +77,9 @@ func _play_lingering_cloud(radius: float, duration: float) -> void:
 		pulse.set_loops()
 		pulse.tween_property(sprite, "modulate:a", 0.14, 0.9).set_trans(Tween.TRANS_SINE)
 		pulse.tween_property(sprite, "modulate:a", 0.22, 0.9).set_trans(Tween.TRANS_SINE)
-		var linger_timer := get_tree().create_timer(linger)
+		# process_always=false (retour utilisateur, menu pause) : sans lui ce
+		# délai continue de décompter même arbre en pause, cf. bullet.gd::launch().
+		var linger_timer := get_tree().create_timer(linger, false)
 		linger_timer.timeout.connect(func() -> void:
 			pulse.kill()
 			var outro := create_tween()
@@ -113,7 +115,9 @@ func _play_lightning_chain(radius: float) -> void:
 		# ponctuelle suffit à confirmer l'impact sans rien à relier.
 		_play_burst(texture_electrique, radius * 0.25, 0.5, 0.12, 0.15)
 		return
-	get_tree().create_timer(LIGHTNING_FLASH_DURATION + 0.05).timeout.connect(queue_free)
+	# process_always=false (retour utilisateur, menu pause) : sans lui ce
+	# délai continue de décompter même arbre en pause, cf. bullet.gd::launch().
+	get_tree().create_timer(LIGHTNING_FLASH_DURATION + 0.05, false).timeout.connect(queue_free)
 
 
 func _draw_bolt(target_global_position: Vector2) -> void:

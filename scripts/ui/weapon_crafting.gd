@@ -59,9 +59,15 @@ func close() -> void:
 	root.visible = false
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if root.visible and event.is_action_pressed("ui_cancel"):
+## Retour utilisateur : se ferme désormais avec la même touche qu'à
+## l'ouverture (E, via Interactable -> Player.open_weapon_crafting()) plutôt
+## qu'avec Échap -- Échap est maintenant réservé au menu pause
+## (pause_menu.gd), les deux se disputaient la même touche.
+func toggle() -> void:
+	if root.visible:
 		close()
+	else:
+		open()
 
 
 func _on_weapon_parts_changed(_part: Resource) -> void:

@@ -15,6 +15,17 @@ const HUB_SCENE_PATH: String = "res://scenes/world/hub.tscn"
 signal floor_changed(new_floor: int)
 var current_floor: int = 1
 
+## Pause générale (retour utilisateur, distincte des écrans locaux comme
+## l'inventaire) : SceneTree.paused est un état moteur global, pas répliqué
+## par nature -- request_toggle_pause()/_rpc_set_paused() le synchronisent
+## explicitement sur tous les pairs, même schéma any_peer/authority que
+## request_return_to_hub()/_rpc_set_floor() plus bas. pause_menu.gd écoute
+## pause_changed pour afficher/masquer son panneau en phase avec l'état réel,
+## plutôt que de togguer sa propre visibilité localement (ce qui laissait
+## jusqu'ici le jeu tourner derrière le panneau).
+signal pause_changed(paused: bool)
+var is_paused: bool = false
+
 # Persistance des objets de run entre étages (hors scope roadmap, retour
 # utilisateur) : Inventory/Weapon sont des enfants de Player, recréés à
 # chaque changement de scène (cf. PlayerManager.spawnPlayer) -- sans ce
@@ -82,6 +93,29 @@ func request_return_to_hub() -> void:
 	end_run()
 
 
+## Requêtable par n'importe quel pair (touche "pause", cf. pause_menu.gd) :
+## seul l'hôte décide réellement, même garde que les autres request_* de ce
+## fichier. N'importe quel joueur peut mettre en pause OU sortir de pause --
+## pas de notion de "propriétaire" de la pause, un simple bascule partagé.
+@rpc("any_peer", "call_local", "reliable")
+func request_toggle_pause() -> void:
+	if not multiplayer.is_server():
+		return
+	_rpc_set_paused.rpc(not is_paused)
+
+
+## Hôte uniquement (broadcast), même schéma que _rpc_set_floor/_rpc_set_loading
+## ci-dessous : applique l'état identiquement sur CHAQUE pair, y compris
+## l'hôte lui-même (call_local). get_tree().paused est global au process de
+## ce pair -- geler sa propre SceneTree ne gèle en rien celle des autres
+## pairs, d'où la nécessité que tout le monde reçoive et applique ce RPC.
+@rpc("authority", "call_local", "reliable")
+func _rpc_set_paused(value: bool) -> void:
+	is_paused = value
+	get_tree().paused = value
+	pause_changed.emit(value)
+
+
 ## Requêtable par n'importe quel pair depuis le hub (RunStartStation) :
 ## seul l'hôte décide réellement, même garde que request_fire/request_craft_mixture.
 @rpc("any_peer", "call_local", "reliable")
@@ -142,6 +176,16 @@ func _rpc_ack_scene_change() -> void:
 
 @rpc("authority", "call_local", "reliable")
 func _rpc_change_scene(scene_path: String) -> void:
+	# SceneTree.paused est un état moteur global, PAS attaché à la scène en
+	# cours -- sans ce reset, une pause encore active pendant une transition
+	# (hub <-> donjon) survivrait au changement de scène et démarrerait la
+	# suivante déjà figée, sans aucun moyen de la lever (le menu pause qui
+	# permettrait de dépaused n'existe pas encore dans la nouvelle scène tant
+	# que Player._ready() n'a pas tourné).
+	if is_paused:
+		is_paused = false
+		get_tree().paused = false
+		pause_changed.emit(false)
 	# call_deferred : end_run() est atteint depuis take_damage() -> _update_health()
 	# -> died.emit(), souvent lui-même déclenché depuis un callback physique
 	# (ex : contact ennemi, cf. enemy_erratic.gd._on_collision_area_body_entered).

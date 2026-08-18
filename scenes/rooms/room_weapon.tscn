@@ -20,6 +20,9 @@ radius = 80.0
 [sub_resource type="RectangleShape2D" id="RoomTriggerShape"]
 size = Vector2(928, 576)
 
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_weapon_station"]
+polygon = PackedVector2Array(-48, 10, 48, 10, 48, 45, -48, 45)
+
 [node name="RoomWeapon" type="Node2D"]
 script = ExtResource("1_room")
 
@@ -91,7 +94,11 @@ position = Vector2(672, 480)
 script = ExtResource("2_station")
 
 [node name="BenchVisual" type="Sprite2D" parent="WeaponStation"]
+light_mask = 2
 texture = ExtResource("5_weapon_station")
+
+[node name="Occluder" type="LightOccluder2D" parent="WeaponStation"]
+occluder = SubResource("OccluderPolygon2D_weapon_station")
 
 [node name="Interactable" type="Area2D" parent="WeaponStation"]
 script = ExtResource("3_interactable")

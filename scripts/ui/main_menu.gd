@@ -20,6 +20,7 @@ extends Control
 @onready var _music_volume_slider: HSlider = $OptionsPanel/OptionsVBox/MusicVolumeSlider
 @onready var _sfx_volume_slider: HSlider = $OptionsPanel/OptionsVBox/SfxVolumeSlider
 @onready var _fullscreen_check: CheckButton = $OptionsPanel/OptionsVBox/FullscreenCheck
+@onready var _dynamic_lighting_check: CheckButton = $OptionsPanel/OptionsVBox/DynamicLightingCheck
 @onready var _back_button: Button = $OptionsPanel/OptionsVBox/Back
 
 @onready var _profile_panel: Control = $ProfilePanel
@@ -42,6 +43,7 @@ func _ready() -> void:
 	_music_volume_slider.value_changed.connect(_on_music_volume_changed)
 	_sfx_volume_slider.value_changed.connect(_on_sfx_volume_changed)
 	_fullscreen_check.toggled.connect(_on_fullscreen_toggled)
+	_dynamic_lighting_check.toggled.connect(_on_dynamic_lighting_toggled)
 	_back_button.pressed.connect(_on_back_pressed)
 
 	for i in _profile_buttons.size():
@@ -77,6 +79,7 @@ func _on_options_pressed() -> void:
 	_music_volume_slider.value = Settings.music_volume
 	_sfx_volume_slider.value = Settings.sfx_volume
 	_fullscreen_check.button_pressed = Settings.fullscreen
+	_dynamic_lighting_check.button_pressed = Settings.dynamic_lighting
 	_options_panel.visible = true
 
 
@@ -98,6 +101,10 @@ func _on_sfx_volume_changed(value: float) -> void:
 
 func _on_fullscreen_toggled(enabled: bool) -> void:
 	Settings.set_fullscreen(enabled)
+
+
+func _on_dynamic_lighting_toggled(enabled: bool) -> void:
+	Settings.set_dynamic_lighting(enabled)
 
 
 func _on_back_pressed() -> void:

@@ -105,6 +105,10 @@ value = 1.0
 layout_mode = 2
 text = "Plein écran"
 
+[node name="DynamicLightingCheck" type="CheckButton" parent="OptionsPanel/OptionsVBox"]
+layout_mode = 2
+text = "Éclairage dynamique"
+
 [node name="Back" type="Button" parent="OptionsPanel/OptionsVBox"]
 layout_mode = 2
 text = "Retour"

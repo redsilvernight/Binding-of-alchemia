@@ -21,6 +21,9 @@ radius = 80.0
 [sub_resource type="RectangleShape2D" id="RoomTriggerShape"]
 size = Vector2(928, 576)
 
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_chest"]
+polygon = PackedVector2Array(-32, 15, 32, 15, 32, 45, -32, 45)
+
 [node name="RoomTreasure" type="Node2D"]
 script = ExtResource("1_room")
 
@@ -92,10 +95,15 @@ position = Vector2(672, 480)
 script = ExtResource("2_chest")
 
 [node name="Closed" type="Sprite2D" parent="Chest"]
+light_mask = 2
 texture = ExtResource("5_chest_closed")
 
 [node name="Open" type="Sprite2D" parent="Chest"]
+light_mask = 2
 texture = ExtResource("6_chest_open")
+
+[node name="Occluder" type="LightOccluder2D" parent="Chest"]
+occluder = SubResource("OccluderPolygon2D_chest")
 
 [node name="Interactable" type="Area2D" parent="Chest"]
 script = ExtResource("3_interactable")
