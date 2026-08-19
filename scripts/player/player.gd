@@ -35,6 +35,16 @@ var unlock_screen: Node = null
 var _spectate_target: Node2D = null
 var _pending_fire_type: String = ""
 var _pending_fire_direction: Vector2 = Vector2.ZERO
+## Bruits de pas (retour utilisateur : uniquement le joueur, pas les ennemis --
+## essayé sur Character/EnemyBase d'abord, retiré). Calé sur la FRAME de l'anim
+## "walk-*" (0 et milieu de cycle = 2 pas par cycle, un par pied) plutôt qu'une
+## distance/un minuteur fixe : suit exactement la vitesse de lecture réelle de
+## l'AnimatedSprite2D. Dans _process (pas _physics_process, non gardé par
+## is_multiplayer_authority()) : "chaque instance avance ses propres frames
+## localement" (cf. sprite.play() dans _ready()), donc sprite.frame est fiable
+## identiquement sur chaque pair -- y compris pour voir/entendre les pas des
+## AUTRES joueurs, pas seulement le sien.
+var _footstep_last_frame: int = -1
 ## Phase 9.3 : vrai une fois l'anim death-* terminée -- gate _process_spectating()
 ## pour que la caméra reste sur le corps le temps de l'anim au lieu de sauter
 ## instantanément sur un coéquipier (cf. _on_died).
@@ -71,6 +81,17 @@ func _ready() -> void:
 	# frame 0 (l'anim Idle n'a qu'1 frame, donc ce bug ne s'y voyait pas).
 	sprite.play()
 	sprite.animation_finished.connect(_on_sprite_animation_finished)
+	# Corrige un figeage constaté chez les pairs distants : "Sprite2D:animation"
+	# ne réplique que le NOM de l'anim (cf. SceneReplicationConfig), pas l'état
+	# playing du AnimatedSprite2D. Or playing repasse à false localement, sur
+	# CHAQUE pair, dès qu'une anim non bouclée se termine (attack-*/hit-*/
+	# death-*) -- ces trois-là relancent bien play() partout (RPC dédiée ou
+	# call_local), mais walk-*/idle-* ne comptent que sur la synchro passive :
+	# une simple assignation de propriété ne relance pas la lecture si playing
+	# était déjà à false. Sans ce hook, un pair distant qui a tapé/encaissé/
+	# est mort une fois reste figé sur la dernière frame pour tout le monde
+	# sauf lui-même, même si le NOM d'anim continue bien à se mettre à jour.
+	sprite.animation_changed.connect(_on_sprite_animation_changed)
 	if is_multiplayer_authority():
 		player_camera.enabled = true
 		get_viewport().size_changed.connect(_on_viewport_size_changed)
@@ -121,6 +142,20 @@ func enable_dungeon_camera_mode() -> void:
 func _on_viewport_size_changed() -> void:
 	if _dungeon_camera_mode:
 		_update_camera_zoom()
+
+func _process(_delta: float) -> void:
+	if is_dead:
+		return
+	if not sprite.animation.begins_with("walk-"):
+		_footstep_last_frame = -1
+		return
+	var current_frame: int = sprite.frame
+	if current_frame == _footstep_last_frame:
+		return
+	_footstep_last_frame = current_frame
+	var frame_count: int = sprite.sprite_frames.get_frame_count(sprite.animation)
+	if current_frame == 0 or current_frame == frame_count / 2:
+		AudioManager.play_sfx(RunManager.footstep_key_for_floor(RunManager.current_floor))
 
 func _physics_process(_delta: float) -> void:
 	if not is_multiplayer_authority():
@@ -278,9 +313,23 @@ func _on_sprite_animation_finished() -> void:
 	request_fire.rpc_id(1, _pending_fire_type, _pending_fire_direction)
 	_pending_fire_type = ""
 
+## Cf. commentaire sur la connexion dans _ready() : ne concerne que les pairs
+## distants -- l'autorité relance déjà play() elle-même à chaque changement de
+## nom d'anim (_update_facing), donc ce hook y serait redondant.
+func _on_sprite_animation_changed() -> void:
+	if is_multiplayer_authority():
+		return
+	sprite.play()
+
 func open_alchemy_crafting() -> void:
 	if alchemy_crafting_screen:
 		alchemy_crafting_screen.toggle()
+
+## Retour utilisateur : l'écran d'alchimie se ferme tout seul en s'éloignant
+## de la table (cf. AlchemyStation._on_player_left, via Interactable.player_left).
+func close_alchemy_crafting() -> void:
+	if alchemy_crafting_screen:
+		alchemy_crafting_screen.close()
 
 func open_weapon_crafting() -> void:
 	if weapon_crafting_screen:
@@ -310,6 +359,12 @@ func request_equip_weapon_part(part_path: String) -> void:
 
 	weapon.equip_networked(load(part_path))
 
+## Retour utilisateur : rendre l'alchimie rare et marquante -- un craft ne
+## peut plus mélanger un nombre arbitraire d'ingrédients d'un coup (cf.
+## alchemy_crafting.gd, qui applique déjà ce plafond côté UI ; revérifié ici
+## côté hôte, seul point d'autorité).
+const MAX_INGREDIENTS_PER_CRAFT: int = 3
+
 @rpc("any_peer", "call_local", "reliable")
 func request_craft_mixture(ingredient_paths: Array[String]) -> void:
 	# Même garde que request_fire : seul l'hôte résout, et seulement pour
@@ -321,6 +376,10 @@ func request_craft_mixture(ingredient_paths: Array[String]) -> void:
 		return
 	if ingredient_paths.is_empty():
 		return
+	if ingredient_paths.size() > MAX_INGREDIENTS_PER_CRAFT:
+		return
+	if RunManager.has_used_alchemy(sender_id):
+		return # ce joueur a déjà utilisé la table sur cet étage (désync UI possible, cf. AlchemyStation)
 
 	# On compte d'abord tout ce qu'il faut et on vérifie le stock AVANT de
 	# retirer quoi que ce soit : un retrait partiel suivi d'un échec plus
@@ -364,6 +423,7 @@ func request_craft_mixture(ingredient_paths: Array[String]) -> void:
 	var effect: ImpactEffect = MixtureToEffect.convertir(mixture)
 	weapon.mixture_impact_effect = effect
 	weapon.set_mixture_ingredients_networked(combined_ingredient_paths)
+	RunManager.mark_alchemy_used(sender_id)
 	print("Mixture appliquée pour %s: %s" % [name, effect])
 
 func _on_projectile_requested(data: Dictionary) -> void:

@@ -15,6 +15,43 @@ const HUB_SCENE_PATH: String = "res://scenes/world/hub.tscn"
 signal floor_changed(new_floor: int)
 var current_floor: int = 1
 
+# Retour utilisateur : rendre l'alchimie rare et marquante -- une seule table
+# par donjon (jamais alchimie ET arme ensemble, cf. game.gd
+# SPECIAL_ROOM_TEMPLATE_PATHS), un craft par étage PAR JOUEUR (pas partagé par
+# le groupe -- retour utilisateur ultérieur). Vit ici comme current_floor
+# (partagé par toute la partie, survit à la destruction de game.gd) -- la clé
+# est le peer_id plutôt qu'un bool unique, vidée à chaque _rpc_set_floor
+# (avance ET reset : dans ce jeu il n'existe pas de respawn en cours d'étage,
+# une mort individuelle ne fait qu'un spectateur jusqu'à la mort de toute
+# l'équipe, cf. game._check_all_players_dead -- le changement d'étage recrée
+# de toute façon la salle et tous les joueurs, donc vider ce dictionnaire à ce
+# seul endroit couvre aussi bien "nouvel étage" que "nouvelle vie"),
+# verrouillé par mark_alchemy_used() côté hôte depuis
+# Player.request_craft_mixture après une résolution réussie.
+signal alchemy_lock_changed(peer_id: int, used: bool)
+var alchemy_used_by_peer: Dictionary = {} # int (peer_id) -> bool
+
+# Bruits de pas par pool thématique (nouvelle demande) : même ordre que
+# game.gd::MUSIC_KEYS/ROOM_TILESET_PATHS (A=cavernes, B=cryptes, C=alchimie),
+# gardé ici plutôt que dans game.gd car Character (scripts/entities/character.gd,
+# classe de base de Player ET EnemyBase) doit pouvoir résoudre "quel thème sur
+# cet étage" sans dépendre de la scène game.gd (détruite au changement de
+# scène, contrairement à cet Autoload). POOL_COUNT dupliqué depuis game.gd
+# (même valeur, 3) plutôt que partagé -- un import croisé scène -> Autoload
+# n'apporterait rien ici, cette formule ne change pratiquement jamais.
+const POOL_COUNT: int = 3
+const FOOTSTEP_KEYS: Array[String] = [
+	"footstep_cave",
+	"footstep_crypt",
+	"footstep_alchemy",
+]
+
+func pool_index_for_floor(floor_level: int) -> int:
+	return (floor_level - 1) % POOL_COUNT
+
+func footstep_key_for_floor(floor_level: int) -> String:
+	return FOOTSTEP_KEYS[pool_index_for_floor(floor_level)]
+
 ## Pause générale (retour utilisateur, distincte des écrans locaux comme
 ## l'inventaire) : SceneTree.paused est un état moteur global, pas répliqué
 ## par nature -- request_toggle_pause()/_rpc_set_paused() le synchronisent
@@ -244,8 +281,34 @@ func take_saved_run_state(peer_id: int) -> Dictionary:
 func _rpc_set_floor(new_floor: int, play_sound: bool = true) -> void:
 	current_floor = new_floor
 	floor_changed.emit(new_floor)
+	alchemy_used_by_peer.clear()
 	if play_sound:
 		AudioManager.play_sfx("floor_advance")
+
+
+## Interrogé par Player.request_craft_mixture (autorité) et par les écrans/
+## visuels qui doivent refléter l'état d'UN joueur précis (alchemy_crafting.gd,
+## AlchemyStation) -- jamais de bool global, cf. commentaire de
+## alchemy_used_by_peer plus haut.
+func has_used_alchemy(peer_id: int) -> bool:
+	return alchemy_used_by_peer.get(peer_id, false)
+
+
+## Hôte uniquement, appelé depuis Player.request_craft_mixture juste après
+## une résolution de mixture réussie -- verrouille la table pour CE joueur
+## pour le reste de l'étage, diffusé à tous les pairs (même schéma que
+## _rpc_set_floor et chest._rpc_mark_opened) pour que la fiole associée se
+## casse chez tout le monde, pas seulement chez qui a crafté.
+func mark_alchemy_used(peer_id: int) -> void:
+	if not multiplayer.is_server():
+		return
+	_rpc_set_alchemy_used.rpc(peer_id, true)
+
+
+@rpc("authority", "call_local", "reliable")
+func _rpc_set_alchemy_used(peer_id: int, used: bool) -> void:
+	alchemy_used_by_peer[peer_id] = used
+	alchemy_lock_changed.emit(peer_id, used)
 
 
 ## Hôte uniquement, appelé en tout début de _change_scene_with_handshake.

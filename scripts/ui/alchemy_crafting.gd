@@ -29,6 +29,11 @@ var weapon: Weapon
 ## _on_compose_pressed) -- purement local, jamais répliqué : personne d'autre
 ## n'a besoin de voir "en cours de composition" avant confirmation.
 var _pending_paths: Array[String] = []
+## Peer_id du joueur propriétaire de cet écran (cf. get_parent() ci-dessous) --
+## résolu une fois en _ready(), utilisé pour interroger RunManager.has_used_alchemy()
+## côté CE joueur uniquement (le verrou est maintenant par joueur, pas par
+## groupe, cf. RunManager.alchemy_used_by_peer).
+var _owner_peer_id: int = 0
 
 
 func _ready() -> void:
@@ -40,7 +45,9 @@ func _ready() -> void:
 	# instancié comme enfant de Player, après que son propre @onready var
 	# weapon ait déjà résolu (cf. player.gd::_ready).
 	weapon = get_parent().weapon
+	_owner_peer_id = int(get_parent().name)
 	weapon.mixture_changed.connect(_refresh_loaded_summary)
+	RunManager.alchemy_lock_changed.connect(_on_lock_changed)
 
 
 func bind_inventory(p_inventory: Inventory) -> void:
@@ -57,6 +64,7 @@ func open() -> void:
 	cauldron_preview.display(_pending_paths, inventory)
 	_refresh_loaded_summary(weapon.mixture_ingredient_paths)
 	result_label.text = ""
+	_on_lock_changed(_owner_peer_id, RunManager.has_used_alchemy(_owner_peer_id))
 
 
 func close() -> void:
@@ -116,6 +124,12 @@ func _refresh_loaded_summary(ingredient_paths: Array[String]) -> void:
 func _add_to_pending(ingredient: Resource) -> void:
 	if inventory == null or not (ingredient is Ingredient):
 		return
+	if RunManager.has_used_alchemy(_owner_peer_id):
+		AudioManager.play_sfx("ui_error")
+		return
+	if _pending_paths.size() >= get_parent().MAX_INGREDIENTS_PER_CRAFT:
+		AudioManager.play_sfx("ui_error")
+		return
 	var item: Ingredient = ingredient as Ingredient
 	var key: String = item.resource_path
 	var owned: int = inventory.get_ingredient_count(item)
@@ -161,6 +175,10 @@ func _refresh_available() -> void:
 
 
 func _on_compose_pressed() -> void:
+	if RunManager.has_used_alchemy(_owner_peer_id):
+		AudioManager.play_sfx("ui_error")
+		result_label.text = "Table déjà utilisée pour cet étage."
+		return
 	if _pending_paths.is_empty():
 		AudioManager.play_sfx("ui_error")
 		result_label.text = "Ajoute au moins un ingrédient au chaudron."
@@ -169,7 +187,25 @@ func _on_compose_pressed() -> void:
 	# L'hôte revalidera le stock avant de retirer quoi que ce soit ; on ne
 	# fait ici qu'exprimer l'intention, jamais de calcul de résultat local.
 	get_parent().request_craft_mixture.rpc_id(1, _pending_paths.duplicate())
-	result_label.text = "Mixture demandée..."
 	_pending_paths.clear()
 	_refresh_available()
 	cauldron_preview.display(_pending_paths, inventory)
+	# Retour utilisateur : l'écran se ferme tout seul après une composition
+	# envoyée, plutôt que de rester ouvert sur un chaudron vide.
+	close()
+
+
+## Reflète le verrouillage "un craft par étage PAR JOUEUR" (cf.
+## RunManager.alchemy_lock_changed) -- purement visuel ici, la vérité vit dans
+## RunManager, appliquée côté hôte dans Player.request_craft_mixture. Filtre
+## sur _owner_peer_id : le signal est diffusé pour TOUS les joueurs (leurs
+## fioles respectives, cf. AlchemyStation), cet écran ne doit réagir qu'à
+## l'état de son propre propriétaire.
+func _on_lock_changed(peer_id: int, used: bool) -> void:
+	if peer_id != _owner_peer_id:
+		return
+	if not root.visible:
+		return
+	compose_button.disabled = used
+	if used:
+		result_label.text = "Table déjà utilisée pour cet étage."
