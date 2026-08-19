@@ -29,6 +29,7 @@ projectile_speed = 300.0
 currency_reward = 6
 max_lifepoint = 18.0
 ambient_sfx_key = "cry_ranged_gunner"
+attack_sfx_key = "enemy_attack_ranged_gunner"
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=478204224]
 texture_filter = 1

@@ -10,6 +10,12 @@ extends EnemyBase
 @export var attack_range: float = 450.0
 @export var fire_cooldown: float = 1.5
 @export var projectile_speed: float = 320.0
+## Son de TIR (retour utilisateur : un seul son générique "ignoble" partagé
+## par tous les ennemis à distance) -- surchargé par variante directement dans
+## chaque .tscn (enemy_ranged_gunner.tscn, etc.), même convention déjà utilisée
+## pour ambient_sfx_key juste au-dessus dans EnemyBase. Valeur par défaut =
+## conservée pour enemy_ranged.tscn (base), qui n'a pas de son propre.
+@export var attack_sfx_key: String = "enemy_attack_ranged"
 var target: Node2D = null
 @onready var sprite: AnimatedSprite2D = $Sprite2D
 ## Dernière direction non-nulle : la vitesse retombe à zéro pendant la phase
@@ -75,6 +81,7 @@ func fire_at(p_target: Node2D) -> void:
 		"trajectory": Bullet.TrajectoryType.LINEAR,
 		"from_position": global_position,
 		"direction": global_position.direction_to(p_target.global_position),
+		"attack_sfx_key": attack_sfx_key,
 	})
 
 ## Même raisonnement que ennemi_test.gd::_on_health_changed.

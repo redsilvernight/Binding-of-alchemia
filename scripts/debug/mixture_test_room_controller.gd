@@ -29,6 +29,7 @@ const ENEMY_SCENE_PATHS: Array[String] = [
 ]
 const INGREDIENTS_DIR: String = "res://resources/Ingredients/"
 const INGREDIENT_TEST_QUANTITY: int = 99
+const WEAPON_PARTS_DIR: String = "res://resources/GunParts/"
 const ROOM_SPAWN_MARGIN: float = 100.0
 const ROOM_WIDTH_PX: float = 1344.0
 const ROOM_HEIGHT_PX: float = 960.0
@@ -100,6 +101,7 @@ func _spawn_player() -> void:
 	players_container.add_child(player)
 	player.position = Vector2(ROOM_WIDTH_PX / 2.0, ROOM_HEIGHT_PX * 0.75)
 	_grant_all_ingredients(player.inventory)
+	_grant_all_weapon_parts(player.inventory)
 	# Retour utilisateur : joueur invulnérable dans ce bac à sable uniquement
 	# (rien de partagé touché) -- can_take_damage est le même champ que
 	# Character.take_damage() vérifie déjà pour les i-frames temporaires,
@@ -150,6 +152,31 @@ func _grant_all_ingredients(inventory: Inventory) -> void:
 			var ingredient: Ingredient = load(INGREDIENTS_DIR + file_name) as Ingredient
 			if ingredient:
 				inventory.add_ingredient(ingredient, INGREDIENT_TEST_QUANTITY)
+		file_name = dir.get_next()
+	dir.list_dir_end()
+
+
+## Retour utilisateur : accès à toutes les pièces d'arme UNIQUEMENT dans cette
+## scène de test, pour pouvoir tester l'atelier d'arme comme la mixture --
+## contrairement aux ingrédients (Dictionary quantité), Inventory.weapon_parts
+## est un Array[Resource] non-stackable : add_weapon_part() ajoute une entrée
+## par appel sans dédoublonnage, et équiper une pièce ne la retire jamais de
+## l'inventaire (cf. Player.request_equip_weapon_part -- simple vérification
+## de possession). Donner "x99" de chaque créerait donc 99 doublons inutiles
+## dans la grille de l'UI pour zéro bénéfice : une seule copie de chaque
+## pièce suffit à tout tester.
+func _grant_all_weapon_parts(inventory: Inventory) -> void:
+	var dir := DirAccess.open(WEAPON_PARTS_DIR)
+	if dir == null:
+		push_error("mixture_test_room: dossier pièces d'arme introuvable: %s" % WEAPON_PARTS_DIR)
+		return
+	dir.list_dir_begin()
+	var file_name: String = dir.get_next()
+	while file_name != "":
+		if file_name.ends_with(".tres"):
+			var part: Resource = load(WEAPON_PARTS_DIR + file_name)
+			if part:
+				inventory.add_weapon_part(part)
 		file_name = dir.get_next()
 	dir.list_dir_end()
 

@@ -23,6 +23,21 @@ static func resoudre(ingredients: Array[Ingredient]) -> Mixture:
 		effet.duree += ingredient.duree_base
 		effet.zone += ingredient.zone_base
 
+	# Dilution proportionnelle (retour utilisateur : donner un intérêt réel à
+	# choisir un ingrédient plutôt qu'un autre, sans plafonner le nombre
+	# d'ingrédients) -- chaque type ne garde que sa part de la mixture
+	# (occurrences[type] / total). Un mix mono-type garde 100% de sa
+	# puissance quel que soit le nombre d'ingrédients (aucune limite de
+	# stack), mais chaque type supplémentaire dilue TOUS les types déjà
+	# présents : mélanger a un coût, se concentrer sur un type n'en a pas.
+	var total: int = ingredients.size()
+	for type in effets_par_type.keys():
+		var part: float = float(occurrences[type]) / float(total)
+		var effet: Mixture.EffetParType = effets_par_type[type]
+		effet.degats *= part
+		effet.duree *= part
+		effet.zone *= part
+
 	var type_dominant: Ingredient.TypeAlchimie = _determiner_type_dominant(occurrences)
 
 	var mixture := Mixture.new()

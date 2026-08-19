@@ -167,6 +167,15 @@ const WALL_LIGHT_TEXTURE_PATHS: Array[String] = [
 	"res://assets/tiles/props/torche_murale.png",
 	"res://assets/tiles/props/brasero_alchimique.png",
 ]
+# Musique de donjon par pool thématique (retour utilisateur : la même piste
+# "dungeon" jouait sur les 3 thèmes). Même ordre que ROOM_TILESET_PATHS/
+# WALL_LIGHT_TEXTURE_PATHS (A=cavernes, B=cryptes, C=alchimie) -- clés
+# résolues par AudioManager.play_music() en res://assets/audio/music/{clé}.ogg.
+const MUSIC_KEYS: Array[String] = [
+	"cave",
+	"crypt",
+	"alchemy",
+]
 # Dimensions fixes de toutes les salles en tuiles -- dérivées des mêmes
 # constantes publiques que Room._paint_floor()/_paint_walls() (ROOM_WIDTH_PX/
 # TILE_SIZE_PX), qui ne sont pas accessibles ici : la Room n'existe pas
@@ -257,8 +266,9 @@ func _ready() -> void:
 	_ambient_light.energy = AMBIENT_LIGHT_ENERGY
 	# Tourne localement sur chaque pair (comme tout _ready de scène, pas
 	# besoin de RPC) -- remplacé par la musique de boss dès l'entrée dans sa
-	# salle, cf. _rpc_mark_room_visited.
-	AudioManager.play_music("dungeon")
+	# salle, cf. _rpc_mark_room_visited. Piste par pool thématique (Phase 11.5,
+	# cf. MUSIC_KEYS) plutôt qu'une unique piste "dungeon" pour tous les étages.
+	AudioManager.play_music(MUSIC_KEYS[pool_index_ambient])
 	NetworkManager.multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	NetworkManager.multiplayer.peer_connected.connect(_on_peer_connected)
 	room_spawner.spawn_function = _spawn_room
@@ -919,8 +929,11 @@ func _spawn_bullet(data: Dictionary) -> Node:
 		# rejoue localement le même appel côté client), contrairement à
 		# fire_at() lui-même qui ne s'exécute que côté hôte (FSM host-only,
 		# cf. enemy_ranged.gd/boss_01.gd) -- même raisonnement que le SFX de
-		# tir du joueur, placé dans player.gd plutôt que weapon.gd.
-		AudioManager.play_sfx("enemy_attack_ranged")
+		# tir du joueur, placé dans player.gd plutôt que weapon.gd. Clé par
+		# type d'ennemi (retour utilisateur : un seul son générique partagé
+		# par tous les ennemis à distance) -- cf. EnemyRanged.attack_sfx_key/
+		# Boss01.fire_at(), repli sur l'ancienne clé unique si absente.
+		AudioManager.play_sfx(data.get("attack_sfx_key", "enemy_attack_ranged"))
 	if data.has("impact_effect_data"):
 		var effect: ImpactEffect = ImpactEffect.from_dict(data["impact_effect_data"])
 		bullet.set_impact_effect(effect)

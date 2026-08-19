@@ -1,7 +1,6 @@
-[gd_resource type="GradientTexture2D" load_steps=2 format=3]
+[gd_resource type="GradientTexture2D" format=3 uid="uid://klxkbkotvbnb"]
 
 [sub_resource type="Gradient" id="Gradient_radial_light"]
-offsets = PackedFloat32Array(0, 1)
 colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
 
 [resource]

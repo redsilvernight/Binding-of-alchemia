@@ -18,6 +18,11 @@ extends Area2D
 # passant dans la zone.
 
 signal interacted(player: Node2D)
+## Émis quand LE JOUEUR LOCAL quitte la zone (même restriction d'autorité que
+## interacted, cf. _on_body_entered) -- consommateurs typiques : fermer un
+## écran ouvert depuis cette station plutôt que de le laisser affiché alors
+## que le joueur s'est déjà éloigné (cf. AlchemyStation).
+signal player_left(player: Node2D)
 
 @export var prompt_text: String = "Appuyer sur E"
 
@@ -50,6 +55,7 @@ func _on_body_exited(body: Node2D) -> void:
 	_local_player_inside = null
 	if prompt_label:
 		prompt_label.visible = false
+	player_left.emit(body)
 
 
 func _unhandled_input(event: InputEvent) -> void:

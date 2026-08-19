@@ -98,6 +98,7 @@ func fire_at(p_target: Node2D) -> void:
 		"trajectory": Bullet.TrajectoryType.LINEAR,
 		"from_position": global_position,
 		"direction": global_position.direction_to(p_target.global_position),
+		"attack_sfx_key": "boss_attack_ranged",
 	})
 
 func take_damage(degat: float) -> void:

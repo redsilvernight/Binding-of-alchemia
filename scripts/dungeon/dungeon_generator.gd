@@ -41,38 +41,60 @@ static func generate(room_count: int, room_template_paths: Array[String], specia
 		if not placed:
 			frontier.erase(from) # plus aucun voisin libre accessible depuis cette salle
 
-	# La salle de départ (0,0) n'est jamais la salle spéciale (alchimie OU
-	# arme, jamais les deux à la fois — cf. room_alchemy.tscn/room_weapon.tscn) :
-	# Dictionary préserve l'ordre d'insertion en GDScript 4, donc
-	# occupied.keys()[0] == start.
 	var cells: Array = occupied.keys()
+
+	# Portes réelles entre salles voisines : PAS forcément un arbre -- deux
+	# branches de la marche aléatoire peuvent finir géométriquement adjacentes
+	# et s'ouvrir l'une sur l'autre (open_sides plus bas teste les 4 côtés,
+	# pas seulement le lien de parenté de la marche). Calculé une fois ici,
+	# réutilisé pour situer le boss par vraie distance de chemin et vérifier
+	# l'accessibilité des salles spéciale/trésor sans passer par lui.
+	var adjacency: Dictionary = {} # Vector2i -> Array[Vector2i]
+	for cell in cells:
+		var neighbors: Array[Vector2i] = []
+		for dir in DIRECTIONS.keys():
+			var neighbor: Vector2i = cell + DIRECTIONS[dir]
+			if occupied.has(neighbor):
+				neighbors.append(neighbor)
+		adjacency[cell] = neighbors
+
+	# Salle de boss (7.4) : jamais tirée au hasard — toujours la salle la
+	# plus profonde depuis le départ en NOMBRE DE PORTES à traverser (BFS sur
+	# adjacency), pas en distance à vol d'oiseau comme avant -- l'ancienne
+	# métrique euclidienne pouvait désigner "profond" une salle proche en
+	# distance de grille mais reliée par un long chemin, laissant une salle
+	# spéciale réellement plus profonde qu'elle, donc au-delà du boss et
+	# inaccessible une fois celui-ci atteint (retour utilisateur).
+	var start_distances: Dictionary = _bfs_distances(start, adjacency)
+	var boss_cell: Vector2i = start
+	var best_distance: int = -1
+	for cell in cells:
+		if cell == start:
+			continue
+		var distance: int = start_distances.get(cell, -1)
+		if distance > best_distance:
+			best_distance = distance
+			boss_cell = cell
+
+	# Salles spéciale (alchimie/arme) et trésor : choisies uniquement parmi
+	# les salles encore accessibles depuis le départ SANS emprunter boss_cell
+	# (reachable_without_boss = même BFS, boss_cell muré). Sans cette
+	# contrainte, une salle spéciale pouvait retomber dans la branche "derrière"
+	# le boss et devenir inaccessible (retour utilisateur ci-dessus).
+	var reachable_without_boss: Dictionary = _bfs_distances(start, adjacency, boss_cell)
+
+	var special_candidates: Array = cells.filter(func(c): return c != start and c != boss_cell and reachable_without_boss.has(c))
 	var special_cell: Vector2i = start
-	if cells.size() > 1:
-		special_cell = cells[1 + (randi() % (cells.size() - 1))]
+	if not special_candidates.is_empty():
+		special_cell = special_candidates[randi() % special_candidates.size()]
 	var special_template_path: String = special_room_template_paths[randi() % special_room_template_paths.size()]
 
-	# Salle de boss (7.4) : jamais tirée au hasard — toujours la cellule la
-	# plus éloignée du départ (distance de grille), pour que le boss se
-	# trouve systématiquement "au fond" du donjon. Exclut start et
-	# special_cell (jamais les deux salles spéciales superposées).
-	var boss_cell: Vector2i = start
-	var boss_candidates: Array = cells.filter(func(c): return c != start and c != special_cell)
-	if not boss_candidates.is_empty():
-		boss_cell = boss_candidates[0]
-		var best_distance: int = (boss_cell - start).length_squared()
-		for candidate in boss_candidates:
-			var distance: int = (candidate - start).length_squared()
-			if distance > best_distance:
-				best_distance = distance
-				boss_cell = candidate
-
-	# Salle au trésor (9.2) : comme la salle de boss, une salle garantie
-	# supplémentaire (pas en concurrence avec special_cell, qui reste
-	# réservée à l'alchimie/l'arme) -- contrairement au boss, position
-	# aléatoire parmi les cellules restantes (pas de raison d'être "au
-	# fond du donjon"). Même repli sur start si aucune cellule libre.
+	# Salle au trésor (9.2) : comme la salle spéciale, position aléatoire
+	# parmi les cellules restantes accessibles sans passer par le boss (pas
+	# de raison d'être "au fond du donjon" comme lui). Même repli sur start
+	# si aucune cellule libre.
+	var treasure_candidates: Array = cells.filter(func(c): return c != start and c != boss_cell and c != special_cell and reachable_without_boss.has(c))
 	var treasure_cell: Vector2i = start
-	var treasure_candidates: Array = cells.filter(func(c): return c != start and c != special_cell and c != boss_cell)
 	if not treasure_candidates.is_empty():
 		treasure_cell = treasure_candidates[randi() % treasure_candidates.size()]
 
@@ -99,3 +121,25 @@ static func generate(room_count: int, room_template_paths: Array[String], specia
 			"is_treasure": cell == treasure_cell,
 		})
 	return layout
+
+
+## BFS sur le graphe des portes réelles (adjacency), en s'interdisant
+## optionnellement de traverser excluded_cell (utilisé pour vérifier qu'une
+## salle reste accessible sans passer par le boss). Retourne les distances
+## (en nombre de salles) des cellules atteintes depuis start -- une cellule
+## absente du résultat n'est pas accessible dans ces conditions.
+static func _bfs_distances(start: Vector2i, adjacency: Dictionary, excluded_cell: Variant = null) -> Dictionary:
+	var distances: Dictionary = {start: 0}
+	if excluded_cell != null and start == excluded_cell:
+		return distances
+	var queue: Array[Vector2i] = [start]
+	var head: int = 0
+	while head < queue.size():
+		var current: Vector2i = queue[head]
+		head += 1
+		for neighbor in adjacency.get(current, []):
+			if (excluded_cell != null and neighbor == excluded_cell) or distances.has(neighbor):
+				continue
+			distances[neighbor] = distances[current] + 1
+			queue.append(neighbor)
+	return distances

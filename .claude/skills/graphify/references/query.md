@@ -22,15 +22,24 @@ If it fails, stop and tell the user to run `/graphify <path>` first.
 
 ### Step 0 — Constrained query expansion (REQUIRED before traversal)
 
-graphify's `query` CLI matches nodes via case-folded substring + IDF — there is **no stemming, no synonyms, no cross-language match** inside the binary, and the inline fallback below matches the same way. If the user's question uses different language or different domain vocabulary than the graph's labels (user says "обработчик" / graph says "handler"; user says "authentication" / graph says "Guardian"), the literal matcher returns 0 hits and the answer collapses to noise.
+**Gate: never call `graphify query`, `graphify path`, or `graphify explain` with the user's question (or any close paraphrase of it) verbatim.** If the string you are about to pass as `QUESTION` is the raw question minus a few words, you have skipped this step — stop and do it properly. This gate exists because skipping straight to a free-text query is the single most common cause of noisy results (confirmed case: `"dungeon room placement and boss room selection"` passed raw matched 29 nodes on the generic substring `room` and 12 nodes on the stopword `and`, drowning out the 4 relevant `dungeon` hits and losing the query's actual intent — `placement`/`selection` matched 0 nodes because that vocabulary doesn't exist in the graph at all).
 
-Fix this **without inventing tokens** by expanding the query against the actual graph vocabulary first:
+graphify's `query` CLI matches nodes via case-folded substring + IDF — there is **no stemming, no synonyms, no cross-language match** inside the binary, and the inline fallback below matches the same way. Two distinct failure modes, both fixed by this step:
+- **Vocabulary mismatch**: the user's question uses different language or different domain vocabulary than the graph's labels (user says "обработчик" / graph says "handler"; user says "authentication" / graph says "Guardian") — the literal matcher returns 0 hits.
+- **Generic-token flooding**: a query word IS present in the graph's vocabulary but as a substring of many unrelated labels (e.g. "room" inside `Room._apply_walls()`, `boss_healthbar._check_boss_room_visited`, and a dozen other unconnected nodes) — the matcher returns hits, but they swamp the few nodes that actually matter, and BFS/DFS then expands outward from noise instead of signal.
 
-1. Extract the token vocabulary from node labels:
+Fix both **without inventing tokens** by expanding the query against the actual graph vocabulary first:
+
+1. Extract the token vocabulary from node labels, excluding stopwords so they can never leak into a selection later:
 ```bash
 $(cat graphify-out/.graphify_python) -c "
 import json, re
 from pathlib import Path
+STOPWORDS = {
+    'and','the','for','with','from','that','this','are','was','were','has','have','had',
+    'not','but','you','your','all','can','will','into','onto','via','per','out','over',
+    'des','les','une','dans','pour','avec','sur','est','les','aux','par','sont',
+}
 data = json.loads(Path('graphify-out/graph.json').read_text(encoding='utf-8'))
 vocab = set()
 for n in data['nodes']:
@@ -38,10 +47,10 @@ for n in data['nodes']:
         parts = re.findall(r'[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+', c) or [c]
         for p in parts:
             t = p.lower()
-            if 3 <= len(t) <= 30:
+            if 3 <= len(t) <= 30 and t not in STOPWORDS:
                 vocab.add(t)
 Path('graphify-out/.vocab.txt').write_text('\n'.join(sorted(vocab)), encoding='utf-8')
-print(f'vocab: {len(vocab)} tokens')
+print(f'vocab: {len(vocab)} tokens (stopwords excluded)')
 "
 ```
 
@@ -52,7 +61,24 @@ print(f'vocab: {len(vocab)} tokens')
    - Translate cross-language: Russian "аутентификация" → look for `auth`, `credential`, `token`, `security` IFF present in vocab.
    - Morphology: "handlers" maps to `handler` IFF present; "todos" maps to `todo` IFF present.
 
-3. Print the selection explicitly to the user before running the query, so the expansion is auditable:
+3. **Genericity check** — before finalizing, count how many node labels each candidate token actually matches, and drop or deprioritize the ones that are too broad to anchor a useful traversal:
+```bash
+$(cat graphify-out/.graphify_python) -c "
+import json
+from pathlib import Path
+data = json.loads(Path('graphify-out/graph.json').read_text(encoding='utf-8'))
+labels = [(n.get('label','') or '').lower() for n in data['nodes']]
+tokens = 'TOKENS'.split()  # replace TOKENS with your candidate list, space-separated
+total = len(labels)
+for t in tokens:
+    hits = sum(1 for l in labels if t in l)
+    flag = ' <- GENERIC, consider dropping' if total and hits / total > 0.02 else ''
+    print(f'{t}: {hits}/{total}{flag}')
+"
+```
+   A token flagged generic isn't automatically wrong to keep — e.g. if it's the *only* token you have for a concept, keep it but expect it to need a tighter `--budget` or a follow-up `--dfs` from a more specific node. But if you have a specific alternative (a class/function name beats a generic domain noun), prefer the specific one to anchor the start nodes.
+
+4. Print the selection explicitly to the user before running the query, so the expansion is auditable:
 ```
 Query expanded to (from graph vocab, N tokens): [token1, token2, ...]
 ```
@@ -88,7 +114,8 @@ G = json_graph.node_link_graph(data, edges='links')
 
 question = 'QUESTION'
 mode = 'MODE'  # 'bfs' or 'dfs'
-terms = [t.lower() for t in question.split() if len(t) >= 3]  # match the vocab threshold; keeps api/jwt/ios (#1392)
+_STOPWORDS = {'and','the','for','with','from','that','this','are','was','were','has','have','had','not','but','you','your','all','can','will','into','onto','via','per','out','over','des','les','une','dans','pour','avec','sur','est','aux','par','sont'}
+terms = [t.lower() for t in question.split() if len(t) >= 3 and t.lower() not in _STOPWORDS]  # match the vocab threshold; keeps api/jwt/ios (#1392); stopwords excluded even if Step 0 was somehow bypassed
 
 # Find best-matching start nodes
 scored = []

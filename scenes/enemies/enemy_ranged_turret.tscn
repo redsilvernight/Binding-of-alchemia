@@ -28,6 +28,7 @@ fire_cooldown = 0.45
 projectile_speed = 380.0
 currency_reward = 7.0
 max_lifepoint = 16.0
+attack_sfx_key = "enemy_attack_ranged_turret"
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
