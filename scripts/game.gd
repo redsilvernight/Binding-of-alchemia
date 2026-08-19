@@ -894,6 +894,13 @@ func _restore_run_state(id: int, player: Node) -> void:
 	if not mixture_paths.is_empty():
 		player.weapon.mixture_impact_effect = snapshot.get("mixture_impact_effect")
 		player.weapon.set_mixture_ingredients_networked(mixture_paths)
+	# Rééquipe les pièces réellement portées avant le boss (cf. _capture_run_state)
+	# -- l'ownership vient d'être restaurée juste au-dessus par restore_snapshot,
+	# donc equip_networked() peut charger directement chaque chemin sans revalider.
+	for key in ["equipped_water_barrel_path", "equipped_mixture_barrel_path", "equipped_tank_path", "equipped_core_path"]:
+		var part_path: String = snapshot.get(key, "")
+		if not part_path.is_empty():
+			player.weapon.equip_networked(load(part_path))
 
 ## scene_path optionnel (Phase 7.3) : les projectiles ennemis (voir
 ## enemy_ranged.gd) passent leur propre scène (layer/mask pour toucher les
@@ -1003,6 +1010,15 @@ func _capture_run_state(player: Node) -> Dictionary:
 		"weapon_part_paths": player.inventory.weapon_parts.map(func(part: Resource) -> String: return part.resource_path),
 		"mixture_impact_effect": player.weapon.mixture_impact_effect,
 		"mixture_ingredient_paths": player.weapon.mixture_ingredient_paths.duplicate(),
+		# Les 4 pièces réellement ÉQUIPÉES (pas seulement possédées) -- sans ça,
+		# le nouveau Weapon du donjon suivant repart des pièces de départ codées
+		# en dur dans player.tscn (cf. _restore_run_state), perdant silencieusement
+		# tout équipement amélioré en cours de run alors qu'une victoire de boss
+		# ne doit rien faire perdre (contrairement à une mort).
+		"equipped_water_barrel_path": player.weapon.barrel_water.resource_path if player.weapon.barrel_water else "",
+		"equipped_mixture_barrel_path": player.weapon.barrel_mixture.resource_path if player.weapon.barrel_mixture else "",
+		"equipped_tank_path": player.weapon.tank.resource_path if player.weapon.tank else "",
+		"equipped_core_path": player.weapon.core.resource_path if player.weapon.core else "",
 	}
 
 

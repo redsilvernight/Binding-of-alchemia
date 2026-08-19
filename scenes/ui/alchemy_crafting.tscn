@@ -1,6 +1,9 @@
-[gd_scene format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/alchemy_crafting.gd" id="1_craft"]
+[ext_resource type="StyleBox" path="res://resources/ui/panel_frame.tres" id="2_panel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/mixture_preview.tscn" id="3_mixture"]
+[ext_resource type="Texture2D" path="res://assets/ui/mixture_vial.png" id="4_vial_tex"]
 
 [node name="AlchemyCrafting" type="CanvasLayer"]
 layer = 5
@@ -23,32 +26,113 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
 
-[node name="Content" type="VBoxContainer" parent="Root"]
+[node name="FramePanel" type="Panel" parent="Root"]
 layout_mode = 1
-anchor_left = 0.25
-anchor_top = 0.15
-anchor_right = 0.75
-anchor_bottom = 0.85
+anchor_left = 0.1
+anchor_top = 0.06
+anchor_right = 0.9
+anchor_bottom = 0.94
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 12
+clip_contents = true
+theme_override_styles/panel = ExtResource("2_panel")
 
-[node name="Title" type="Label" parent="Root/Content"]
+[node name="Margin" type="MarginContainer" parent="Root/FramePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 28
+
+[node name="Content" type="VBoxContainer" parent="Root/FramePanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HeaderRow" type="HBoxContainer" parent="Root/FramePanel/Margin/Content"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Root/FramePanel/Margin/Content/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.78, 0.5, 1)
+theme_override_font_sizes/font_size = 28
+text = "Table d'alchimie"
+
+[node name="LoadedRow" type="HBoxContainer" parent="Root/FramePanel/Margin/Content/HeaderRow"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 8
+
+[node name="LoadedVialIcon" type="TextureRect" parent="Root/FramePanel/Margin/Content/HeaderRow/LoadedRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("4_vial_tex")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LoadedLabel" type="Label" parent="Root/FramePanel/Margin/Content/HeaderRow/LoadedRow"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.7, 0.68, 0.65, 1)
+text = "Mixture chargée : aucune"
+
+[node name="HintLabel" type="Label" parent="Root/FramePanel/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.68, 0.65, 1)
+text = "Clique ou glisse un ingrédient dans le chaudron, puis compose la mixture."
+
+[node name="HSeparator1" type="HSeparator" parent="Root/FramePanel/Margin/Content"]
+layout_mode = 2
+
+[node name="CauldronTitle" type="Label" parent="Root/FramePanel/Margin/Content"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "Établi d'alchimie"
+text = "Chaudron (clique un ingrédient pour le retirer)"
 
-[node name="IngredientList" type="ItemList" parent="Root/Content"]
-custom_minimum_size = Vector2(0, 220)
+[node name="CauldronPreview" parent="Root/FramePanel/Margin/Content" instance=ExtResource("3_mixture")]
 layout_mode = 2
-select_mode = 1
-allow_reselect = true
+size_flags_vertical = 3
+empty_text = "Chaudron vide."
+accepts_drops = true
 
-[node name="CraftButton" type="Button" parent="Root/Content"]
+[node name="HSeparator3" type="HSeparator" parent="Root/FramePanel/Margin/Content"]
 layout_mode = 2
-text = "Créer la mixture"
 
-[node name="ResultLabel" type="Label" parent="Root/Content"]
+[node name="IngredientsTitle" type="Label" parent="Root/FramePanel/Margin/Content"]
 layout_mode = 2
-autowrap_mode = 2
-text = ""
+theme_override_font_sizes/font_size = 20
+text = "Ingrédients disponibles"
+
+[node name="IngredientsScroll" type="ScrollContainer" parent="Root/FramePanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="IngredientsGrid" type="GridContainer" parent="Root/FramePanel/Margin/Content/IngredientsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 9
+
+[node name="HSeparator4" type="HSeparator" parent="Root/FramePanel/Margin/Content"]
+layout_mode = 2
+
+[node name="ComposeRow" type="HBoxContainer" parent="Root/FramePanel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="ComposeButton" type="Button" parent="Root/FramePanel/Margin/Content/ComposeRow"]
+layout_mode = 2
+text = "Composer la mixture"
+
+[node name="ResultLabel" type="Label" parent="Root/FramePanel/Margin/Content/ComposeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+vertical_alignment = 1

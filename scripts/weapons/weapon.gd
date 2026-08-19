@@ -4,6 +4,11 @@ class_name Weapon
 
 signal ammo_changed(current: float, max: float)
 signal projectile_requested(data: Dictionary)
+## Émis à chaque équipement de pièce (cf. equip()), pour que l'UI (écran
+## d'inventaire, "arme à trous") puisse se rafraîchir sans avoir à poller.
+signal part_equipped(piece: Resource)
+## Émis à chaque mise à jour de la mixture chargée (cf. mixture_ingredient_paths).
+signal mixture_changed(ingredient_paths: Array[String])
 
 const WATER_BULLET_SCENE: String = "res://scenes/projectiles/bullet_water.tscn"
 const MIXTURE_BULLET_SCENE: String = "res://scenes/projectiles/bullet_mixture.tscn"
@@ -73,6 +78,7 @@ func equip(piece) -> void:
 	elif piece is GunCore:
 		core = piece
 	_recalculate_stats()
+	part_equipped.emit(piece)
 
 func equip_networked(piece: Resource) -> void:
 	# Propage l'équipement à tous les pairs (même pattern que _broadcast_ammo) :
@@ -104,10 +110,12 @@ func set_mixture_ingredients_networked(ingredient_paths: Array[String]) -> void:
 		_rpc_set_mixture_ingredients.rpc(ingredient_paths)
 	else:
 		mixture_ingredient_paths = ingredient_paths
+		mixture_changed.emit(ingredient_paths)
 
 @rpc("any_peer", "call_local", "reliable")
 func _rpc_set_mixture_ingredients(ingredient_paths: Array[String]) -> void:
 	mixture_ingredient_paths = ingredient_paths
+	mixture_changed.emit(ingredient_paths)
 	if is_multiplayer_authority(): # même garde que _rpc_equip
 		AudioManager.play_sfx("craft_success")
 

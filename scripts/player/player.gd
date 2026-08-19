@@ -83,6 +83,7 @@ func _ready() -> void:
 		var inventory_screen = inventory_screen_scene.instantiate()
 		add_child(inventory_screen)
 		inventory_screen.bind_inventory(inventory)
+		inventory_screen.bind_weapon(weapon)
 		var alchemy_crafting = alchemy_crafting_scene.instantiate()
 		add_child(alchemy_crafting)
 		alchemy_crafting.bind_inventory(inventory)

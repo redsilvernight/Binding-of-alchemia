@@ -120,7 +120,7 @@ func _add_mixture_reset_button(player: Node) -> void:
 	var screen: Node = player.alchemy_crafting_screen
 	if screen == null:
 		return
-	var content: Node = screen.get_node("Root/Content")
+	var content: Node = screen.get_node("Root/FramePanel/Margin/Content")
 	var reset_button := Button.new()
 	reset_button.text = "Réinitialiser la mixture"
 	content.add_child(reset_button)

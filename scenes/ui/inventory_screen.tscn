@@ -1,6 +1,10 @@
-[gd_scene format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/inventory_screen.gd" id="1_screen"]
+[ext_resource type="StyleBox" path="res://resources/ui/panel_frame.tres" id="2_panel"]
+[ext_resource type="Texture2D" path="res://assets/ui/weapon_frame.png" id="3_weapon_tex"]
+[ext_resource type="PackedScene" path="res://scenes/ui/weapon_socket.tscn" id="4_socket"]
+[ext_resource type="PackedScene" path="res://scenes/ui/mixture_preview.tscn" id="5_mixture"]
 
 [node name="InventoryScreen" type="CanvasLayer"]
 layer = 5
@@ -23,38 +27,179 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
 
-[node name="Content" type="VBoxContainer" parent="Root"]
+[node name="FramePanel" type="Panel" parent="Root"]
 layout_mode = 1
-anchor_left = 0.2
-anchor_top = 0.1
-anchor_right = 0.8
-anchor_bottom = 0.9
+anchor_left = 0.16
+anchor_top = 0.06
+anchor_right = 0.84
+anchor_bottom = 0.94
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 12
+clip_contents = true
+theme_override_styles/panel = ExtResource("2_panel")
 
-[node name="CurrencyLabel" type="Label" parent="Root/Content"]
+[node name="Margin" type="MarginContainer" parent="Root/FramePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 28
+
+[node name="Content" type="VBoxContainer" parent="Root/FramePanel/Margin"]
 layout_mode = 2
-text = "Monnaie : 0"
+theme_override_constants/separation = 10
 
-[node name="IngredientsTitle" type="Label" parent="Root/Content"]
+[node name="HeaderRow" type="HBoxContainer" parent="Root/FramePanel/Margin/Content"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Root/FramePanel/Margin/Content/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.78, 0.5, 1)
+theme_override_font_sizes/font_size = 28
+text = "Inventaire"
+
+[node name="CurrencyLabel" type="Label" parent="Root/FramePanel/Margin/Content/HeaderRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Monnaie : 0"
+horizontal_alignment = 2
+
+[node name="HSeparator1" type="HSeparator" parent="Root/FramePanel/Margin/Content"]
+layout_mode = 2
+
+[node name="IngredientsTitle" type="Label" parent="Root/FramePanel/Margin/Content"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Ingrédients"
 
-[node name="IngredientGrid" type="GridContainer" parent="Root/Content"]
+[node name="IngredientScroll" type="ScrollContainer" parent="Root/FramePanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="IngredientGrid" type="GridContainer" parent="Root/FramePanel/Margin/Content/IngredientScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
-columns = 6
+columns = 8
 
-[node name="WeaponPartsTitle" type="Label" parent="Root/Content"]
+[node name="WeaponPartsTitle" type="Label" parent="Root/FramePanel/Margin/Content"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Pièces d'arme"
 
-[node name="WeaponPartGrid" type="GridContainer" parent="Root/Content"]
+[node name="WeaponPartScroll" type="ScrollContainer" parent="Root/FramePanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="WeaponPartGrid" type="GridContainer" parent="Root/FramePanel/Margin/Content/WeaponPartScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
-columns = 6
+columns = 8
+
+[node name="HSeparator2" type="HSeparator" parent="Root/FramePanel/Margin/Content"]
+layout_mode = 2
+
+[node name="BottomRow" type="HBoxContainer" parent="Root/FramePanel/Margin/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 30
+
+[node name="MixtureColumn" type="VBoxContainer" parent="Root/FramePanel/Margin/Content/BottomRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="MixtureTitle" type="Label" parent="Root/FramePanel/Margin/Content/BottomRow/MixtureColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Mixture actuelle"
+
+[node name="MixturePreview" parent="Root/FramePanel/Margin/Content/BottomRow/MixtureColumn" instance=ExtResource("5_mixture")]
+layout_mode = 2
+size_flags_vertical = 4
+empty_text = "Aucune mixture chargée."
+
+[node name="WeaponColumn" type="VBoxContainer" parent="Root/FramePanel/Margin/Content/BottomRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="WeaponTitle" type="Label" parent="Root/FramePanel/Margin/Content/BottomRow/WeaponColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Arme équipée"
+
+[node name="WeaponFrame" type="Control" parent="Root/FramePanel/Margin/Content/BottomRow/WeaponColumn"]
+custom_minimum_size = Vector2(320, 160)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="WeaponBody" type="TextureRect" parent="Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponFrame"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_weapon_tex")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SocketWaterBarrel" parent="Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponFrame" instance=ExtResource("4_socket")]
+layout_mode = 1
+anchor_left = 0.07
+anchor_top = 0.43
+anchor_right = 0.07
+anchor_bottom = 0.43
+offset_left = -22.0
+offset_top = -22.0
+offset_right = 22.0
+offset_bottom = 22.0
+
+[node name="SocketMixtureBarrel" parent="Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponFrame" instance=ExtResource("4_socket")]
+layout_mode = 1
+anchor_left = 0.3
+anchor_top = 0.6
+anchor_right = 0.3
+anchor_bottom = 0.6
+offset_left = -22.0
+offset_top = -22.0
+offset_right = 22.0
+offset_bottom = 22.0
+
+[node name="SocketTank" parent="Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponFrame" instance=ExtResource("4_socket")]
+layout_mode = 1
+anchor_left = 0.61
+anchor_top = 0.3
+anchor_right = 0.61
+anchor_bottom = 0.3
+offset_left = -22.0
+offset_top = -22.0
+offset_right = 22.0
+offset_bottom = 22.0
+
+[node name="SocketCore" parent="Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponFrame" instance=ExtResource("4_socket")]
+layout_mode = 1
+anchor_left = 0.7
+anchor_top = 0.5
+anchor_right = 0.7
+anchor_bottom = 0.5
+offset_left = -22.0
+offset_top = -22.0
+offset_right = 22.0
+offset_bottom = 22.0

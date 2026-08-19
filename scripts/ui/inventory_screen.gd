@@ -1,9 +1,9 @@
 extends CanvasLayer
 
-# Écran d'inventaire du joueur local (Phase 5.2). Toggle avec l'action
+# Écran d'inventaire du joueur local (Phase 5.2, restylé pour afficher aussi
+# la mixture chargée et l'arme équipée). Toggle avec l'action
 # "toggle_inventory" (Tab). Purement affichage : ne modifie jamais l'état de
-# l'Inventory (autorité hôte, cf. Inventory.gd), se contente de refléter ses
-# signaux ingredient_added/removed et weapon_part_added/removed.
+# l'Inventory/Weapon (autorité hôte), se contente de refléter leurs signaux.
 
 const INGREDIENT_FALLBACK_ICON: Texture2D = preload("res://assets/test/mixture_bullet_test.png")
 const WEAPON_PART_FALLBACK_ICON: Texture2D = preload("res://assets/test/water_bullet_test.png")
@@ -11,11 +11,17 @@ const WEAPON_PART_FALLBACK_ICON: Texture2D = preload("res://assets/test/water_bu
 @export var slot_scene: PackedScene = preload("res://scenes/ui/inventory_slot.tscn")
 
 @onready var root: Control = $Root
-@onready var currency_label: Label = $Root/Content/CurrencyLabel
-@onready var ingredient_grid: GridContainer = $Root/Content/IngredientGrid
-@onready var weapon_part_grid: GridContainer = $Root/Content/WeaponPartGrid
+@onready var currency_label: Label = $Root/FramePanel/Margin/Content/HeaderRow/CurrencyLabel
+@onready var ingredient_grid: GridContainer = $Root/FramePanel/Margin/Content/IngredientScroll/IngredientGrid
+@onready var weapon_part_grid: GridContainer = $Root/FramePanel/Margin/Content/WeaponPartScroll/WeaponPartGrid
+@onready var mixture_preview: MixturePreview = $Root/FramePanel/Margin/Content/BottomRow/MixtureColumn/MixturePreview
+@onready var socket_water: Control = $Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponFrame/SocketWaterBarrel
+@onready var socket_mixture: Control = $Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponFrame/SocketMixtureBarrel
+@onready var socket_tank: Control = $Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponFrame/SocketTank
+@onready var socket_core: Control = $Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponFrame/SocketCore
 
 var inventory: Inventory
+var weapon: Weapon
 
 
 func _ready() -> void:
@@ -41,6 +47,16 @@ func bind_inventory(p_inventory: Inventory) -> void:
 	_refresh_weapon_parts()
 
 
+## Séparé de bind_inventory (appelé juste après par player.gd) : la mixture
+# et les sockets vivent sur Weapon, pas Inventory.
+func bind_weapon(p_weapon: Weapon) -> void:
+	weapon = p_weapon
+	weapon.part_equipped.connect(_on_part_equipped)
+	weapon.mixture_changed.connect(_on_mixture_changed)
+	_refresh_weapon_sockets()
+	mixture_preview.display(weapon.mixture_ingredient_paths, inventory)
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_inventory"):
 		root.visible = not root.visible
@@ -53,6 +69,14 @@ func _on_ingredient_changed(_ingredient: Ingredient, _new_quantity: int) -> void
 
 func _on_weapon_part_changed(_part: Resource) -> void:
 	_refresh_weapon_parts()
+
+
+func _on_part_equipped(_piece: Resource) -> void:
+	_refresh_weapon_sockets()
+
+
+func _on_mixture_changed(ingredient_paths: Array[String]) -> void:
+	mixture_preview.display(ingredient_paths, inventory)
 
 
 func _refresh_ingredients() -> void:
@@ -81,3 +105,18 @@ func _refresh_weapon_parts() -> void:
 		var icon: Texture2D = part.icon if part.icon else WEAPON_PART_FALLBACK_ICON
 		var nom: String = part.resource_path.get_file() if part.resource_path != "" else part.get_class()
 		slot.setup(icon, -1, nom)
+
+
+func _refresh_weapon_sockets() -> void:
+	if weapon == null:
+		return
+	socket_water.setup(weapon.barrel_water.icon if weapon.barrel_water else null, _part_display_name(weapon.barrel_water))
+	socket_mixture.setup(weapon.barrel_mixture.icon if weapon.barrel_mixture else null, _part_display_name(weapon.barrel_mixture))
+	socket_tank.setup(weapon.tank.icon if weapon.tank else null, _part_display_name(weapon.tank))
+	socket_core.setup(weapon.core.icon if weapon.core else null, _part_display_name(weapon.core))
+
+
+func _part_display_name(part: Resource) -> String:
+	if part == null:
+		return "Emplacement vide"
+	return part.resource_path.get_file() if part.resource_path != "" else part.get_class()
