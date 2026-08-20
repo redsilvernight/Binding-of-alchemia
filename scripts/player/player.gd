@@ -29,6 +29,7 @@ var last_mouse_activity_time: float = -INF
 var last_mouse_screen_position: Vector2 = Vector2.ZERO
 var mouse_position_initialized: bool = false
 var last_movement_activity_time: float = -INF
+var inventory_screen: Node = null
 var alchemy_crafting_screen: Node = null
 var weapon_crafting_screen: Node = null
 var unlock_screen: Node = null
@@ -101,10 +102,11 @@ func _ready() -> void:
 		weapon.ammo_changed.connect(mixture_bar._on_ammo_changed)
 		mixture_bar._on_ammo_changed(weapon.mixture_max_capacity, weapon.current_mixture_ammo)
 		instance_hud.emit(hud)
-		var inventory_screen = inventory_screen_scene.instantiate()
-		add_child(inventory_screen)
-		inventory_screen.bind_inventory(inventory)
-		inventory_screen.bind_weapon(weapon)
+		var inventory_screen_instance = inventory_screen_scene.instantiate()
+		add_child(inventory_screen_instance)
+		inventory_screen_instance.bind_inventory(inventory)
+		inventory_screen_instance.bind_weapon(weapon)
+		inventory_screen = inventory_screen_instance
 		var alchemy_crafting = alchemy_crafting_scene.instantiate()
 		add_child(alchemy_crafting)
 		alchemy_crafting.bind_inventory(inventory)
@@ -173,17 +175,22 @@ func _physics_process(_delta: float) -> void:
 	var water_pressed = Input.is_action_pressed("fire_water")
 	var mixture_pressed = Input.is_action_pressed("fire_mixture")
 	var fire_type := ""
-	if water_pressed and not mixture_pressed:
-		fire_type = "water"
-	elif mixture_pressed and not water_pressed:
-		fire_type = "mixture"
-	elif water_pressed and mixture_pressed:
-		if was_water_pressed:
+	# Retour utilisateur : aucun tir (ni son animation) tant qu'une interface
+	# (inventaire, crafting, déblocage) est ouverte -- fire_type reste "",
+	# donc _try_play_attack_animation() sort tôt et request_fire() n'est
+	# jamais programmé (cf. _on_sprite_animation_finished).
+	if not _is_ui_open():
+		if water_pressed and not mixture_pressed:
 			fire_type = "water"
-		elif was_mixture_pressed:
+		elif mixture_pressed and not water_pressed:
 			fire_type = "mixture"
-		else:
-			fire_type = "water"
+		elif water_pressed and mixture_pressed:
+			if was_water_pressed:
+				fire_type = "water"
+			elif was_mixture_pressed:
+				fire_type = "mixture"
+			else:
+				fire_type = "water"
 	_try_play_attack_animation(aim_direction, fire_type)
 	was_water_pressed = water_pressed
 	was_mixture_pressed = mixture_pressed
@@ -273,6 +280,20 @@ func _update_facing(direction: Vector2, is_moving: bool) -> void:
 ## contrairement à un déplacement continu. Constaté en jeu : le swing de
 ## l'hôte restait invisible chez les clients alors que la marche répliquait
 ## normalement.
+## Vrai si une interface plein écran (inventaire, crafting arme/alchimie,
+## déblocage) est actuellement ouverte pour ce joueur -- utilisé pour couper
+## le tir en amont plutôt que de patcher chaque écran séparément.
+func _is_ui_open() -> bool:
+	if inventory_screen and inventory_screen.is_open():
+		return true
+	if alchemy_crafting_screen and alchemy_crafting_screen.is_open():
+		return true
+	if weapon_crafting_screen and weapon_crafting_screen.is_open():
+		return true
+	if unlock_screen and unlock_screen.is_open():
+		return true
+	return false
+
 func _try_play_attack_animation(direction: Vector2, fire_type: String) -> void:
 	if fire_type == "" or direction.length() < 0.001:
 		return
@@ -334,6 +355,12 @@ func close_alchemy_crafting() -> void:
 func open_weapon_crafting() -> void:
 	if weapon_crafting_screen:
 		weapon_crafting_screen.toggle()
+
+## Retour utilisateur : l'écran d'arme se ferme tout seul en s'éloignant
+## de la table (cf. WeaponStation._on_player_left, via Interactable.player_left).
+func close_weapon_crafting() -> void:
+	if weapon_crafting_screen:
+		weapon_crafting_screen.close()
 
 func open_unlock_screen() -> void:
 	if unlock_screen:

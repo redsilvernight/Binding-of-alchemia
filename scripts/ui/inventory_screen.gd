@@ -63,6 +63,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		AudioManager.play_sfx("ui_toggle")
 
 
+func is_open() -> bool:
+	return root.visible
+
+
 func _on_ingredient_changed(_ingredient: Ingredient, _new_quantity: int) -> void:
 	_refresh_ingredients()
 

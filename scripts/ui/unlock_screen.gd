@@ -37,6 +37,10 @@ func close() -> void:
 	root.visible = false
 
 
+func is_open() -> bool:
+	return root.visible
+
+
 ## Retour utilisateur : se ferme désormais avec la même touche qu'à
 ## l'ouverture (E, via Interactable -> Player.open_unlock_screen()) plutôt
 ## qu'avec Échap -- Échap est maintenant réservé au menu pause

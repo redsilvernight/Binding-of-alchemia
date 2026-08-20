@@ -174,6 +174,18 @@ func _change_scene_with_handshake(scene_path: String) -> void:
 	# génération du donjon (plus longue à mesure que l'étage augmente, cf.
 	# game.gd._room_count_for_floor) et réplication des spawns aux clients.
 	show_loading_screen()
+	# Sans pair réseau (solo, ou hôte avant que quiconque rejoigne), rien
+	# n'attend plus bas (expected_peers vide court-circuite le await de la
+	# boucle d'accusés de réception) et le reste de cette transition --
+	# change_scene_to_file puis _ready() de la nouvelle scène, tous deux
+	# synchrones (game.gd._generate_dungeon/hub.gd n'ont aucun await) --
+	# s'exécute jusqu'à hide_loading_screen() sans qu'aucune image ne soit
+	# jamais présentée entre-temps : l'écran ne s'affichait donc jamais en
+	# solo. Deux frames (pas une) : le VisualServer a un cycle de retard sur
+	# la mise à jour de "visible", une seule frame ne garantit pas qu'elle
+	# soit déjà composée au moment du rendu.
+	await get_tree().process_frame
+	await get_tree().process_frame
 	_peers_acked_scene_change.clear()
 	var expected_peers: PackedInt32Array = NetworkManager.get_peers()
 	if not expected_peers.is_empty():

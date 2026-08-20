@@ -12,7 +12,7 @@ const WEAPON_PART_FALLBACK_ICON: Texture2D = preload("res://assets/test/water_bu
 @export var item_chip_scene: PackedScene = preload("res://scenes/ui/item_chip.tscn")
 
 @onready var root: Control = $Root
-@onready var parts_grid: GridContainer = $Root/FramePanel/Margin/Content/PartsScroll/PartsGrid
+@onready var parts_grid: GridContainer = $Root/FramePanel/Margin/Content/PartsScroll/PartsGridMargin/PartsGrid
 @onready var socket_water: Control = $Root/FramePanel/Margin/Content/WeaponFrame/SocketWaterBarrel
 @onready var socket_mixture: Control = $Root/FramePanel/Margin/Content/WeaponFrame/SocketMixtureBarrel
 @onready var socket_tank: Control = $Root/FramePanel/Margin/Content/WeaponFrame/SocketTank
@@ -55,6 +55,10 @@ func open() -> void:
 
 func close() -> void:
 	root.visible = false
+
+
+func is_open() -> bool:
+	return root.visible
 
 
 ## Retour utilisateur : se ferme avec la même touche qu'à l'ouverture (E, via

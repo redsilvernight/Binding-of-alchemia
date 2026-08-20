@@ -71,6 +71,10 @@ func close() -> void:
 	root.visible = false
 
 
+func is_open() -> bool:
+	return root.visible
+
+
 ## Retour utilisateur : se ferme avec la même touche qu'à l'ouverture (E, via
 ## Interactable -> Player.open_alchemy_crafting()) plutôt qu'avec Échap --
 ## Échap est réservé au menu pause (pause_menu.gd).
