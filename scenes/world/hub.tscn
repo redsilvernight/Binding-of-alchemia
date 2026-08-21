@@ -5,15 +5,64 @@
 [ext_resource type="Script" path="res://scripts/world/interactable.gd" id="3_interactable"]
 [ext_resource type="Script" path="res://scripts/world/unlock_station.gd" id="4_unlockstation"]
 [ext_resource type="Texture2D" path="res://assets/tiles/run_start_station/run_start_station.png" id="5_run_start_station"]
-[ext_resource type="Texture2D" path="res://assets/tiles/unlock_station/unlock_station.png" id="6_unlock_station"]
+[ext_resource type="TileSet" path="res://resources/tilesets/hub_shop_terrain.tres" id="7_shop_tileset"]
+[ext_resource type="Texture2D" path="res://assets/tiles/hub_shop_counter.png" id="8_counter"]
+[ext_resource type="Texture2D" path="res://assets/tiles/hub_shop_merchant.png" id="9_merchant"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_station"]
 radius = 80.0
 
+[sub_resource type="RectangleShape2D" id="RoomTriggerShape"]
+size = Vector2(928, 576)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_station"]
+polygon = PackedVector2Array(-70, 55, 70, 55, 70, 100, -70, 100)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_counter"]
+size = Vector2(170, 40)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_counter"]
+polygon = PackedVector2Array(-85, 10, 85, 10, 85, 50, -85, 50)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_merchant"]
+size = Vector2(50, 40)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_merchant"]
+polygon = PackedVector2Array(-25, 25, 25, 25, 25, 65, -25, 65)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_portal_pillar"]
+size = Vector2(26, 180)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_portal_pillar"]
+polygon = PackedVector2Array(-13, -90, 13, -90, 13, 90, -13, 90)
+
+[sub_resource type="LabelSettings" id="LabelSettings_prompt"]
+font_size = 18
+outline_size = 6
+outline_color = Color(0.15, 0.1, 0.05, 1)
+
 [node name="Hub" type="Node2D"]
 script = ExtResource("1_hub")
 
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+color = Color(0.85, 0.78, 0.65, 1)
+
+[node name="AmbientLight" type="DirectionalLight2D" parent="."]
+color = Color(1, 0.95, 0.85, 1)
+energy = 0.45
+shadow_enabled = false
+
+[node name="Floor" type="TileMapLayer" parent="."]
+tile_set = ExtResource("7_shop_tileset")
+
+[node name="RoomTrigger" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RoomTrigger"]
+position = Vector2(672, 480)
+shape = SubResource("RoomTriggerShape")
+
 [node name="Players" type="Node2D" parent="."]
+position = Vector2(672, 700)
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
 spawn_path = NodePath("../Players")
@@ -21,10 +70,35 @@ spawn_path = NodePath("../Players")
 [node name="HUD" type="Node2D" parent="."]
 
 [node name="RunStartStation" type="Node2D" parent="."]
+position = Vector2(450, 320)
 script = ExtResource("2_runstation")
 
-[node name="BenchVisual" type="Sprite2D" parent="RunStartStation"]
+[node name="PortalVisual" type="Sprite2D" parent="RunStartStation"]
+light_mask = 2
 texture = ExtResource("5_run_start_station")
+
+[node name="Occluder" type="LightOccluder2D" parent="RunStartStation"]
+occluder = SubResource("OccluderPolygon2D_station")
+
+[node name="PortalBody" type="StaticBody2D" parent="RunStartStation"]
+collision_layer = 8
+collision_mask = 0
+
+[node name="LeftPillar" type="CollisionShape2D" parent="RunStartStation/PortalBody"]
+position = Vector2(-70, 0)
+shape = SubResource("RectangleShape2D_portal_pillar")
+
+[node name="RightPillar" type="CollisionShape2D" parent="RunStartStation/PortalBody"]
+position = Vector2(70, 0)
+shape = SubResource("RectangleShape2D_portal_pillar")
+
+[node name="LeftOccluder" type="LightOccluder2D" parent="RunStartStation/PortalBody"]
+position = Vector2(-70, 0)
+occluder = SubResource("OccluderPolygon2D_portal_pillar")
+
+[node name="RightOccluder" type="LightOccluder2D" parent="RunStartStation/PortalBody"]
+position = Vector2(70, 0)
+occluder = SubResource("OccluderPolygon2D_portal_pillar")
 
 [node name="Interactable" type="Area2D" parent="RunStartStation"]
 script = ExtResource("3_interactable")
@@ -34,17 +108,47 @@ prompt_text = "Appuyer sur E pour commencer une run"
 shape = SubResource("CircleShape2D_station")
 
 [node name="PromptLabel" type="Label" parent="RunStartStation/Interactable"]
-position = Vector2(-100, -90)
+position = Vector2(-100, -140)
 size = Vector2(200, 30)
 horizontal_alignment = 1
 text = "Appuyer sur E pour commencer une run"
+label_settings = SubResource("LabelSettings_prompt")
 
 [node name="UnlockStation" type="Node2D" parent="."]
-position = Vector2(200, 0)
+position = Vector2(900, 220)
 script = ExtResource("4_unlockstation")
 
-[node name="BenchVisual" type="Sprite2D" parent="UnlockStation"]
-texture = ExtResource("6_unlock_station")
+[node name="Merchant" type="Sprite2D" parent="UnlockStation"]
+position = Vector2(0, -95)
+light_mask = 2
+texture = ExtResource("9_merchant")
+
+[node name="MerchantBody" type="StaticBody2D" parent="UnlockStation"]
+position = Vector2(0, -95)
+collision_layer = 8
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="UnlockStation/MerchantBody"]
+position = Vector2(0, 45)
+shape = SubResource("RectangleShape2D_merchant")
+
+[node name="Occluder" type="LightOccluder2D" parent="UnlockStation/MerchantBody"]
+occluder = SubResource("OccluderPolygon2D_merchant")
+
+[node name="Counter" type="Sprite2D" parent="UnlockStation"]
+light_mask = 2
+texture = ExtResource("8_counter")
+
+[node name="CounterBody" type="StaticBody2D" parent="UnlockStation"]
+collision_layer = 8
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="UnlockStation/CounterBody"]
+position = Vector2(0, 30)
+shape = SubResource("RectangleShape2D_counter")
+
+[node name="Occluder" type="LightOccluder2D" parent="UnlockStation/CounterBody"]
+occluder = SubResource("OccluderPolygon2D_counter")
 
 [node name="Interactable" type="Area2D" parent="UnlockStation"]
 script = ExtResource("3_interactable")
@@ -58,3 +162,4 @@ position = Vector2(-100, -90)
 size = Vector2(200, 30)
 horizontal_alignment = 1
 text = "Appuyer sur E pour les déblocages"
+label_settings = SubResource("LabelSettings_prompt")

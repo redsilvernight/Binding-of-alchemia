@@ -17,13 +17,49 @@ extends Node
 signal currency_changed(new_amount: int)
 signal run_currency_changed(new_amount: int)
 signal unlocks_changed
+## Retour utilisateur : la boutique ne doit pas proposer tout le catalogue
+## d'un coup -- un pool restreint, cf. shop_pool_by_peer ci-dessous.
+signal shop_pool_changed
 
+## Retour utilisateur ("pas assez de déblocables actuellement") : +6
+## ingrédients, choisis parmi les 36 du catalogue (resources/Ingredients/)
+## comme les plus puissants par degats_base RÉEL (pas duree_base -- vérifié
+## dans alchemy_resolver.gd/mixture_to_effect.gd/impact_effect.gd :
+## duree_base ne fait qu'étaler le MÊME total de dégâts en ticks plus
+## nombreux, cf. _apply_damage_over_time, donc un ingrédient à faible
+## degats_base mais longue durée n'est PAS plus fort pour autant -- seul
+## zone_base est un vrai multiplicateur de puissance, en touchant plusieurs
+## cibles). Classement obtenu par grep sur tous les .tres puis lecture du
+## code de résolution, pas une estimation :
+## - baril_poudre (12, EXPLOSIF) / eclat_shrapnel (10, EXPLOSIF) : dégâts
+##   bruts les plus élevés du jeu, toutes catégories confondues.
+## - seve_de_vie (-10, SOIN) : plus gros soin du jeu (degats_base négatif =
+##   soin, cf. mixture_to_effect.gd).
+## - noyau_instable (8, zone 3.0, EXPLOSIF) : 2e plus grande zone du jeu.
+## - orage_captif (9, ELECTRIQUE) : meilleur ingrédient électrique après
+##   Éclair de Zeus (déjà déblocable).
+## - braise (8, FEU) : meilleur ingrédient feu, aucun autre n'approche.
+## Explosif domine nettement ce classement (3 des 6 picks) -- c'est un fait
+## des données actuelles, pas un choix arbitraire ; Glace plafonne à 4
+## dégâts et n'a donc aucun candidat "puissant" à proposer ici. Chaque ajout
+## a aussi reçu requires_unlock=true dans resources/spawn_tables/ingredients.tres
+## (sinon il resterait disponible gratuitement dès le début malgré son
+## entrée ici).
 const UNLOCKABLES: Array[Dictionary] = [
 	{"item_path": "res://resources/Ingredients/sang_hydre.tres", "display_name": "Sang d'Hydre", "cost": 80},
 	{"item_path": "res://resources/Ingredients/eclair_zeus.tres", "display_name": "Éclair de Zeus", "cost": 80},
 	{"item_path": "res://resources/GunParts/core_apollo.tres", "display_name": "Cœur d'Apollon", "cost": 120},
 	{"item_path": "res://resources/GunParts/tank_titan.tres", "display_name": "Réservoir Titan", "cost": 120},
+	{"item_path": "res://resources/Ingredients/baril_poudre.tres", "display_name": "Baril de Poudre", "cost": 140},
+	{"item_path": "res://resources/Ingredients/eclat_shrapnel.tres", "display_name": "Éclat de Shrapnel", "cost": 110},
+	{"item_path": "res://resources/Ingredients/seve_de_vie.tres", "display_name": "Sève de Vie", "cost": 110},
+	{"item_path": "res://resources/Ingredients/orage_captif.tres", "display_name": "Orage Captif", "cost": 110},
+	{"item_path": "res://resources/Ingredients/noyau_instable.tres", "display_name": "Noyau Instable", "cost": 110},
+	{"item_path": "res://resources/Ingredients/braise.tres", "display_name": "Braise", "cost": 90},
 ]
+## Nombre d'objets proposés en vitrine à la fois (retour utilisateur : "pas
+## tous d'un coup"), cf. _reroll_shop_pool().
+const SHOP_POOL_SIZE: int = 3
 
 var currency_by_peer: Dictionary = {} # int peer_id -> int
 var unlocked_by_peer: Dictionary = {} # int peer_id -> Dictionary[String, bool] (ensemble des item_path débloqués)
@@ -31,6 +67,13 @@ var unlocked_by_peer: Dictionary = {} # int peer_id -> Dictionary[String, bool] 
 # (cf. RunManager.request_start_run) -- panneau de résumé de run (8.6), pour
 # afficher "monnaie gagnée pendant cette run" sans perdre le total cumulatif.
 var run_currency_by_peer: Dictionary = {} # int peer_id -> int
+## Sous-ensemble d'UNLOCKABLES (item_path) actuellement en vente pour ce
+## pair -- régénéré à chaque lancement de run (cf. reroll_shop_pool_for_all(),
+## appelée par RunManager.request_start_run) plutôt que figé pour toute la
+## partie, pour que la boutique se renouvelle comme dans la plupart des
+## roguelites. Par pair comme currency_by_peer/unlocked_by_peer : chacun a
+## sa propre vitrine, cohérent avec le reste de la progression méta.
+var shop_pool_by_peer: Dictionary = {} # int peer_id -> Array[String]
 
 
 func _ready() -> void:
@@ -63,6 +106,10 @@ func is_unlocked_by_party(item_path: String) -> bool:
 	return false
 
 
+func get_shop_pool(peer_id: int) -> Array:
+	return shop_pool_by_peer.get(peer_id, [])
+
+
 ## Hôte uniquement, appelé depuis EnemyBase._on_death() (déjà gardé par
 ## kill() -> multiplayer.is_server()).
 func add_currency(peer_id: int, amount: int) -> void:
@@ -86,6 +133,54 @@ func reset_run_currency() -> void:
 	_notify_run_currency(NetworkManager.get_unique_id())
 	for peer_id in NetworkManager.get_peers():
 		_notify_run_currency(peer_id)
+
+
+## Host uniquement, appelé par RunManager.request_start_run() : la vitrine
+## de chaque pair se renouvelle à chaque nouvelle run -- même liste de pairs
+## que reset_run_currency() (soi-même + tous les pairs déjà connectés).
+func reroll_shop_pool_for_all() -> void:
+	if not multiplayer.is_server():
+		return
+	_reroll_shop_pool(NetworkManager.get_unique_id())
+	for peer_id in NetworkManager.get_peers():
+		_reroll_shop_pool(peer_id)
+
+
+## Host uniquement : garantit qu'un pair a un pool assigné SANS le
+## reroll s'il en a déjà un -- rattrapage pour l'hôte à son tout premier
+## accès (hub.gd._ready()) ou un pair qui vient de se connecter en cours de
+## partie (hub.gd._on_peer_connected), pas un renouvellement volontaire
+## (cf. reroll_shop_pool_for_all() pour ça).
+func ensure_shop_pool(peer_id: int) -> void:
+	if not multiplayer.is_server():
+		return
+	if shop_pool_by_peer.has(peer_id):
+		return
+	_reroll_shop_pool(peer_id)
+
+
+func _reroll_shop_pool(peer_id: int) -> void:
+	var candidates: Array = []
+	for entry in UNLOCKABLES:
+		if not is_unlocked(peer_id, entry["item_path"]):
+			candidates.append(entry["item_path"])
+	candidates.shuffle()
+	shop_pool_by_peer[peer_id] = candidates.slice(0, SHOP_POOL_SIZE)
+	_notify_shop_pool(peer_id)
+
+
+func _notify_shop_pool(peer_id: int) -> void:
+	var pool: Array = get_shop_pool(peer_id)
+	if peer_id == NetworkManager.get_unique_id():
+		shop_pool_changed.emit()
+	else:
+		_rpc_shop_pool.rpc_id(peer_id, pool)
+
+
+@rpc("authority", "call_local", "reliable")
+func _rpc_shop_pool(pool: Array) -> void:
+	shop_pool_by_peer[NetworkManager.get_unique_id()] = pool
+	shop_pool_changed.emit()
 
 
 func _notify_currency(peer_id: int) -> void:
@@ -134,6 +229,8 @@ func request_unlock(item_path: String) -> void:
 
 	if is_unlocked(sender_id, item_path):
 		return
+	if item_path not in get_shop_pool(sender_id):
+		return # pas dans la vitrine actuelle de ce pair : requête invalide, on ignore
 	var cost: int = _find_cost(item_path)
 	if cost < 0:
 		return # item_path hors catalogue : requête invalide, on ignore

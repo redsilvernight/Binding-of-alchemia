@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c5d3v6fo12psn"
-path="res://.godot/imported/unlock_station.png-69af234a24e99006a9383fa542b65213.ctex"
+uid="uid://iw7chx7uc67l"
+path="res://.godot/imported/hub_shop_sheet.png-56cc6b94aaf4a6d9788e6f0a678dc073.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/unlock_station/unlock_station.png"
-dest_files=["res://.godot/imported/unlock_station.png-69af234a24e99006a9383fa542b65213.ctex"]
+source_file="res://assets/tiles/hub_shop_sheet.png"
+dest_files=["res://.godot/imported/hub_shop_sheet.png-56cc6b94aaf4a6d9788e6f0a678dc073.ctex"]
 
 [params]
 

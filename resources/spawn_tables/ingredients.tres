@@ -7,6 +7,7 @@
 script = ExtResource("2_entry")
 item_path = "res://resources/Ingredients/braise.tres"
 weight = 1.0
+requires_unlock = true
 
 [sub_resource type="Resource" id="Resource_cristal_givre"]
 script = ExtResource("2_entry")
@@ -49,6 +50,7 @@ weight = 1.0
 script = ExtResource("2_entry")
 item_path = "res://resources/Ingredients/baril_poudre.tres"
 weight = 1.0
+requires_unlock = true
 
 [sub_resource type="Resource" id="Resource_eclat_meteore"]
 script = ExtResource("2_entry")
@@ -84,6 +86,7 @@ weight = 1.0
 script = ExtResource("2_entry")
 item_path = "res://resources/Ingredients/seve_de_vie.tres"
 weight = 1.0
+requires_unlock = true
 
 [sub_resource type="Resource" id="Resource_huile_enflammee"]
 script = ExtResource("2_entry")
@@ -114,6 +117,7 @@ weight = 1.0
 script = ExtResource("2_entry")
 item_path = "res://resources/Ingredients/orage_captif.tres"
 weight = 1.0
+requires_unlock = true
 
 [sub_resource type="Resource" id="Resource_baume_regenerant"]
 script = ExtResource("2_entry")
@@ -124,6 +128,7 @@ weight = 1.0
 script = ExtResource("2_entry")
 item_path = "res://resources/Ingredients/noyau_instable.tres"
 weight = 1.0
+requires_unlock = true
 
 [sub_resource type="Resource" id="Resource_cendre_vive"]
 script = ExtResource("2_entry")
@@ -179,6 +184,7 @@ weight = 1.0
 script = ExtResource("2_entry")
 item_path = "res://resources/Ingredients/eclat_shrapnel.tres"
 weight = 1.0
+requires_unlock = true
 
 [sub_resource type="Resource" id="Resource_charge_sismique"]
 script = ExtResource("2_entry")

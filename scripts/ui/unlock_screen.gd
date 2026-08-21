@@ -15,6 +15,12 @@ extends CanvasLayer
 @onready var result_label: Label = $Root/Content/ResultLabel
 
 var _local_peer_id: int = 0
+## Item_path affichés dans unlock_list, DANS LE MÊME ORDRE que les lignes
+## ajoutées par _refresh_list() -- MetaProgression.UNLOCKABLES n'est plus
+## utilisable comme index direct maintenant que la liste n'affiche qu'un
+## sous-ensemble (le pool de la boutique, cf. get_shop_pool()), pas le
+## catalogue entier.
+var _visible_entries: Array[Dictionary] = []
 
 
 func _ready() -> void:
@@ -23,6 +29,7 @@ func _ready() -> void:
 	_local_peer_id = NetworkManager.get_unique_id()
 	MetaProgression.currency_changed.connect(_on_currency_changed)
 	MetaProgression.unlocks_changed.connect(_on_unlocks_changed)
+	MetaProgression.shop_pool_changed.connect(_on_shop_pool_changed)
 
 
 func open() -> void:
@@ -68,18 +75,37 @@ func _on_unlocks_changed() -> void:
 		_refresh_list()
 
 
+## Même garde que _on_unlocks_changed : évite un refresh/son parasite au
+## rattrapage réseau (hub.gd._on_peer_connected) si l'écran n'est pas ouvert.
+## Pas de SFX ici contrairement à _on_unlocks_changed -- un renouvellement de
+## vitrine (nouvelle run) n'est pas une action du joueur, juste un rafraîchissement.
+func _on_shop_pool_changed() -> void:
+	if root.visible:
+		_refresh_list()
+
+
 func _refresh_currency() -> void:
 	currency_label.text = "Monnaie : %d" % MetaProgression.get_currency(_local_peer_id)
 
 
+## N'affiche que la vitrine actuelle du pair (cf. MetaProgression.get_shop_pool()),
+## pas tout MetaProgression.UNLOCKABLES -- retour utilisateur : "pas tous
+## d'un coup". Un objet déjà débloqué reste affiché (désactivé) tant qu'il
+## est dans le pool -- il n'en sort qu'au prochain reroll (nouvelle run,
+## cf. RunManager.request_start_run), pas retiré à la volée ici.
 func _refresh_list() -> void:
 	unlock_list.clear()
+	_visible_entries.clear()
+	var pool: Array = MetaProgression.get_shop_pool(_local_peer_id)
 	for entry in MetaProgression.UNLOCKABLES:
+		if not pool.has(entry["item_path"]):
+			continue
 		var unlocked: bool = MetaProgression.is_unlocked(_local_peer_id, entry["item_path"])
 		var status: String = "débloqué" if unlocked else "%d monnaie" % entry["cost"]
 		unlock_list.add_item("%s — %s" % [entry["display_name"], status])
 		if unlocked:
 			unlock_list.set_item_disabled(unlock_list.item_count - 1, true)
+		_visible_entries.append(entry)
 
 
 func _on_unlock_pressed() -> void:
@@ -89,7 +115,7 @@ func _on_unlock_pressed() -> void:
 		result_label.text = "Sélectionne un élément à débloquer."
 		return
 
-	var entry: Dictionary = MetaProgression.UNLOCKABLES[selection[0]]
+	var entry: Dictionary = _visible_entries[selection[0]]
 	if MetaProgression.is_unlocked(_local_peer_id, entry["item_path"]):
 		AudioManager.play_sfx("ui_error")
 		result_label.text = "Déjà débloqué."

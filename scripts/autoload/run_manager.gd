@@ -160,6 +160,7 @@ func request_start_run() -> void:
 	if not multiplayer.is_server():
 		return
 	MetaProgression.reset_run_currency()
+	MetaProgression.reroll_shop_pool_for_all()
 	_change_scene_with_handshake(DUNGEON_SCENE_PATH)
 
 

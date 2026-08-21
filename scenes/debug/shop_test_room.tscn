@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/hub.tscn" id="1_hub"]
+[ext_resource type="Script" path="res://scripts/debug/shop_test_room_controller.gd" id="2_controller"]
+
+[node name="ShopTestRoom" type="Node2D"]
+
+[node name="Hub" parent="." instance=ExtResource("1_hub")]
+
+[node name="TestController" type="Node" parent="."]
+script = ExtResource("2_controller")
