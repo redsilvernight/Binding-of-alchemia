@@ -18,7 +18,7 @@ properties/1/replication_mode = 1
 [node name="EnemyErraticSwift" type="CharacterBody2D" unique_id=368404698]
 scale = Vector2(0.3, 0.3)
 collision_layer = 2
-collision_mask = 92
+collision_mask = 93
 script = ExtResource("1")
 speed = 260.0
 damage = 3.0

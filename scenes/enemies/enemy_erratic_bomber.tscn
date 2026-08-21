@@ -18,7 +18,7 @@ properties/1/replication_mode = 1
 [node name="EnemyErraticBomber" type="CharacterBody2D" unique_id=549528862]
 scale = Vector2(0.6, 0.6)
 collision_layer = 2
-collision_mask = 92
+collision_mask = 93
 script = ExtResource("1")
 speed = 100.0
 damage = 12.0

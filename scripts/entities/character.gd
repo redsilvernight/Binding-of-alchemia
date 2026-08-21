@@ -15,6 +15,12 @@ var is_dead: bool = false
 var can_take_damage: bool = true
 
 func _ready() -> void:
+	# Jeu topdown sans gravité : GROUNDED (défaut CharacterBody2D) classe les
+	# contacts en sol/mur/plafond selon up_direction et fait hériter la
+	# vélocité d'un "sol" en mouvement -- non pertinent ici, et cause de
+	# blocages/glissements erratiques quand deux capsules se poussent selon
+	# certains angles (joueur coincé contre un mur par un ennemi, par ex.).
+	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 	lifepoint = max_lifepoint
 
 func move(direction: Vector2, speed: float) -> void:

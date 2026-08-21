@@ -18,7 +18,7 @@ properties/1/replication_mode = 1
 [node name="EnemyErratic" type="CharacterBody2D" unique_id=1558403834]
 scale = Vector2(0.5, 0.5)
 collision_layer = 2
-collision_mask = 92
+collision_mask = 93
 script = ExtResource("1")
 ambient_sfx_key = "cry_erratic_base"
 
