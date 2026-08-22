@@ -10,10 +10,6 @@ signal instance_projectile(data: Dictionary)
 @export var weapon_crafting_scene: PackedScene = preload("res://scenes/ui/weapon_crafting.tscn")
 @export var unlock_screen_scene: PackedScene = preload("res://scenes/ui/unlock_screen.tscn")
 @export var pause_menu_scene: PackedScene = preload("res://scenes/ui/pause_menu.tscn")
-## Facteur de zoom-in supplémentaire au-delà du strict nécessaire pour que la
-## zone visible tienne dans une salle (cf. _update_camera_zoom()) -- évite
-## qu'un pixel de la salle voisine ne dépasse au bord de l'écran par arrondi.
-const CAMERA_ZOOM_MARGIN: float = 1.05
 @onready var player_camera: Camera2D = $Camera2D
 @onready var damage_timer: Timer = $DamageTimer
 @onready var weapon: Weapon = $Weapon
@@ -33,7 +29,6 @@ var inventory_screen: Node = null
 var alchemy_crafting_screen: Node = null
 var weapon_crafting_screen: Node = null
 var unlock_screen: Node = null
-var _spectate_target: Node2D = null
 var _pending_fire_type: String = ""
 var _pending_fire_direction: Vector2 = Vector2.ZERO
 ## Bruits de pas (retour utilisateur : uniquement le joueur, pas les ennemis --
@@ -46,7 +41,7 @@ var _pending_fire_direction: Vector2 = Vector2.ZERO
 ## identiquement sur chaque pair -- y compris pour voir/entendre les pas des
 ## AUTRES joueurs, pas seulement le sien.
 var _footstep_last_frame: int = -1
-## Phase 9.3 : vrai une fois l'anim death-* terminée -- gate _process_spectating()
+## Phase 9.3 : vrai une fois l'anim death-* terminée -- gate PlayerSpectator.process()
 ## pour que la caméra reste sur le corps le temps de l'anim au lieu de sauter
 ## instantanément sur un coéquipier (cf. _on_died).
 var _death_animation_done: bool = false
@@ -55,10 +50,17 @@ var _death_animation_done: bool = false
 ## scène à part, sans grille de salles Room.ROOM_WIDTH_PX/HEIGHT_PX, donc le
 ## zoom/clamp caméra basé sur cette grille ne doit jamais s'y appliquer.
 var _dungeon_camera_mode: bool = false
+## Cf. PlayerCameraController/PlayerSpectator (scripts/player/, extraits de ce
+## fichier pour File Size) -- instanciés en _ready(), une fois player_camera
+## résolu par son @onready.
+var _camera_controller: PlayerCameraController
+var _spectator: PlayerSpectator
 
 func _ready() -> void:
 	super()
 	add_to_group("Players")
+	_camera_controller = PlayerCameraController.new(player_camera)
+	_spectator = PlayerSpectator.new(self, player_camera)
 	# Option "Éclairage dynamique" (retour utilisateur) : cf. game.gd pour le
 	# pendant CanvasModulate -- purement visuel/local, chaque pair applique
 	# indépendamment son propre réglage sur sa propre instance du joueur (pas
@@ -138,12 +140,12 @@ func enable_dungeon_camera_mode() -> void:
 		return
 	if not is_multiplayer_authority():
 		return
-	_update_camera_zoom()
-	_update_camera_room_limits(global_position)
+	_camera_controller.update_zoom(get_viewport_rect().size)
+	_camera_controller.update_room_limits(global_position)
 
 func _on_viewport_size_changed() -> void:
 	if _dungeon_camera_mode:
-		_update_camera_zoom()
+		_camera_controller.update_zoom(get_viewport_rect().size)
 
 func _process(_delta: float) -> void:
 	if is_dead:
@@ -164,16 +166,16 @@ func _physics_process(_delta: float) -> void:
 		return
 	if is_dead:
 		# Caméra figée sur le corps tant que death-* joue (cf. _on_died) --
-		# _process_spectating() ne prend la main qu'une fois l'anim terminée.
+		# PlayerSpectator.process() ne prend la main qu'une fois l'anim terminée.
 		if _death_animation_done:
-			_process_spectating()
+			_spectator.process(_dungeon_camera_mode, _camera_controller.update_room_limits)
 		return
-	var aim_direction = _get_aim_direction()
-	var input_direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	var facing_direction = _get_facing_direction(aim_direction, input_direction)
+	var aim_direction: Vector2 = _get_aim_direction()
+	var input_direction: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	var facing_direction: Vector2 = _get_facing_direction(aim_direction, input_direction)
 	_update_facing(facing_direction, input_direction.length() > 0.0)
-	var water_pressed = Input.is_action_pressed("fire_water")
-	var mixture_pressed = Input.is_action_pressed("fire_mixture")
+	var water_pressed: bool = Input.is_action_pressed("fire_water")
+	var mixture_pressed: bool = Input.is_action_pressed("fire_mixture")
 	var fire_type := ""
 	# Retour utilisateur : aucun tir (ni son animation) tant qu'une interface
 	# (inventaire, crafting, déblocage) est ouverte -- fire_type reste "",
@@ -196,7 +198,7 @@ func _physics_process(_delta: float) -> void:
 	was_mixture_pressed = mixture_pressed
 	move(input_direction, speed)
 	if _dungeon_camera_mode:
-		_update_camera_room_limits(global_position)
+		_camera_controller.update_room_limits(global_position)
 
 @rpc("any_peer", "call_local", "reliable")
 func request_fire(fire_type: String, direction: Vector2) -> void:
@@ -211,11 +213,11 @@ func request_fire(fire_type: String, direction: Vector2) -> void:
 		weapon.try_fire_mixture(direction)
 
 func _get_aim_direction() -> Vector2:
-	var now = Time.get_ticks_msec() / 1000.0
-	var stick_input = Input.get_vector("aim_left", "aim_right", "aim_up", "aim_down")
+	var now: float = Time.get_ticks_msec() / 1000.0
+	var stick_input: Vector2 = Input.get_vector("aim_left", "aim_right", "aim_up", "aim_down")
 	if stick_input.length() > 0.0:
 		last_stick_activity_time = now
-	var current_mouse_screen_position = get_viewport().get_mouse_position()
+	var current_mouse_screen_position: Vector2 = get_viewport().get_mouse_position()
 	if not mouse_position_initialized:
 		last_mouse_screen_position = current_mouse_screen_position
 		mouse_position_initialized = true
@@ -226,7 +228,7 @@ func _get_aim_direction() -> Vector2:
 		if stick_input.length() > 0.0:
 			last_aim_direction = stick_input.normalized()
 	else:
-		var mouse_delta = get_global_mouse_position() - global_position
+		var mouse_delta: Vector2 = get_global_mouse_position() - global_position
 		if mouse_delta.length() > 0.0:
 			last_aim_direction = mouse_delta.normalized()
 	return last_aim_direction
@@ -237,10 +239,10 @@ func _get_aim_direction() -> Vector2:
 ## _get_aim_direction() pour stick vs souris. Le tir continue lui d'utiliser
 ## aim_direction directement (non affecté par cette fonction).
 func _get_facing_direction(aim_direction: Vector2, input_direction: Vector2) -> Vector2:
-	var now = Time.get_ticks_msec() / 1000.0
+	var now: float = Time.get_ticks_msec() / 1000.0
 	if input_direction.length() > 0.0:
 		last_movement_activity_time = now
-	var aim_activity_time = max(last_stick_activity_time, last_mouse_activity_time)
+	var aim_activity_time: float = max(last_stick_activity_time, last_mouse_activity_time)
 	if last_movement_activity_time >= aim_activity_time and input_direction.length() > 0.0:
 		return input_direction.normalized()
 	return aim_direction
@@ -435,7 +437,7 @@ func request_craft_mixture(ingredient_paths: Array[String]) -> void:
 	# degats/duree/zone par TypeAlchimie pour plusieurs ingrédients d'un seul
 	# coup, donc la même logique s'étend naturellement à travers plusieurs
 	# crafts successifs sans rien dupliquer. Seule la mort (nouveau Player/
-	# Weapon recréés, cf. PlayerManager.spawnPlayer) remet mixture_ingredient_paths
+	# Weapon recréés, cf. PlayerManager.spawn_player) remet mixture_ingredient_paths
 	# à vide.
 	var combined_ingredient_paths: Array[String] = weapon.mixture_ingredient_paths.duplicate()
 	combined_ingredient_paths.append_array(ingredient_paths)
@@ -487,8 +489,8 @@ func _on_died() -> void:
 	sprite.visible = false
 	_death_animation_done = true
 	if is_multiplayer_authority():
-		_show_spectator_label()
-		_pick_spectate_target()
+		_spectator.show_label(self)
+		_spectator.pick_target()
 		player_camera.position_smoothing_enabled = true
 		player_camera.position_smoothing_speed = 2.5
 
@@ -503,66 +505,6 @@ func _on_health_changed(_max_lifepoint: float, lifepoint: float) -> void:
 		return
 	sprite.play(StringName("hit-" + FacingDirection.label_for(last_aim_direction)))
 
-## Le projet n'impose aucune résolution/stretch fixe (cf. project.godot) : la
-## taille du viewport suit donc la fenêtre réelle du joueur. Un zoom fixe
-## calculé pour une résolution de référence laisserait voir au-delà de la
-## salle sur un écran plus large -- on recalcule ici le zoom pour que la zone
-## visible tienne toujours dans les dimensions d'une salle, quelle que soit
-## la taille de fenêtre (rappelée à chaque redimensionnement, cf.
-## _on_viewport_size_changed()). N'est jamais appelée hors donjon (cf.
-## _dungeon_camera_mode).
-func _update_camera_zoom() -> void:
-	var viewport_size: Vector2 = get_viewport_rect().size
-	var zoom_x: float = viewport_size.x / float(Room.ROOM_WIDTH_PX)
-	var zoom_y: float = viewport_size.y / float(Room.ROOM_HEIGHT_PX)
-	var target_zoom: float = max(zoom_x, zoom_y) * CAMERA_ZOOM_MARGIN
-	player_camera.zoom = Vector2(target_zoom, target_zoom)
-
-## Empêche la caméra de montrer au-delà de la salle courante (couloir/salle
-## voisine visible par une porte ouverte) : les salles sont juxtaposées sans
-## marge dans la grille du donjon (cf. game.gd::ROOM_CELL_SIZE, identique à
-## Room.ROOM_WIDTH_PX/HEIGHT_PX), donc une simple division entière de la
-## position retrouve la salle qui contient reference_position.
-func _update_camera_room_limits(reference_position: Vector2) -> void:
-	var room_col := floori(reference_position.x / Room.ROOM_WIDTH_PX)
-	var room_row := floori(reference_position.y / Room.ROOM_HEIGHT_PX)
-	player_camera.limit_left = room_col * Room.ROOM_WIDTH_PX
-	player_camera.limit_top = room_row * Room.ROOM_HEIGHT_PX
-	player_camera.limit_right = (room_col + 1) * Room.ROOM_WIDTH_PX
-	player_camera.limit_bottom = (room_row + 1) * Room.ROOM_HEIGHT_PX
-
-func _process_spectating() -> void:
-	if Input.is_action_just_pressed("spectate_next"):
-		_pick_spectate_target(true)
-	elif not is_instance_valid(_spectate_target) or _spectate_target.is_dead:
-		_pick_spectate_target()
-	if is_instance_valid(_spectate_target):
-		player_camera.global_position = _spectate_target.global_position
-		if _dungeon_camera_mode:
-			_update_camera_room_limits(_spectate_target.global_position)
-
-func _pick_spectate_target(cycle: bool = false) -> void:
-	var candidates: Array = []
-	for p in get_tree().get_nodes_in_group("Players"):
-		if p != self and not p.is_dead:
-			candidates.append(p)
-	if candidates.is_empty():
-		_spectate_target = null
-		return
-	if not cycle or _spectate_target == null or not candidates.has(_spectate_target):
-		_spectate_target = candidates[0]
-		return
-	var current_index: int = candidates.find(_spectate_target)
-	_spectate_target = candidates[(current_index + 1) % candidates.size()]
-
-func _show_spectator_label() -> void:
-	var label := Label.new()
-	label.text = "Vous êtes mort — Espace pour changer de vue"
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	label.position.y = 40
-	label.size.x = 400
-	label.position.x -= 200
-	var layer := CanvasLayer.new()
-	layer.add_child(label)
-	add_child(layer)
+## Cf. PlayerCameraController (zoom/limites caméra, extrait de ce fichier
+## pour File Size) et PlayerSpectator (mode spectateur après la mort) --
+## scripts/player/, instanciés dans _ready().

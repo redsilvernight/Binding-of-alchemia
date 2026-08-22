@@ -89,7 +89,7 @@ func _process(_delta: float) -> void:
 
 
 func _spawn_player() -> void:
-	var player: Node = PlayerManager.spawnPlayer(1)
+	var player: Node = PlayerManager.spawn_player(1)
 	player.instance_hud.connect(func(hud: Node) -> void: hud_container.add_child(hud))
 	# LE bug signalé : dans game.gd, player.instance_projectile est connecté
 	# à _on_projectile_requested -> projectile_spawner.spawn(data), ce qui

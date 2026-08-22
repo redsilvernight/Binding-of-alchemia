@@ -22,6 +22,13 @@ Prefer clear names over abbreviations.
 - Avoid introducing abstractions for purely theoretical flexibility.
 - Reuse existing helpers and systems when appropriate.
 
+## File Size
+
+- Keep `.gd` files focused; do not let functionality accumulate indefinitely in a single file.
+- When a file grows past roughly 300-400 lines, split it into smaller files along responsibility boundaries (helper scripts, components on child nodes, `class_name` modules) rather than continuing to append code.
+- Prefer composition (child nodes, dedicated scripts) over one file handling multiple unrelated systems.
+- Do not split a small, cohesive file solely to satisfy a line count.
+
 ## Signals
 
 - Prefer signals when communication should be decoupled.

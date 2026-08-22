@@ -137,72 +137,17 @@ const AMBIENT_LIGHT_COLORS: Array[Color] = [
 	Color(0.7, 0.4, 0.9, 1.0),
 ]
 const AMBIENT_LIGHT_ENERGY: float = 0.35
-# Torche/cristal/brasero murale selon le thème (retour utilisateur : "ça doit
-# être sur le mur, comme une vraie torche" -- pas un prop qui flotte au sol).
-# Désormais une TUILE (comme tout le reste des props décoratifs, cf.
-# Room._props_decor) enregistrée directement dans les 3 tilesets de thème
-# (resources/tilesets/dungeon_*_terrain.tres, source "decor_torche") plutôt
-# qu'une scène instanciée -- son source_id est retrouvé via
-# _prop_tile_sources_by_texture() comme n'importe quel autre décor. La
-# LUMIÈRE qu'elle projette reste un noeud séparé (cf. WallLight,
-# scripts/props/wall_light.gd, posé par Room._setup_wall_light() sur cette
-# même cellule) : une tuile n'a pas de PointLight2D, cf. le raisonnement déjà
-# établi pour _props_decor/_props_blocking (aucun comportement/script sur une
-# tuile). Garanti une fois par salle (cf. _prepare_room_props()) plutôt que
-# tiré depuis une SpawnTable -- une apparition aléatoire noyée parmi 8 autres
-# props (poids égal) se voyait trop rarement pour lire comme de l'ambiance
-# (retour utilisateur).
-# Même ordre que ROOM_TILESET_PATHS/AMBIENT_LIGHT_COLORS (A=cavernes,
-# B=cryptes, C=alchimie). La couleur de la lumière réutilise directement
-# AMBIENT_LIGHT_COLORS (même dominante que le halo ambiant de la salle,
-# cohérence visuelle) -- seule la texture de la tuile change par thème.
-# Uniquement nord/sud (cf. WALL_LIGHT_SIDES) : ce sprite est dessiné pour un
-# mur HORIZONTAL avec un vrai bandeau visible -- essayé sur est/ouest avec
-# une variante pré-tournée de 90°, mais ce tileset n'a qu'un fin bord de sol
-# sur ces côtés (pas de bandeau de mur équivalent), donc la torche flottait
-# sans rien à quoi s'accrocher visuellement (retour utilisateur, écran à
-# l'appui) -- retiré plutôt que gardé pour une "cohérence" purement théorique.
-const WALL_LIGHT_TEXTURE_PATHS: Array[String] = [
-	"res://assets/tiles/props/cristaux_lumineux.png",
-	"res://assets/tiles/props/torche_murale.png",
-	"res://assets/tiles/props/brasero_alchimique.png",
-]
+# Torche/cristal/brasero murale par thème -- cf. DungeonPropPlacer.WALL_LIGHT_TEXTURE_PATHS
+# (extrait de game.gd, File Size) pour le détail du placement en tuile.
 # Musique de donjon par pool thématique (retour utilisateur : la même piste
-# "dungeon" jouait sur les 3 thèmes). Même ordre que ROOM_TILESET_PATHS/
-# WALL_LIGHT_TEXTURE_PATHS (A=cavernes, B=cryptes, C=alchimie) -- clés
-# résolues par AudioManager.play_music() en res://assets/audio/music/{clé}.ogg.
+# "dungeon" jouait sur les 3 thèmes). Même ordre que ROOM_TILESET_PATHS
+# (A=cavernes, B=cryptes, C=alchimie) -- clés résolues par
+# AudioManager.play_music() en res://assets/audio/music/{clé}.ogg.
 const MUSIC_KEYS: Array[String] = [
 	"cave",
 	"crypt",
 	"alchemy",
 ]
-# Dimensions fixes de toutes les salles en tuiles -- dérivées des mêmes
-# constantes publiques que Room._paint_floor()/_paint_walls() (ROOM_WIDTH_PX/
-# TILE_SIZE_PX), qui ne sont pas accessibles ici : la Room n'existe pas
-# encore à ce stade (cf. _prepare_room_props(), appelée avant
-# room_spawner.spawn() dans _generate_dungeon()). Cf. le commentaire de
-# Room.DOOR_TILES : ce calcul retombe toujours sur 21x15 tuiles.
-const ROOM_COLS: int = 21
-# Profondeur (en pixels) de la zone gardée libre devant une embrasure de
-# porte structurellement ouverte -- calculée depuis room_data directement
-# (cf. _prop_exclusion_rects), sans attendre le set_open_sides() déféré de la
-# Room elle-même (cf. commentaire sur Room.TILE_SIZE_PX).
-const PROP_DOOR_CLEARANCE: float = 160.0
-# Rayon de la zone gardée libre autour du meuble central des salles spéciales
-# (alchimie/arme) et de la salle au trésor -- toujours à rect.get_center()
-# dans leurs templates respectifs (cf. AlchemyStation/WeaponStation/Chest).
-const PROP_CENTER_CLEARANCE_RADIUS: float = 180.0
-# Nombre d'essais avant d'accepter un point qui retombe quand même dans une
-# zone d'exclusion -- pas de recherche exhaustive (aucun système d'overlap-
-# avoidance n'existe déjà dans ce projet, cf. _random_position_in_room pour
-# les ennemis, qui n'en a aucun), juste assez d'essais pour que ce soit rare
-# en pratique.
-const PROP_PLACEMENT_ATTEMPTS: int = 20
-# Distance minimale entre deux props d'une même salle (cf. _prepare_room_props) --
-# contrairement aux ennemis (mobiles, un chevauchement passager ne se voit
-# pas), deux props immobiles trop proches fusionnent visuellement en un bloc
-# à la forme incohérente (bug constaté en jeu par l'utilisateur, 2026-08-17).
-const PROP_MIN_SPACING: float = 110.0
 
 # Phase 6.4 : carte du donjon pour la mini-map (scripts/ui/minimap.gd). Toutes
 # les salles y sont enregistrées dès leur spawn (_spawn_room tourne sur
@@ -218,6 +163,14 @@ var dungeon_map: Dictionary = {} # Vector2i (grid_position) -> {is_start, is_spe
 # — sans ça sa boss_healthbar afficherait la vie max jusqu'au prochain coup
 # porté, puisque _update_health est un RPC one-shot jamais rejoué.
 var current_boss: Node = null
+
+## Instanciés en _ready() (File Size, cf. .claude/rules/gdscript.md) :
+## composants extraits de game.gd pour le placement procédural des props
+## (DungeonPropPlacer) et le tirage du butin de coffre/monnaie (LootRoller).
+## Ne sont pas des noeuds de l'arbre de scène -- pur code partagé, aucun état
+## réseau/multijoueur ne leur est délégué (cf. leurs commentaires d'en-tête).
+var _prop_placer: DungeonPropPlacer
+var _loot_roller: LootRoller
 
 # Bugfix hors scope (8.3, trouvé en playtest à plusieurs) : contrairement au
 # tout premier lancement (menu -> game, où les clients se connectent APRÈS ce
@@ -271,6 +224,8 @@ func _ready() -> void:
 	AudioManager.play_music(MUSIC_KEYS[pool_index_ambient])
 	NetworkManager.multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	NetworkManager.multiplayer.peer_connected.connect(_on_peer_connected)
+	_prop_placer = DungeonPropPlacer.new(_room_world_rect, _random_position_in_room)
+	_loot_roller = LootRoller.new()
 	room_spawner.spawn_function = _spawn_room
 	projectile_spawner.spawn_function = _spawn_bullet
 	enemy_spawner.spawn_function = _spawn_enemy
@@ -330,7 +285,7 @@ func _generate_dungeon() -> void:
 	var room_count: int = _room_count_for_floor(floor_level)
 	var dungeon_layout: Array[Dictionary] = DungeonGenerator.generate(room_count, ROOM_TEMPLATE_PATHS, SPECIAL_ROOM_TEMPLATE_PATHS, BOSS_ROOM_TEMPLATE_PATH, TREASURE_ROOM_TEMPLATE_PATH)
 	# Phase 11 : chargés une fois pour tout l'étage (même pool pour toutes les
-	# salles, cf. _pool_index_for_floor) -- passés à _prepare_room_props() qui
+	# salles, cf. _pool_index_for_floor) -- passés à DungeonPropPlacer.prepare_room_props() qui
 	# remplit room_data["decor_cells"]/["decor_source_ids"] et
 	# room_data["blocking_cells"]/["blocking_source_ids"] AVANT le spawn de
 	# chaque salle (cf. commentaire sur set_decor_props()/set_blocking_props()
@@ -340,10 +295,10 @@ func _generate_dungeon() -> void:
 	var pool_index: int = _pool_index_for_floor(floor_level)
 	var prop_table: SpawnTable = load(PROP_SPAWN_TABLE_PATHS[pool_index]) as SpawnTable
 	var room_tile_set: TileSet = load(ROOM_TILESET_PATHS[pool_index]) as TileSet
-	var prop_tile_sources: Dictionary = _prop_tile_sources_by_texture(room_tile_set)
+	var prop_tile_sources: Dictionary = _prop_placer.prop_tile_sources_by_texture(room_tile_set)
 	var room_nodes: Dictionary = {} # Vector2i (grid_position) -> Room
 	for room_data in dungeon_layout:
-		_prepare_room_props(room_data, prop_table, prop_tile_sources, pool_index)
+		_prop_placer.prepare_room_props(room_data, prop_table, prop_tile_sources, pool_index, prop_spawner)
 		var room: Room = room_spawner.spawn(room_data)
 		room_nodes[room_data["grid_position"]] = room
 
@@ -422,7 +377,7 @@ func _generate_dungeon() -> void:
 			continue
 		var treasure_room: Room = room_nodes[room_data["grid_position"]]
 		var chest: Node = treasure_room.get_node("Chest")
-		chest.set_contents(_roll_chest_contents(room_data))
+		chest.set_contents(_loot_roller.roll_chest_contents(room_data, _room_world_rect(room_data), ENEMY_SPAWN_TABLE_PATH, WEAPON_PART_SPAWN_TABLE_PATH))
 		break
 
 	# Phase 9 (loader) : dernier appel, une fois tous les spawns émis --
@@ -440,7 +395,7 @@ func _spawn_room(data: Dictionary) -> Node:
 	# Même contrainte de timing que set_floor_tileset() juste au-dessus (avant
 	# l'entrée dans l'arbre, cf. Room.set_decor_props()/set_blocking_props())
 	# -- room_data porte toujours ces quatre clés, remplies par
-	# _prepare_room_props() avant le spawn de la salle (cf. _generate_dungeon()).
+	# DungeonPropPlacer.prepare_room_props() avant le spawn de la salle (cf. _generate_dungeon()).
 	room.set_decor_props(data["decor_cells"], data["decor_source_ids"])
 	room.set_blocking_props(data["blocking_cells"], data["blocking_source_ids"])
 	# Même thème que set_floor_tileset() ci-dessus (pool_index recalculé
@@ -523,250 +478,9 @@ func _random_position_in_room(room_data: Dictionary) -> Vector2:
 		rect.position.y + randf_range(ROOM_SPAWN_MARGIN, rect.size.y - ROOM_SPAWN_MARGIN)
 	)
 
-## Phase 11.2 : décors/obstacles procéduraux, un pool par étage
-## (floor_level % 3, cf. PROP_SPAWN_TABLE_PATHS). Salle de départ et salle de
-## boss exclues (position de spawn joueur/boss fixe au centre, cf.
-## _spawn_player/_generate_dungeon -- un prop y apparaissant dessus serait
-## un vrai problème, contrairement aux salles normales où seule la position
-## est aléatoire de toute façon).
-## Tourne AVANT le spawn de room_data (cf. _generate_dungeon()), pas après :
-## remplit room_data["decor_cells"]/["decor_source_ids"] et
-## room_data["blocking_cells"]/["blocking_source_ids"] pour que ces tuiles
-## voyagent avec le reste des données de spawn de la salle et soient
-## répliquées nativement par le RoomSpawner (cf. Room.set_decor_props()/
-## set_blocking_props()) -- contrairement à un RPC séparé tiré une fois, un
-## pair qui rejoint en cours de partie les reçoit alors automatiquement avec
-## le spawn de la salle. Seuls les props qui n'ont ni tuile décorative ni
-## tuile bloquante enregistrée dans ce TileSet (cf. prop_tile_sources --
-## aucun cas actuel, tous les props de ce projet -- y compris la torche
-## murale, cf. WALL_LIGHT_TEXTURE_PATHS -- sont des tuiles) passent encore
-## par prop_spawner (MultiplayerSpawner classique, déjà rattrapé nativement
-## pour un rejoin
-## tardif).
-func _prepare_room_props(room_data: Dictionary, prop_table: SpawnTable, prop_tile_sources: Dictionary, pool_index: int) -> void:
-	var decor_cells: Array[Vector2i] = []
-	var decor_source_ids: Array[int] = []
-	var blocking_cells: Array[Vector2i] = []
-	var blocking_source_ids: Array[int] = []
-	# Tableau vide = pas de torche murale pour cette salle (start/boss, cf.
-	# garde ci-dessous) -- lu par Room.set_wall_light() dans _spawn_room().
-	var wall_light_cells: Array[Vector2i] = []
-	if not (room_data["is_start"] or room_data["is_boss"]):
-		var room_origin: Vector2 = _room_world_rect(room_data).position
-		var placed_positions: Array[Vector2] = []
-		for prop_path in prop_table.pick_many():
-			var prop_position: Vector2 = _random_prop_position_in_room(room_data, placed_positions)
-			placed_positions.append(prop_position)
-			var local_pos: Vector2 = prop_position - room_origin
-			var cell: Vector2i = Vector2i(floori(local_pos.x / Room.TILE_SIZE_PX), floori(local_pos.y / Room.TILE_SIZE_PX))
-			if prop_tile_sources["blocking"].has(prop_path):
-				blocking_cells.append(cell)
-				blocking_source_ids.append(prop_tile_sources["blocking"][prop_path])
-			elif prop_tile_sources["decor"].has(prop_path):
-				decor_cells.append(cell)
-				decor_source_ids.append(prop_tile_sources["decor"][prop_path])
-			else:
-				prop_spawner.spawn({
-					"scene_path": prop_path,
-					"position": prop_position,
-				})
-		# Torche/cristal/brasero murale garantie sur les murs nord ET sud
-		# (retour utilisateur : "ça doit être sur le mur, comme une vraie
-		# torche" -- cf. WALL_LIGHT_SIDES pour pourquoi est/ouest sont exclus)
-		# -- des TUILES peintes comme les autres décors ci-dessus, une par
-		# côté (cf. _wall_light_cell_for_side()). La lumière elle-même
-		# (WallLight) est un noeud séparé par cellule, posé par
-		# Room._setup_wall_light() (cf. set_wall_light() dans _spawn_room()) --
-		# une tuile n'a pas de PointLight2D.
-		var wall_light_source_id: int = prop_tile_sources["decor"][WALL_LIGHT_TEXTURE_PATHS[pool_index]]
-		for side in WALL_LIGHT_SIDES:
-			for cell in _wall_light_cell_for_side(room_data, side):
-				wall_light_cells.append(cell)
-				decor_cells.append(cell)
-				decor_source_ids.append(wall_light_source_id)
-	room_data["decor_cells"] = decor_cells
-	room_data["decor_source_ids"] = decor_source_ids
-	room_data["blocking_cells"] = blocking_cells
-	room_data["blocking_source_ids"] = blocking_source_ids
-	room_data["wall_light_cells"] = wall_light_cells
-
-## Table texture (res://assets/tiles/props/xxx.png, cf. item_path des entrées
-## dans props_pool_*.tres) -> id de source d'atlas dans ce TileSet, scindée
-## en deux selon que la tuile porte un polygone de collision sur
-## physics_layer_0 (props bloquants, peints sur PropsBlocking) ou non (props
-## décoratifs, peints sur PropsDecor) -- entièrement dérivé du TileSet
-## lui-même (aucun id ni chemin en dur côté script, aucune liste à
-## maintenir en parallèle des .tres) pour rester correct si les sources sont
-## un jour réordonnées ou si un prop change de catégorie.
-func _prop_tile_sources_by_texture(tile_set: TileSet) -> Dictionary:
-	var decor: Dictionary = {}
-	var blocking: Dictionary = {}
-	for i in tile_set.get_source_count():
-		var source_id: int = tile_set.get_source_id(i)
-		var source: TileSetAtlasSource = tile_set.get_source(source_id) as TileSetAtlasSource
-		if source == null or source.texture == null:
-			continue
-		var tile_data: TileData = source.get_tile_data(Vector2i.ZERO, 0)
-		if tile_data == null:
-			continue
-		if tile_data.get_collision_polygons_count(0) > 0:
-			blocking[source.texture.resource_path] = source_id
-		else:
-			decor[source.texture.resource_path] = source_id
-	return {"decor": decor, "blocking": blocking}
-
-## Zones à garder libres pour le placement des props : bandes d'embrasure de
-## porte (calculées directement depuis room_data["open_sides"], sans attendre
-## le Room.set_open_sides() déféré -- cf. Room.TILE_SIZE_PX) et, pour les
-## salles spéciales/trésor, un cercle autour du meuble central (toujours à
-## rect.get_center() dans leurs templates, cf. AlchemyStation/WeaponStation/Chest).
-func _prop_exclusion_rects(room_data: Dictionary) -> Array[Rect2]:
-	var rect: Rect2 = _room_world_rect(room_data)
-	var door_span: float = Room.DOOR_TILES * Room.TILE_SIZE_PX
-	var exclusions: Array[Rect2] = []
-	for side in room_data["open_sides"]:
-		match side:
-			"north":
-				exclusions.append(Rect2(rect.position.x + (rect.size.x - door_span) / 2.0, rect.position.y, door_span, PROP_DOOR_CLEARANCE))
-			"south":
-				exclusions.append(Rect2(rect.position.x + (rect.size.x - door_span) / 2.0, rect.end.y - PROP_DOOR_CLEARANCE, door_span, PROP_DOOR_CLEARANCE))
-			"west":
-				exclusions.append(Rect2(rect.position.x, rect.position.y + (rect.size.y - door_span) / 2.0, PROP_DOOR_CLEARANCE, door_span))
-			"east":
-				exclusions.append(Rect2(rect.end.x - PROP_DOOR_CLEARANCE, rect.position.y + (rect.size.y - door_span) / 2.0, PROP_DOOR_CLEARANCE, door_span))
-	if room_data["is_special"] or room_data["is_treasure"]:
-		var center: Vector2 = rect.get_center()
-		exclusions.append(Rect2(center - Vector2.ONE * PROP_CENTER_CLEARANCE_RADIUS, Vector2.ONE * PROP_CENTER_CLEARANCE_RADIUS * 2.0))
-	return exclusions
-
-## Rejection sampling borné (PROP_PLACEMENT_ATTEMPTS) plutôt qu'une recherche
-## exhaustive de point valide -- cohérent avec le reste du placement procédural
-## de ce projet, qui n'a aucune garantie d'absence d'overlap pour le placement
-## de type "aléatoire dans la salle" (cf. _random_position_in_room, utilisée
-## telle quelle pour les ennemis). Ici en plus des zones d'exclusion, rejette
-## aussi tout candidat trop proche d'un prop déjà placé DANS CETTE SALLE
-## (placed_positions, cf. _prepare_room_props) -- sans quoi deux props immobiles
-## peuvent se chevaucher et fusionner visuellement en un bloc incohérent.
-## Dernier essai accepté tel quel si aucun n'est valide : un prop très
-## occasionnellement trop proche d'un autre plutôt qu'un blocage de génération.
-func _random_prop_position_in_room(room_data: Dictionary, placed_positions: Array[Vector2]) -> Vector2:
-	var exclusions: Array[Rect2] = _prop_exclusion_rects(room_data)
-	var candidate: Vector2 = _random_position_in_room(room_data)
-	for attempt in PROP_PLACEMENT_ATTEMPTS:
-		if _is_valid_prop_position(candidate, exclusions, placed_positions):
-			return candidate
-		candidate = _random_position_in_room(room_data)
-	return candidate
-
-## Une torche murale sur les murs nord ET sud (retour utilisateur : est/ouest
-## retirés -- cf. header ci-dessus, ce tileset n'a pas de bandeau de mur
-## visible sur ces côtés, seulement un fin bord de sol, donc rien pour y
-## "accrocher" une torche). ROOM_ROWS même raisonnement que ROOM_COLS
-## (Room.ROOM_HEIGHT_PX / Room.TILE_SIZE_PX, cf. le commentaire de
-## Room.DOOR_TILES : toujours 21x15 tuiles).
-const ROOM_ROWS: int = 15
-const WALL_LIGHT_SIDES: Array[String] = ["north", "south"]
-
-## Choisit UNE cellule (pas une position monde) pour la torche murale de ce
-## côté -- rangée de bord (cf. Room._paint_walls(), même repère que
-## WANG_ATLAS_BY_CORNERS/DOOR_TILES). Room n'existe pas encore à cet instant
-## (cf. _prepare_room_props(), appelée avant room_spawner.spawn() dans
-## _generate_dungeon()), donc ce calcul ne peut pas lire les champs privés de
-## la Room -- il reproduit la même formule que _paint_walls() à partir des
-## constantes publiques de Room (ROOM_COLS, DOOR_TILES). Exclut les 2 coins
-## et, si ce côté est structurellement ouvert, l'embrasure de porte (+ les 2
-## cases de bord plein qui l'encadrent, cf. Room._flatten_door_frame()).
-## Tableau vide si aucune cellule valide (salle trop petite ou porte trop
-## large) -- mieux qu'un blocage de génération, même philosophie que
-## _random_prop_position_in_room().
-func _wall_light_cell_for_side(room_data: Dictionary, side: String) -> Array[Vector2i]:
-	var door_col_start: int = (ROOM_COLS - Room.DOOR_TILES) / 2
-	var door_col_end: int = door_col_start + Room.DOOR_TILES
-	var open_here: bool = side in room_data["open_sides"]
-	var y: int = 0 if side == "north" else ROOM_ROWS - 1
-	var candidates: Array[Vector2i] = []
-	for x in range(1, ROOM_COLS - 1):
-		if open_here and x >= door_col_start - 1 and x <= door_col_end:
-			continue
-		candidates.append(Vector2i(x, y))
-	if candidates.is_empty():
-		return []
-	return [candidates[randi() % candidates.size()]]
-
-func _is_valid_prop_position(candidate: Vector2, exclusions: Array[Rect2], placed_positions: Array[Vector2]) -> bool:
-	for zone in exclusions:
-		if zone.has_point(candidate):
-			return false
-	for other in placed_positions:
-		if candidate.distance_to(other) < PROP_MIN_SPACING:
-			return false
-	return true
-
-## Phase 9.2 : contenu du coffre de la salle au trésor, tiré une fois à la
-## génération (pas à l'ouverture, pour rester déterministe côté hôte) --
-## chest.gd se contente de stocker ce dict et de le renvoyer tel quel à
-## request_open_chest() une fois interagi. Une seule pièce d'arme au plus
-## (pick_one pondéré, plus l'ancienne garantie "une de chaque"), de la
-## monnaie possible en plus ou à la place, et une très faible chance de
-## "coffre piège" (pas de loot, un ennemi apparaît à la place). Pourcentages
-## et montants sont un premier réglage, à ajuster en playtest.
-const CHEST_TRAP_CHANCE: float = 0.05
-const CHEST_WEAPON_PART_CHANCE: float = 0.65
-const CHEST_CURRENCY_CHANCE: float = 0.5
-# Tiré en nombre de pièces (cf. CURRENCY_PER_COIN plus bas), pas en montant
-# brut -- garantit que le total est toujours un multiple exact de
-# CURRENCY_PER_COIN, sans quoi une partie du montant tiré ne correspondrait
-# à aucune pièce physique réellement spawnable.
-const CHEST_CURRENCY_COINS_MIN: int = 3
-const CHEST_CURRENCY_COINS_MAX: int = 6
-# Dispersion autour du coffre lui-même (room_treasure.tscn place le noeud
-# Chest au centre de la salle, cf. _room_world_rect().get_center()) plutôt
-# qu'une position aléatoire dans toute la salle -- sinon les items pouvaient
-# apparaître très loin du coffre qu'on vient d'ouvrir.
-const CHEST_LOOT_SCATTER_RADIUS: float = 80.0
-
-func _random_position_near(center: Vector2, radius: float) -> Vector2:
-	return center + Vector2(randf_range(-radius, radius), randf_range(-radius, radius))
-
-## Phase 9.2 (dynamisme) : une pièce physique vaut toujours CURRENCY_PER_COIN
-## -- un montant total (récompense de kill, monnaie de coffre) se traduit en
-## N pièces séparées à ramasser plutôt qu'une seule au montant variable.
-## Division entière, au moins une pièce si amount > 0 (arrondi vers le bas
-## si amount n'est pas un multiple exact de CURRENCY_PER_COIN).
-const CURRENCY_PER_COIN: int = 5
-const CURRENCY_SCATTER_RADIUS: float = 40.0
-
-func _currency_coin_positions(amount: int, center: Vector2) -> Array[Vector2]:
-	var positions: Array[Vector2] = []
-	if amount <= 0:
-		return positions
-	var coin_count: int = maxi(1, amount / CURRENCY_PER_COIN)
-	for i in coin_count:
-		positions.append(_random_position_near(center, CURRENCY_SCATTER_RADIUS))
-	return positions
-
-func _roll_chest_contents(room_data: Dictionary) -> Dictionary:
-	var chest_position: Vector2 = _room_world_rect(room_data).get_center()
-	if randf() < CHEST_TRAP_CHANCE:
-		var enemy_table: SpawnTable = load(ENEMY_SPAWN_TABLE_PATH) as SpawnTable
-		return {
-			"is_trap": true,
-			"enemy_scene_path": enemy_table.pick_one(),
-			"position": chest_position,
-		}
-
-	var contents: Dictionary = {
-		"is_trap": false,
-		"weapon_part_path": "",
-		"currency": 0,
-		"position": _random_position_near(chest_position, CHEST_LOOT_SCATTER_RADIUS),
-	}
-	if randf() < CHEST_WEAPON_PART_CHANCE:
-		var weapon_part_table: SpawnTable = load(WEAPON_PART_SPAWN_TABLE_PATH) as SpawnTable
-		contents["weapon_part_path"] = weapon_part_table.pick_one()
-	if randf() < CHEST_CURRENCY_CHANCE:
-		contents["currency"] = randi_range(CHEST_CURRENCY_COINS_MIN, CHEST_CURRENCY_COINS_MAX) * CURRENCY_PER_COIN
-	return contents
+## Phase 11.2 / File Size : placement des décors/obstacles procéduraux
+## délégué à DungeonPropPlacer (scripts/dungeon/dungeon_prop_placer.gd) --
+## _prop_placer est l'unique instance partagée pour tout l'étage, cf. _ready().
 
 ## Phase 9.2 : appelé par EnemyBase._on_death() pour l'ennemi "porteur"
 ## désigné à la génération (cf. _generate_dungeon()) -- même pipeline que
@@ -787,7 +501,7 @@ func request_enemy_drop(position: Vector2, item_resource_path: String) -> void:
 		})
 
 ## Phase 9.2 (dynamisme) : la monnaie de kill devient N pickups physiques de
-## valeur fixe (cf. CURRENCY_PER_COIN/_currency_coin_positions ci-dessus),
+## valeur fixe (cf. LootRoller.CURRENCY_PER_COIN/currency_coin_positions),
 ## ramassés individuellement (Pickup._on_body_entered()) plutôt qu'un crédit
 ## instantané à toute la partie -- appelé par EnemyBase._on_death() pour
 ## CHAQUE ennemi tué (pas seulement les porteurs d'ingrédient). Même piège de
@@ -796,16 +510,16 @@ func request_enemy_drop(position: Vector2, item_resource_path: String) -> void:
 func request_currency_drop(position: Vector2, amount: int) -> void:
 	if not multiplayer.is_server():
 		return
-	for coin_position in _currency_coin_positions(amount, position):
+	for coin_position in _loot_roller.currency_coin_positions(amount, position):
 		pickup_spawner.spawn.call_deferred({
 			"item_type": "currency",
-			"currency_amount": CURRENCY_PER_COIN,
+			"currency_amount": LootRoller.CURRENCY_PER_COIN,
 			"position": coin_position,
 		})
 
 ## Phase 9.2 : appelé par chest.gd à l'ouverture du coffre de la salle au
 ## trésor -- rien n'est spawné avant ce moment. `contents` vient de
-## _roll_chest_contents() (tiré à la génération, cf. _generate_dungeon()).
+## LootRoller.roll_chest_contents() (tiré à la génération, cf. _generate_dungeon()).
 func request_open_chest(contents: Dictionary) -> void:
 	if not multiplayer.is_server():
 		return
@@ -832,10 +546,10 @@ func request_open_chest(contents: Dictionary) -> void:
 		})
 
 	var currency: int = contents.get("currency", 0)
-	for coin_position in _currency_coin_positions(currency, contents["position"] as Vector2):
+	for coin_position in _loot_roller.currency_coin_positions(currency, contents["position"] as Vector2):
 		pickup_spawner.spawn({
 			"item_type": "currency",
-			"currency_amount": CURRENCY_PER_COIN,
+			"currency_amount": LootRoller.CURRENCY_PER_COIN,
 			"position": coin_position,
 		})
 
@@ -859,19 +573,19 @@ func _spawn_pickup(data: Dictionary) -> Node:
 	
 ## N'est plus emprunté par aucun prop de ce projet à ce jour : les props
 ## décoratifs ET bloquants sont désormais tous des tuiles (cf.
-## _prepare_room_props()/Room.set_decor_props()/set_blocking_props()), y
-## compris la torche/cristal/brasero murale (cf. WALL_LIGHT_TEXTURE_PATHS) --
+## DungeonPropPlacer.prepare_room_props()/Room.set_decor_props()/set_blocking_props()),
+## y compris la torche/cristal/brasero murale (cf. DungeonPropPlacer.WALL_LIGHT_TEXTURE_PATHS) --
 ## sa lumière (WallLight, cf. scripts/props/wall_light.gd) est posée par
 ## Room._setup_wall_light(), pas via prop_spawner. Conservé pour un futur
 ## prop avec script/comportement propre (interaction, physique non-statique)
-## -- celui-là devra rester une scène, cf. _prop_tile_sources_by_texture().
+## -- celui-là devra rester une scène, cf. DungeonPropPlacer.prop_tile_sources_by_texture().
 func _spawn_prop(data: Dictionary) -> Node:
 	var prop: Node2D = (load(data["scene_path"]) as PackedScene).instantiate()
 	prop.position = data["position"]
 	return prop
 
 func _spawn_player(id: int) -> Node:
-	var player = PlayerManager.spawnPlayer(id)
+	var player: Node = PlayerManager.spawn_player(id)
 	# La salle de départ est toujours à la cellule de grille (0,0), donc
 	# son centre monde est constant : pas besoin de connaître la layout ici.
 	player.position = ROOM_CELL_SIZE / 2
@@ -1051,7 +765,7 @@ func _extra_enemy_rolls_for_floor(floor_level: int) -> int:
 ## Phase 11 : pool thématique (props + tileset) de cet étage. Pure fonction
 ## de current_floor (déjà répliqué avant l'entrée dans cette scène, cf.
 ## commentaire sur _generate_dungeon()) -- appelable identiquement depuis
-## _prepare_room_props() (hôte uniquement) ET _spawn_room() (tourne sur CHAQUE
+## DungeonPropPlacer.prepare_room_props() (hôte uniquement) ET _spawn_room() (tourne sur CHAQUE
 ## pair, cf. MultiplayerSpawner), sans avoir besoin d'être glissée dans
 ## room_data pour rester synchronisée entre pairs.
 func _pool_index_for_floor(floor_level: int) -> int:

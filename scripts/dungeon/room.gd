@@ -59,30 +59,9 @@ const OPPOSITE_SIDE: Dictionary = {
 	"west": "east",
 }
 
-const TILE_FLOOR: Vector2i = Vector2i(2, 1)
-## Index = coin_NW*8 + coin_NE*4 + coin_SW*2 + coin_SE*1 (1 = mur, 0 = sol),
-## valeur = coordonnée atlas dans dungeon_stone_terrain.tres. Généré depuis
-## les métadonnées PixelLab (assets/tiles/dungeon_stone_metadata.json) —
-## set_cell() direct plutôt que le système de terrain de Godot, cf. bug du
-## sol (terrains_peering_bit non fiable sans pouvoir tester dans l'éditeur).
-const WANG_ATLAS_BY_CORNERS: Dictionary = {
-	0: Vector2i(2, 1),
-	1: Vector2i(3, 1),
-	2: Vector2i(2, 2),
-	3: Vector2i(1, 2),
-	4: Vector2i(2, 0),
-	5: Vector2i(3, 2),
-	6: Vector2i(0, 1),
-	7: Vector2i(3, 3),
-	8: Vector2i(1, 1),
-	9: Vector2i(2, 3),
-	10: Vector2i(1, 0),
-	11: Vector2i(0, 2),
-	12: Vector2i(3, 0),
-	13: Vector2i(0, 0),
-	14: Vector2i(1, 3),
-	15: Vector2i(0, 3),
-}
+## Cf. WallTilePainter (scripts/dungeon/wall_tile_painter.gd, extrait de ce
+## fichier pour File Size) pour TILE_FLOOR/WANG_ATLAS_BY_CORNERS/*_EDGE_INDEX
+## et la pure math de placement des tuiles de mur.
 ## Dimensions fixes de tous les templates de salle, en pixels -- remplace
 ## l'ancienne lecture dynamique de la taille du mur "Closed" (supprimé,
 ## cf. header) maintenant que plus aucun node de la scène ne porte cette
@@ -103,13 +82,6 @@ const DOOR_TILES: int = 5
 ## de porte (Phase 11.2, placement des props) sans attendre l'entrée en arbre
 ## de cette Room (_cols/_rows ne sont connus qu'après _paint_floor()).
 const TILE_SIZE_PX: float = 64.0
-## Tuiles "bord plein" (WANG_ATLAS_BY_CORNERS), utilisées pour forcer un pan
-## de mur droit aux deux cases qui encadrent une embrasure -- cf.
-## _flatten_door_frame().
-const NORTH_EDGE_INDEX: int = 12
-const SOUTH_EDGE_INDEX: int = 3
-const WEST_EDGE_INDEX: int = 10
-const EAST_EDGE_INDEX: int = 5
 
 @onready var _trigger: Area2D = $RoomTrigger
 @onready var _floor: TileMapLayer = get_node_or_null("Floor")
@@ -169,6 +141,10 @@ var _pending_blocking_source_ids: Array = []
 ## donc le mécanisme de réplication du RoomSpawner plutôt qu'un typage strict.
 var _pending_wall_light_cells: Array = []
 var _pending_wall_light_color: Color = Color.WHITE
+## Cf. WallTilePainter : pure math de placement des tuiles de mur, extraite
+## de ce fichier (File Size) -- aucune dépendance à l'arbre de scène, une
+## seule instance partagée suffit pour toute la durée de vie de cette Room.
+var _wall_painter := WallTilePainter.new()
 
 
 func _ready() -> void:
@@ -427,7 +403,7 @@ func _paint_floor() -> void:
 	_floor.position = Vector2.ZERO
 	for x in range(_cols):
 		for y in range(_rows):
-			_floor.set_cell(Vector2i(x, y), 0, TILE_FLOOR)
+			_floor.set_cell(Vector2i(x, y), 0, WallTilePainter.TILE_FLOOR)
 
 
 ## Peint la bordure de murs, avec embrasure de porte sur les côtés
@@ -444,56 +420,9 @@ func _paint_floor() -> void:
 func _paint_walls() -> void:
 	if _floor == null or _floor.tile_set == null or _cols == 0:
 		return
-	var door_col_start: int = (_cols - DOOR_TILES) / 2
-	var door_col_end: int = door_col_start + DOOR_TILES
-	var door_row_start: int = (_rows - DOOR_TILES) / 2
-	var door_row_end: int = door_row_start + DOOR_TILES
-	var open_north: bool = "north" in _open_sides
-	var open_south: bool = "south" in _open_sides
-	var open_west: bool = "west" in _open_sides
-	var open_east: bool = "east" in _open_sides
-
-	var is_wall_vertex: Callable = func(vx: int, vy: int) -> bool:
-		if vy == 0 and open_north and vx >= door_col_start and vx <= door_col_end:
-			return false
-		if vy == _rows and open_south and vx >= door_col_start and vx <= door_col_end:
-			return false
-		if vx == 0 and open_west and vy >= door_row_start and vy <= door_row_end:
-			return false
-		if vx == _cols and open_east and vy >= door_row_start and vy <= door_row_end:
-			return false
-		return vx == 0 or vx == _cols or vy == 0 or vy == _rows
-
-	for x in range(_cols):
-		for y in range(_rows):
-			var nw: bool = is_wall_vertex.call(x, y)
-			var ne: bool = is_wall_vertex.call(x + 1, y)
-			var sw: bool = is_wall_vertex.call(x, y + 1)
-			var se: bool = is_wall_vertex.call(x + 1, y + 1)
-			if not (nw or ne or sw or se):
-				continue
-			var corner_index: int = int(nw) * 8 + int(ne) * 4 + int(sw) * 2 + int(se)
-			corner_index = _flatten_door_frame(x, y, corner_index, open_north, open_south, open_west, open_east, door_col_start, door_col_end, door_row_start, door_row_end)
-			_floor.set_cell(Vector2i(x, y), 0, WANG_ATLAS_BY_CORNERS[corner_index])
-
-
-## Les deux cases juste avant/après une embrasure (door_col_start-1 et
-## door_col_end pour un côté horizontal, équivalent en lignes pour un côté
-## vertical) n'ont qu'un seul sommet "mur" côté salle -- le modèle de coins
-## Wang y calcule donc un angle diagonal isolé (cf. WANG_ATLAS_BY_CORNERS)
-## au lieu d'un pan de mur droit jusqu'à l'embrasure. On force ici la tuile
-## de bord plein correspondante sur ces deux cases précises seulement, sans
-## toucher aux véritables coins extérieurs de la salle.
-func _flatten_door_frame(x: int, y: int, corner_index: int, open_north: bool, open_south: bool, open_west: bool, open_east: bool, door_col_start: int, door_col_end: int, door_row_start: int, door_row_end: int) -> int:
-	if open_north and y == 0 and (x == door_col_start - 1 or x == door_col_end):
-		return NORTH_EDGE_INDEX
-	if open_south and y == _rows - 1 and (x == door_col_start - 1 or x == door_col_end):
-		return SOUTH_EDGE_INDEX
-	if open_west and x == 0 and (y == door_row_start - 1 or y == door_row_end):
-		return WEST_EDGE_INDEX
-	if open_east and x == _cols - 1 and (y == door_row_start - 1 or y == door_row_end):
-		return EAST_EDGE_INDEX
-	return corner_index
+	var wall_cells: Dictionary = _wall_painter.compute_wall_cells(_cols, _rows, DOOR_TILES, _open_sides)
+	for cell in wall_cells:
+		_floor.set_cell(cell, 0, wall_cells[cell])
 
 
 func set_open_sides(open_sides: Array) -> void:
@@ -637,16 +566,16 @@ func _set_door_gap_tiles(side: String, locked: bool) -> void:
 		match side:
 			"north":
 				coords = Vector2i(door_col_start + i, 0)
-				atlas_coords = WANG_ATLAS_BY_CORNERS[NORTH_EDGE_INDEX] if locked else TILE_FLOOR
+				atlas_coords = WallTilePainter.WANG_ATLAS_BY_CORNERS[WallTilePainter.NORTH_EDGE_INDEX] if locked else WallTilePainter.TILE_FLOOR
 			"south":
 				coords = Vector2i(door_col_start + i, _rows - 1)
-				atlas_coords = WANG_ATLAS_BY_CORNERS[SOUTH_EDGE_INDEX] if locked else TILE_FLOOR
+				atlas_coords = WallTilePainter.WANG_ATLAS_BY_CORNERS[WallTilePainter.SOUTH_EDGE_INDEX] if locked else WallTilePainter.TILE_FLOOR
 			"west":
 				coords = Vector2i(0, door_row_start + i)
-				atlas_coords = WANG_ATLAS_BY_CORNERS[WEST_EDGE_INDEX] if locked else TILE_FLOOR
+				atlas_coords = WallTilePainter.WANG_ATLAS_BY_CORNERS[WallTilePainter.WEST_EDGE_INDEX] if locked else WallTilePainter.TILE_FLOOR
 			"east":
 				coords = Vector2i(_cols - 1, door_row_start + i)
-				atlas_coords = WANG_ATLAS_BY_CORNERS[EAST_EDGE_INDEX] if locked else TILE_FLOOR
+				atlas_coords = WallTilePainter.WANG_ATLAS_BY_CORNERS[WallTilePainter.EAST_EDGE_INDEX] if locked else WallTilePainter.TILE_FLOOR
 			_:
 				continue
 		_floor.call_deferred("set_cell", coords, 0, atlas_coords)

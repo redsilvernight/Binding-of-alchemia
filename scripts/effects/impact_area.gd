@@ -18,7 +18,7 @@ func apply(target: Node, source_position: Vector2, _shooter_id: int = 0) -> void
 	var tree := target.get_tree()
 	if tree == null:
 		return
-	var enemies = tree.get_nodes_in_group("Enemies")
+	var enemies: Array[Node] = tree.get_nodes_in_group("Enemies")
 	for enemy in enemies:
 		if enemy.global_position.distance_to(source_position) <= radius:
 			_apply_damage_over_time(enemy, damage, duration)

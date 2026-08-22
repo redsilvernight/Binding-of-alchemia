@@ -65,7 +65,7 @@ var is_paused: bool = false
 
 # Persistance des objets de run entre étages (hors scope roadmap, retour
 # utilisateur) : Inventory/Weapon sont des enfants de Player, recréés à
-# chaque changement de scène (cf. PlayerManager.spawnPlayer) -- sans ce
+# chaque changement de scène (cf. PlayerManager.spawn_player) -- sans ce
 # cache, une victoire de boss (donjon -> hub -> donjon suivant) perdait
 # ingrédients et mixture chargée exactement comme une mort, ce qui n'est
 # pas voulu : seule une mort doit faire perdre les objets de la run.

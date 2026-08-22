@@ -33,7 +33,7 @@ extends Node2D
 ##
 ## Props peints via Room.set_decor_props()/set_blocking_props() -- même
 ## indirection texture -> source_id -> decor/blocking que
-## game.gd::_prop_tile_sources_by_texture() (collision_polygons_count(0) > 0
+## DungeonPropPlacer.prop_tile_sources_by_texture() (collision_polygons_count(0) > 0
 ## = bloquant), donc la collision (physics_layer_0) et les ombres portées
 ## (occlusion_layer_0, déjà présentes sur chaque tuile dans les .tres) sont
 ## identiques au vrai jeu, aucune forme réinventée ici. Filtré aux seules
@@ -49,7 +49,7 @@ extends Node2D
 ## game.gd) pour l'assombrissement ambiant (retour utilisateur : "je veux
 ## voir les ombres des props").
 ##
-## Joueur ajouté via PlayerManager.spawnPlayer(1) (même pattern que
+## Joueur ajouté via PlayerManager.spawn_player(1) (même pattern que
 ## mixture_test_room_controller.gd::_spawn_player), spawné DANS la première
 ## salle (Cave) : suppose un lancement solo (aucun pair réseau), l'absence
 ## de multiplayer_peer fait tourner Godot en mode hors-ligne (is_server() ==
@@ -226,7 +226,7 @@ func _add_door(room: Room, side_name: String, position: Vector2) -> void:
 
 ## Dérivé entièrement du TileSet lui-même (aucun id/chemin en dur) : toute
 ## source d'atlas dont la texture vit sous PROPS_TEXTURE_DIR est un prop, et
-## "blocking" suit la même règle que game.gd::_prop_tile_sources_by_texture()
+## "blocking" suit la même règle que DungeonPropPlacer.prop_tile_sources_by_texture()
 ## (un polygone sur physics_layer_0 = prop bloquant).
 func _prop_sources(tile_set: TileSet) -> Array[Dictionary]:
 	var sources: Array[Dictionary] = []
@@ -283,7 +283,7 @@ func _add_theme_label(room: Room, theme_name: String) -> void:
 ## pilote la vue -- pas de caméra libre séparée ici, le but est de marcher
 ## dans les props, pas de les survoler.
 func _spawn_player(spawn_position: Vector2, players: Node2D, hud_layer: Node2D) -> void:
-	var player: Node = PlayerManager.spawnPlayer(1)
+	var player: Node = PlayerManager.spawn_player(1)
 	player.instance_hud.connect(func(hud: Node) -> void: hud_layer.add_child(hud))
 	players.add_child(player)
 	player.position = spawn_position

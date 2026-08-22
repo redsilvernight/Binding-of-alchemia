@@ -2,7 +2,7 @@ extends Room
 ## Scène hub (Phase 8.1) : écran "hors run", chargé quand tous les joueurs
 ## meurent (cf. game.gd._check_all_players_dead / RunManager.end_run) et
 ## point de départ d'une nouvelle run via RunStartStation. Spawn minimal des
-## joueurs, réutilise PlayerManager.spawnPlayer comme game.gd — pas de
+## joueurs, réutilise PlayerManager.spawn_player comme game.gd — pas de
 ## donjon, d'ennemis ni de pickups ici, ces systèmes restent propres à
 ## game.gd.
 ##
@@ -174,7 +174,7 @@ func _ready() -> void:
 
 
 func _spawn_player(id: int) -> Node:
-	var player = PlayerManager.spawnPlayer(id)
+	var player = PlayerManager.spawn_player(id)
 	player.instance_hud.connect(_hud_instance)
 	return player
 

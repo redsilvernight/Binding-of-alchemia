@@ -78,7 +78,7 @@ func _setup_vial_rack() -> void:
 ## child_entered_tree (pas le groupe "Players") : ce signal tourne au moment
 ## de l'entrée en arbre, avant que Player._ready() n'ait appelé
 ## add_to_group("Players") -- mais ce conteneur ne contient de toute façon
-## jamais que des joueurs (cf. PlayerManager.spawnPlayer, qui nomme déjà le
+## jamais que des joueurs (cf. PlayerManager.spawn_player, qui nomme déjà le
 ## noeud str(peer_id) avant l'add_child), donc pas besoin de ce groupe ici.
 func _on_player_added(player: Node) -> void:
 	if not player.name.is_valid_int():

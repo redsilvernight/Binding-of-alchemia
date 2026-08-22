@@ -62,12 +62,12 @@ func _process(delta: float) -> void:
 	time_since_last_mixture_fire += delta
 
 	if time_since_last_mixture_fire >= tank.regen_delay and current_mixture_ammo < mixture_max_capacity:
-		var previous_ammo = current_mixture_ammo
+		var previous_ammo: float = current_mixture_ammo
 		current_mixture_ammo = min(current_mixture_ammo + mixture_regen_rate * delta, mixture_max_capacity)
 		if current_mixture_ammo != previous_ammo:
 			_broadcast_ammo()
 
-func equip(piece) -> void:
+func equip(piece: Resource) -> void:
 	if piece is GunBarrelWater:
 		barrel_water = piece
 	elif piece is GunBarrelMixture:
@@ -119,9 +119,9 @@ func _rpc_set_mixture_ingredients(ingredient_paths: Array[String]) -> void:
 	if is_multiplayer_authority(): # même garde que _rpc_equip
 		AudioManager.play_sfx("craft_success")
 
-func _recalculate_stats():
-	var base_speed_water = 0.0
-	var base_speed_mixture = 0.0
+func _recalculate_stats() -> void:
+	var base_speed_water: float = 0.0
+	var base_speed_mixture: float = 0.0
 	if barrel_water:
 		water_fire_rate = barrel_water.fire_rate
 		water_damage = barrel_water.base_damage
@@ -147,9 +147,9 @@ func _recalculate_stats():
 	else:
 		mixture_max_capacity = 0
 		mixture_regen_rate = 0
-	var speed_modifier = 1.0
-	var range_modifier = 0.0
-	var core_damage = 0.0
+	var speed_modifier: float = 1.0
+	var range_modifier: float = 0.0
+	var core_damage: float = 0.0
 	if core:
 		speed_modifier = core.projectile_speed_modifier
 		range_modifier = core.range_modifier
