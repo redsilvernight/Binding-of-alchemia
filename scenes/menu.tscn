@@ -31,9 +31,18 @@ script = ExtResource("1_yqeox")
 layout_mode = 2
 text = "Host"
 
+[node name="CodeInput" type="LineEdit" parent="Panel/MultiplayerVBox"]
+layout_mode = 2
+placeholder_text = "Code de session"
+
 [node name="Join" type="Button" parent="Panel/MultiplayerVBox" unique_id=839718542]
 layout_mode = 2
 text = "Join"
+
+[node name="StatusLabel" type="Label" parent="Panel/MultiplayerVBox"]
+layout_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="Back" type="Button" parent="Panel/MultiplayerVBox"]
 layout_mode = 2

@@ -72,11 +72,17 @@ func _update_target() -> void:
 ## distances (EnemyStateRangedAttack), le contact ne devrait plus se
 ## produire normalement, mais la garde évite un coup gratuit si un joueur
 ## fonce dedans pendant la transition.
-func _on_collision_area_body_entered(body: Node2D) -> void:
+## area_entered (pas body_entered) : le joueur encaisse les dégâts via sa
+## Hurtbox (Area2D, cf. scenes/player.tscn), pas via son CharacterBody2D --
+## sa collision physique est réduite aux jambes (retour utilisateur), la
+## cible réelle est donc le PARENT de la zone détectée (le joueur), pas la
+## zone elle-même.
+func _on_collision_area_area_entered(area: Area2D) -> void:
 	if is_dead:
 		return
 	if _phase != 1:
 		return
+	var body: Node2D = area.get_parent()
 	if body.is_in_group("Players"):
 		body.take_damage(contact_damage)
 		var direction: Vector2 = body.global_position - global_position

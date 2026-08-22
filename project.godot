@@ -25,12 +25,17 @@ MetaProgression="*res://scripts/autoload/meta_progression.gd"
 SaveManager="*res://scripts/autoload/save_manager.gd"
 Settings="*res://scripts/autoload/settings.gd"
 AudioManager="*res://scripts/autoload/audio_manager.gd"
+GameBoarder="*uid://baavnbd557qu3"
 
 [display]
 
 window/size/mode=3
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gameboarder_plugin/plugin.cfg")
 
 [input]
 

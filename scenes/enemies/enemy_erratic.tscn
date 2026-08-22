@@ -7,6 +7,10 @@
 radius = 82.0
 height = 216.0
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_legs_CapsuleShape2D_k5o3q"]
+radius = 22
+height = 50.6
+
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
@@ -31,7 +35,7 @@ metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=148564232]
 position = Vector2(12, 4)
-shape = SubResource("CapsuleShape2D_k5o3q")
+shape = SubResource("CapsuleShape2D_legs_CapsuleShape2D_k5o3q")
 
 [node name="CollisionArea" type="Area2D" parent="." unique_id=1335626768]
 collision_layer = 2
@@ -44,4 +48,13 @@ shape = SubResource("CapsuleShape2D_k5o3q")
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=259331352]
 replication_config = SubResource("SceneReplicationConfig_1")
 
-[connection signal="body_entered" from="CollisionArea" to="." method="_on_collision_area_body_entered"]
+[connection signal="area_entered" from="CollisionArea" to="." method="_on_collision_area_area_entered"]
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 128
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(12, 4)
+shape = SubResource("CapsuleShape2D_k5o3q")

@@ -1,12 +1,7 @@
-[gd_resource type="TileSet" format=3]
+[gd_resource type="TileSet" format=3 uid="uid://cqbsuy2wxtoud"]
 
-[ext_resource type="Texture2D" path="res://assets/tiles/hub_shop_sheet.png" id="1_tex"]
-[ext_resource type="Texture2D" path="res://assets/tiles/hub_shop_lantern.png" id="2_lantern_tex"]
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_lantern"]
-texture = ExtResource("2_lantern_tex")
-texture_region_size = Vector2i(64, 80)
-0:0/0 = 0
+[ext_resource type="Texture2D" uid="uid://iw7chx7uc67l" path="res://assets/tiles/hub_shop_sheet.png" id="1_tex"]
+[ext_resource type="Texture2D" uid="uid://dji3mkoaaanpf" path="res://assets/tiles/hub_shop_lantern.png" id="2_lantern_tex"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1"]
 texture = ExtResource("1_tex")
@@ -122,6 +117,11 @@ texture_region_size = Vector2i(64, 64)
 3:3/0/terrains_peering_bit/bottom_left_corner = 1
 3:3/0/terrains_peering_bit/top_left_corner = 0
 3:3/0/terrains_peering_bit/top_right_corner = 1
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_lantern"]
+texture = ExtResource("2_lantern_tex")
+texture_region_size = Vector2i(64, 80)
+0:0/0 = 0
 
 [resource]
 tile_size = Vector2i(64, 64)

@@ -91,7 +91,37 @@ func _process_homing(delta: float) -> void:
 		rotation = velocity.angle()
 	global_position += velocity * delta
 
+## Ignore un corps qui porte une Hurtbox (joueur ET ennemis désormais, cf.
+## scenes/player.tscn et scenes/enemies/*.tscn) -- reste le seul chemin pour
+## tout le reste (murs/props qui ne portent pas take_damage() mais doivent
+## quand même faire disparaître la balle avec son SFX/VFX d'impact, cf.
+## _resolve_hit()). Sans cette garde, un tir qui touche encore la collision
+## physique réduite aux jambes déclencherait AUSSI ce chemin-ci au même
+## instant que _on_area_entered (Hurtbox) : dégâts comptés deux fois pour un
+## seul impact. has_node("Hurtbox") plutôt qu'un groupe ("Players") codé en
+## dur : marche pour toute entité migrée vers ce pattern, joueur ou ennemi,
+## sans liste à maintenir ici.
 func _on_body_entered(body: Node) -> void:
+	if body.has_node("Hurtbox"):
+		return
+	_resolve_hit(body)
+
+
+## Joueur ET ennemis détectent les dégâts via leur Hurtbox (Area2D) plutôt
+## que directement via leur CharacterBody2D -- leur collision "physique"
+## (celle que body_entered voit) est désormais réduite aux jambes (retour
+## utilisateur : marcher devant/derrière un obstacle sans être bloqué par
+## toute sa hauteur), donc trop petite pour rester une cible de dégâts
+## cohérente avec le sprite affiché. La cible réelle est le PARENT de la
+## Hurtbox, pas la Hurtbox elle-même : c'est lui qui porte take_damage().
+func _on_area_entered(area: Area2D) -> void:
+	_resolve_hit(area.get_parent())
+
+
+## Commun à body_entered (murs/ennemis/joueur en collision "physique" pleine
+## taille, ex: enemy_projectile.tscn) et area_entered (Hurtbox du joueur,
+## cf. ci-dessus) -- même résolution de dégâts dans les deux cas.
+func _resolve_hit(target: Node) -> void:
 	# SFX joué AVANT la garde hôte (Phase 9.4) : ce noeud existe en vrai chez
 	# chaque pair (spawné via projectile_spawner, cf. game.gd), sa trajectoire
 	# est simulée localement de façon déterministe à partir des mêmes données
@@ -109,8 +139,8 @@ func _on_body_entered(body: Node) -> void:
 	# ingrédient de la mixture ajoute son propre pouvoir au tir de base
 	# plutôt que de le remplacer. Sans mixture chargée, impact_effect est
 	# null (comportement inchangé : seuls les dégâts d'arme s'appliquent).
-	if body.has_method("take_damage"):
-		body.take_damage(damage)
+	if target.has_method("take_damage"):
+		target.take_damage(damage)
 	if impact_effect != null:
-		impact_effect.apply(body, global_position, shooter_id)
+		impact_effect.apply(target, global_position, shooter_id)
 	queue_free()

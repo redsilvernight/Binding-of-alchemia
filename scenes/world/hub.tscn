@@ -63,6 +63,7 @@ shape = SubResource("RoomTriggerShape")
 
 [node name="Players" type="Node2D" parent="."]
 position = Vector2(672, 700)
+y_sort_enabled = true
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
 spawn_path = NodePath("../Players")

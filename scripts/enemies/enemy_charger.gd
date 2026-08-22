@@ -61,9 +61,15 @@ func _play_telegraph_animation(direction: Vector2) -> void:
 	_last_facing_direction = direction
 	sprite.play(StringName("attack-" + FacingDirection.label_for(direction)))
 
-func _on_collision_area_body_entered(body: Node2D) -> void:
+## area_entered (pas body_entered) : le joueur encaisse les dégâts via sa
+## Hurtbox (Area2D, cf. scenes/player.tscn), pas via son CharacterBody2D --
+## sa collision physique est réduite aux jambes (retour utilisateur), la
+## cible réelle est donc le PARENT de la zone détectée (le joueur), pas la
+## zone elle-même.
+func _on_collision_area_area_entered(area: Area2D) -> void:
 	if is_dead:
 		return
+	var body: Node2D = area.get_parent()
 	if body.is_in_group("Players"):
 		body.take_damage(damage)
 		AudioManager.play_sfx("enemy_attack_melee")

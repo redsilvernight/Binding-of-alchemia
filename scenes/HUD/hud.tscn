@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://c1e0yn1njhaj4" path="res://scripts/HUD/mixture_bar.gd" id="2_glunx"]
 [ext_resource type="PackedScene" path="res://scenes/ui/minimap.tscn" id="3_minimap"]
 [ext_resource type="Script" path="res://scripts/HUD/floor_label.gd" id="4_floorlabel"]
+[ext_resource type="Script" path="res://scripts/HUD/session_code_label.gd" id="5_sessioncode"]
 
 [node name="HUD" type="CanvasLayer" unique_id=39818824]
 
@@ -39,3 +40,16 @@ offset_bottom = 18.0
 grow_horizontal = 0
 horizontal_alignment = 2
 script = ExtResource("4_floorlabel")
+
+[node name="SessionCodeLabel" type="Label" parent="."]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -220.0
+offset_top = 22.0
+offset_right = -20.0
+offset_bottom = 38.0
+grow_horizontal = 0
+horizontal_alignment = 2
+script = ExtResource("5_sessioncode")

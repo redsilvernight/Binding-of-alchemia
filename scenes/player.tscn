@@ -1511,6 +1511,10 @@ animations = [{
 radius = 33.0
 height = 122.0
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_legs"]
+radius = 13.0
+height = 34.0
+
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_g2els"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
@@ -1544,6 +1548,15 @@ animation = &"idle-south-west"
 frame = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=103710012]
+position = Vector2(-1, 46)
+shape = SubResource("CapsuleShape2D_legs")
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=1092837465]
+collision_layer = 1
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=1092837466]
 position = Vector2(-1, 2)
 shape = SubResource("CapsuleShape2D_p5nqv")
 

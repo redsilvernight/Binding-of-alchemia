@@ -9,6 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+y_sort_enabled = true
 script = ExtResource("1_uwrxv")
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
@@ -20,13 +21,16 @@ energy = 0.35
 shadow_enabled = false
 
 [node name="Rooms" type="Node2D" parent="."]
+y_sort_enabled = true
 
 [node name="RoomSpawner" type="MultiplayerSpawner" parent="."]
 spawn_path = NodePath("../Rooms")
 
 [node name="Players" type="Node2D" parent="." unique_id=1234893558]
+y_sort_enabled = true
 
 [node name="Ennemis" type="Node2D" parent="." unique_id=1962719279]
+y_sort_enabled = true
 
 [node name="Pickups" type="Node2D" parent="."]
 

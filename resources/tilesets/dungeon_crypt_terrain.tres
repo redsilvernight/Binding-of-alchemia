@@ -146,45 +146,49 @@ texture = ExtResource("5_decor_gravats")
 texture_region_size = Vector2i(128, 128)
 0:0/0 = 0
 
-[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_sarcophage"]
-polygon = PackedVector2Array(-48, -32, 48, -32, 48, 32, -48, 32)
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_crypt_sarcophage"]
+polygon = PackedVector2Array(13.0, -37.0, -48.0, -30.0, -50.0, -26.0, -47.0, -21.0, -59.0, -16.0, -58.0, 25.0, -24.0, 35.0, 53.0, 20.0, 53.0, -26.0, 30.0, -37.0)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_block_sarcophage"]
 texture = ExtResource("6_block_sarcophage")
 texture_region_size = Vector2i(160, 96)
 0:0/0 = 0
-0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-48, -32, 48, -32, 48, 32, -48, 32)
-0:0/0/occlusion_layer_0/polygon = SubResource("OccluderPolygon2D_sarcophage")
+0:0/0/occlusion_layer_0/polygon_0/polygon = SubResource("OccluderPolygon2D_crypt_sarcophage")
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-50.0, -27.0, -47.0, -21.0, -59.0, -16.0, -57.0, 26.0, -24.0, 35.0, 54.0, 19.0, 55.0, -18.0, 52.0, -27.0)
+0:0/0/y_sort_origin = -29
 
-[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_pilier"]
-polygon = PackedVector2Array(-40, -40, 40, -40, 40, 40, -40, 40)
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_crypt_pilier"]
+polygon = PackedVector2Array(-7.0, -75.0, 22.0, -71.0, 24.0, -58.0, 16.0, -51.0, 17.0, -46.0, 14.0, -44.0, 14.0, 42.0, 21.0, 47.0, 20.0, 50.0, 26.0, 56.0, 45.0, 62.0, 44.0, 68.0, 33.0, 73.0, -12.0, 76.0, -33.0, 73.0, -45.0, 66.0, -45.0, 62.0, -39.0, 58.0, -27.0, 57.0, -20.0, 50.0, -21.0, 47.0, -14.0, 43.0, -14.0, -43.0, -17.0, -46.0, -16.0, -51.0, -24.0, -61.0, -22.0, -71.0)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_block_pilier"]
 texture = ExtResource("7_block_pilier")
 texture_region_size = Vector2i(128, 160)
 0:0/0 = 0
-0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-40, -40, 40, -40, 40, 40, -40, 40)
-0:0/0/occlusion_layer_0/polygon = SubResource("OccluderPolygon2D_pilier")
+0:0/0/occlusion_layer_0/polygon_0/polygon = SubResource("OccluderPolygon2D_crypt_pilier")
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-24.0, 53.0, -27.0, 57.0, -39.0, 58.0, -45.0, 62.0, -44.0, 68.0, -29.0, 74.0, 13.0, 76.0, 33.0, 73.0, 45.0, 66.0, 44.0, 61.0, 26.0, 56.0, 24.0, 53.0)
+0:0/0/y_sort_origin = 12
 
-[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_statue"]
-polygon = PackedVector2Array(-48, -32, 48, -32, 48, 32, -48, 32)
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_crypt_statue"]
+polygon = PackedVector2Array(-10.0, -4.0, -23.0, -2.0, -31.0, 7.0, -45.0, 4.0, -51.0, 6.0, -53.0, 22.0, -45.0, 37.0, -40.0, 37.0, -36.0, 31.0, -25.0, 29.0, -20.0, 35.0, -7.0, 36.0, -4.0, 33.0, 2.0, 34.0, 6.0, 29.0, 40.0, 24.0, 41.0, 27.0, 45.0, 27.0, 49.0, 23.0, 55.0, 24.0, 60.0, 18.0, 59.0, 5.0, 54.0, 1.0, 39.0, -1.0, 28.0, 3.0, 5.0, 3.0, -5.0, -4.0)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_block_statue"]
 texture = ExtResource("8_block_statue")
 texture_region_size = Vector2i(160, 128)
 0:0/0 = 0
-0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-48, -32, 48, -32, 48, 32, -48, 32)
-0:0/0/occlusion_layer_0/polygon = SubResource("OccluderPolygon2D_statue")
+0:0/0/occlusion_layer_0/polygon_0/polygon = SubResource("OccluderPolygon2D_crypt_statue")
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-28.0, 2.0, 56.0, 2.0, 60.0, 8.0, 60.0, 18.0, 55.0, 24.0, 49.0, 23.0, 45.0, 27.0, 41.0, 27.0, 40.0, 24.0, 6.0, 29.0, 2.0, 34.0, -4.0, 33.0, -7.0, 36.0, -20.0, 35.0, -25.0, 29.0, -36.0, 31.0, -40.0, 37.0, -45.0, 37.0, -53.0, 22.0, -51.0, 6.0, -45.0, 4.0, -31.0, 7.0)
+0:0/0/y_sort_origin = -27
 
-[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_cage"]
-polygon = PackedVector2Array(-40, -40, 40, -40, 40, 40, -40, 40)
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_crypt_cage"]
+polygon = PackedVector2Array(-1.0, -59.0, 43.0, -37.0, 42.0, 24.0, 45.0, 26.0, 44.0, 38.0, 1.0, 59.0, -45.0, 37.0, -45.0, 26.0, -42.0, 24.0, -43.0, -37.0)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_block_cage"]
 texture = ExtResource("9_block_cage")
 texture_region_size = Vector2i(128, 128)
 0:0/0 = 0
-0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-40, -40, 40, -40, 40, 40, -40, 40)
-0:0/0/occlusion_layer_0/polygon = SubResource("OccluderPolygon2D_cage")
+0:0/0/occlusion_layer_0/polygon_0/polygon = SubResource("OccluderPolygon2D_crypt_cage")
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-34.0, -42.0, -14.0, -42.0, -14.0, -34.0, -7.0, -37.0, -4.0, -42.0, 4.0, -42.0, 12.0, -35.0, 15.0, -36.0, 14.0, -42.0, 34.0, -42.0, 43.0, -37.0, 44.0, 38.0, -1.0, 59.0, -45.0, 37.0, -45.0, 26.0, -42.0, 24.0, -43.0, -37.0)
+0:0/0/y_sort_origin = -5
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_decor_torche"]
 texture = ExtResource("10_decor_torche")

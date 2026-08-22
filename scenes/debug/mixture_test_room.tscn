@@ -1,79 +1,83 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dr4xkcgsu2foi"]
 
-[ext_resource type="Script" path="res://scripts/dungeon/room.gd" id="1_room"]
-[ext_resource type="TileSet" path="res://resources/tilesets/dungeon_stone_terrain.tres" id="2_tileset"]
-[ext_resource type="Script" path="res://scripts/world/alchemy_station.gd" id="3_alchemy_station"]
-[ext_resource type="Script" path="res://scripts/world/weapon_station.gd" id="4_weapon_station"]
-[ext_resource type="Script" path="res://scripts/world/interactable.gd" id="5_interactable"]
-[ext_resource type="Texture2D" path="res://assets/tiles/alchemy_station/alchemy_station.png" id="6_alchemy_tex"]
-[ext_resource type="Texture2D" path="res://assets/tiles/weapon_station/weapon_station.png" id="7_weapon_tex"]
-[ext_resource type="Script" path="res://scripts/debug/mixture_test_room_controller.gd" id="8_controller"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_station"]
-radius = 80.0
+[ext_resource type="Script" uid="uid://3bupwh5qdsfe" path="res://scripts/dungeon/room.gd" id="1_room"]
+[ext_resource type="TileSet" uid="uid://cw4348enqrkxh" path="res://resources/tilesets/dungeon_stone_terrain.tres" id="2_tileset"]
+[ext_resource type="Script" uid="uid://bhbklp0v82vwe" path="res://scripts/world/alchemy_station.gd" id="3_alchemy_station"]
+[ext_resource type="Script" uid="uid://c3wdynhf5n0ss" path="res://scripts/world/weapon_station.gd" id="4_weapon_station"]
+[ext_resource type="Script" uid="uid://dplg0o88x8yj7" path="res://scripts/world/interactable.gd" id="5_interactable"]
+[ext_resource type="Texture2D" uid="uid://0a8lmyekup1g" path="res://assets/tiles/alchemy_station/alchemy_station.png" id="6_alchemy_tex"]
+[ext_resource type="Texture2D" uid="uid://c8evlpisesm2x" path="res://assets/tiles/weapon_station/weapon_station.png" id="7_weapon_tex"]
+[ext_resource type="Script" uid="uid://ipx26aqak2hj" path="res://scripts/debug/mixture_test_room_controller.gd" id="8_controller"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
 size = Vector2(928, 576)
 
-[node name="MixtureTestRoom" type="Node2D"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_station"]
+radius = 80.0
+
+[node name="MixtureTestRoom" type="Node2D" unique_id=428087454]
 script = ExtResource("1_room")
 
-[node name="Floor" type="TileMapLayer" parent="."]
+[node name="Floor" type="TileMapLayer" parent="." unique_id=580003030]
 tile_set = ExtResource("2_tileset")
 
-[node name="RoomTrigger" type="Area2D" parent="."]
+[node name="RoomTrigger" type="Area2D" parent="." unique_id=1055907428]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="RoomTrigger"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RoomTrigger" unique_id=2111537739]
 position = Vector2(672, 480)
 shape = SubResource("RectangleShape2D_trigger")
 
-[node name="AlchemyStation" type="Node2D" parent="."]
+[node name="AlchemyStation" type="Node2D" parent="." unique_id=46121581]
 position = Vector2(350, 300)
 script = ExtResource("3_alchemy_station")
 
-[node name="BenchVisual" type="Sprite2D" parent="AlchemyStation"]
+[node name="BenchVisual" type="Sprite2D" parent="AlchemyStation" unique_id=1676148373]
 texture = ExtResource("6_alchemy_tex")
 
-[node name="Interactable" type="Area2D" parent="AlchemyStation"]
+[node name="Interactable" type="Area2D" parent="AlchemyStation" unique_id=215049541]
 script = ExtResource("5_interactable")
 prompt_text = "Appuyer sur E pour l'alchimie"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AlchemyStation/Interactable"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AlchemyStation/Interactable" unique_id=2024427570]
 shape = SubResource("CircleShape2D_station")
 
-[node name="PromptLabel" type="Label" parent="AlchemyStation/Interactable"]
-position = Vector2(-70, -90)
-size = Vector2(140, 30)
-horizontal_alignment = 1
+[node name="PromptLabel" type="Label" parent="AlchemyStation/Interactable" unique_id=1149968981]
+offset_left = -70.0
+offset_top = -90.0
+offset_right = 70.0
+offset_bottom = -60.0
 text = "Appuyer sur E pour l'alchimie"
+horizontal_alignment = 1
 
-[node name="WeaponStation" type="Node2D" parent="."]
+[node name="WeaponStation" type="Node2D" parent="." unique_id=89594456]
 position = Vector2(994, 300)
 script = ExtResource("4_weapon_station")
 
-[node name="BenchVisual" type="Sprite2D" parent="WeaponStation"]
+[node name="BenchVisual" type="Sprite2D" parent="WeaponStation" unique_id=76130127]
 texture = ExtResource("7_weapon_tex")
 
-[node name="Interactable" type="Area2D" parent="WeaponStation"]
+[node name="Interactable" type="Area2D" parent="WeaponStation" unique_id=708792681]
 script = ExtResource("5_interactable")
 prompt_text = "Appuyer sur E pour l'atelier d'arme"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="WeaponStation/Interactable"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WeaponStation/Interactable" unique_id=1465065009]
 shape = SubResource("CircleShape2D_station")
 
-[node name="PromptLabel" type="Label" parent="WeaponStation/Interactable"]
-position = Vector2(-70, -90)
-size = Vector2(140, 30)
-horizontal_alignment = 1
+[node name="PromptLabel" type="Label" parent="WeaponStation/Interactable" unique_id=2069744952]
+offset_left = -70.0
+offset_top = -90.0
+offset_right = 70.0
+offset_bottom = -60.0
 text = "Appuyer sur E pour l'atelier d'arme"
+horizontal_alignment = 1
 
-[node name="Players" type="Node2D" parent="."]
+[node name="Players" type="Node2D" parent="." unique_id=1459185635]
 
-[node name="Enemies" type="Node2D" parent="."]
+[node name="Enemies" type="Node2D" parent="." unique_id=1260919947]
 
-[node name="Projectiles" type="Node2D" parent="."]
+[node name="Projectiles" type="Node2D" parent="." unique_id=1872259492]
 
-[node name="HUD" type="Node2D" parent="."]
+[node name="HUD" type="Node2D" parent="." unique_id=1140188282]
 
-[node name="TestController" type="Node" parent="."]
+[node name="TestController" type="Node" parent="." unique_id=667186927]
 script = ExtResource("8_controller")

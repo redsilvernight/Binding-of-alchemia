@@ -172,6 +172,14 @@ var _pending_wall_light_color: Color = Color.WHITE
 
 
 func _ready() -> void:
+	# Retour utilisateur : "une sorte de y-sort sur les props plutôt qu'une
+	# collision" -- active le tri par profondeur (Y) pour TOUS les enfants
+	# directs de cette salle (donc aussi Hub, qui hérite de Room). Ne suffit
+	# PAS à lui seul : ne s'applique qu'aux enfants dont le chemin complet
+	# jusqu'ici a lui aussi y_sort_enabled=true (propagation Godot native) --
+	# cf. _setup_props_blocking_layer() pour PropsBlocking, et Game/Rooms/
+	# Players dans game.tscn/hub.tscn pour le reste de la chaîne côté joueur.
+	y_sort_enabled = true
 	_trigger.body_entered.connect(_on_trigger_body_entered)
 	_paint_floor()
 	_setup_props_decor_layer()
@@ -223,6 +231,15 @@ func _setup_navigation() -> void:
 	if _floor == null or _floor.tile_set == null:
 		return
 	_nav_region = NavigationRegion2D.new()
+	# Sans ça, la chaîne y_sort_enabled=true (Room, cf. _ready() plus haut) --
+	# PropsBlocking (cf. plus bas) se retrouve coupée par ce maillon
+	# intermédiaire resté à false par défaut : Godot ne compare alors plus
+	# JAMAIS la position Y du joueur/des ennemis contre celle des props
+	# bloquants qu'il contient, quelle que soit la valeur de y_sort_origin
+	# posée sur leurs tuiles -- bug constaté en jeu (retour utilisateur : le
+	# joueur passe toujours devant un prop bloquant, même en se tenant
+	# derrière), le rendu retombant alors sur le simple ordre du tree.
+	_nav_region.y_sort_enabled = true
 	add_child(_nav_region)
 	# move_child(0) : add_child() ajoute _nav_region en DERNIER enfant de Room,
 	# alors que Floor était le TOUT PREMIER enfant dans les templates (cf.
@@ -367,6 +384,13 @@ func _setup_props_blocking_layer() -> void:
 	# apparence normale tout en projetant toujours une ombre correcte sur ce
 	# qu'il y a derrière (Floor, resté sur le masque 1).
 	_props_blocking.light_mask = 2
+	# Chaque tuile bloquante trie individuellement contre le joueur (cf.
+	# y_sort_enabled sur Room ci-dessus) en utilisant son y_sort_origin
+	# (retaillé sur le socle visuel réel de chaque sprite, pas le centre de
+	# la tuile -- cf. resources/tilesets/dungeon_*_terrain.tres) : le joueur
+	# peut désormais passer devant OU derrière un prop bloquant selon sa
+	# position Y, au lieu d'être bloqué sur toute la hauteur du sprite.
+	_props_blocking.y_sort_enabled = true
 	add_child(_props_blocking)
 	for i in _pending_blocking_cells.size():
 		_props_blocking.set_cell(_pending_blocking_cells[i], _pending_blocking_source_ids[i], Vector2i.ZERO)

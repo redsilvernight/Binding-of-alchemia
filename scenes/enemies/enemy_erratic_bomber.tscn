@@ -7,6 +7,10 @@
 radius = 73.33333
 height = 209.99998
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_legs_CapsuleShape2D_vqi5h"]
+radius = 22
+height = 50.6
+
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
@@ -35,7 +39,7 @@ metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=62059913]
 position = Vector2(-5, 10)
-shape = SubResource("CapsuleShape2D_vqi5h")
+shape = SubResource("CapsuleShape2D_legs_CapsuleShape2D_vqi5h")
 metadata/_edit_lock_ = true
 
 [node name="CollisionArea" type="Area2D" parent="." unique_id=118175451]
@@ -51,3 +55,12 @@ metadata/_edit_lock_ = true
 replication_config = SubResource("SceneReplicationConfig_1")
 
 [connection signal="body_entered" from="CollisionArea" to="." method="_on_collision_area_body_entered"]
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 128
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(-5, 10)
+shape = SubResource("CapsuleShape2D_vqi5h")

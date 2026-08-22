@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dar2cbvtcbjur"]
+
+[ext_resource type="Script" uid="uid://0gl7xklmlnpb" path="res://scripts/debug/props_gallery_controller.gd" id="1_controller"]
+
+[node name="PropsGallery" type="Node2D" unique_id=1298127366]
+script = ExtResource("1_controller")

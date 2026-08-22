@@ -27,14 +27,11 @@
 
 Detailed GDScript / Godot / Multiplayer conventions live in `.claude/rules/` and load automatically only for the files they apply to — do not duplicate them here.
 
-## Local (qwen) and Kimi delegation for token-heavy work
+## Local (qwen) and Kimi delegation — project-specific case
 
-- For large, read-only analysis — big diff/code reviews, wide code-comprehension passes, or generating the markdown sidecars/semantic-extraction content for Graphify's `.gd`/`.tscn`/`.tres` workaround (see the `graphify-gdscript-workaround` memory) — delegate instead of spending Claude's own context. Do this proactively, without waiting for the user to type `/kimi-review`.
-- **Prefer qwen (local, free) first**, via `~/.claude/scripts/qwen_query.ps1` — it calls the user's local Ollama (`qwen2.5-coder:7b` by default, CPU-only on this machine, ~8 tok/s). No API key, no cost. Fall back to Kimi (cloud, faster, stronger, but paid) when the task exceeds what the local 7B handles well: very large context, complex multi-file synthesis, or when a first qwen pass came back thin/unreliable.
-- **This includes Explore-agent-style codebase search before an edit, not just standalone reviews.** Caught a gap on 2026-08-18: a session spent 92.7k + 89.8k tokens on two `Explore` dispatches ("find footstep audio hookup points") without ever considering delegation. Whenever a search is expected to touch many files or read a lot of code to locate where something should hook in, do the shortlisting myself with a cheap Glob/Grep pass, then hand the shortlisted files' content to qwen (or Kimi if it's a harder synthesis) with the actual question, and pull back only the narrow answer (file + function) to implement. Skip this for a single quick lookup — not worth the round-trip.
-- Never pipe into either script (`... | pwsh ...`). Write the context to a temp file first, then invoke directly: `pwsh -NoProfile -File "$HOME/.claude/scripts/qwen_query.ps1" -Prompt "..." -Files <tempfile>` or the `kimi_query.ps1` equivalent. Only those literal prefixes are pre-approved (no confirmation prompt) — a piped form hits the permission classifier instead.
-- Do not delegate the actual edit/implementation, or anything requiring tool use or direct interaction with Godot/Claude Code — both qwen and Kimi only read text and return text.
-- This is precisely what makes proactive graph updates viable again (see the Graphify section below) — local/Kimi delegation changes *how* an update is paid for (tokens or GPU-idle CPU time instead of Claude's context), which is why *when* it runs can now be judgment-based instead of "only on explicit request."
+The general delegation criteria (what to delegate, what to avoid, how to invoke the scripts) live globally in `~/.claude/CLAUDE.md` — do not duplicate them here.
+
+Project-specific case: generating the markdown sidecars/semantic-extraction content for Graphify's `.gd`/`.tscn`/`.tres` workaround (see the `graphify-gdscript-workaround` memory) — route this through qwen first, Kimi as fallback, per the global rule. This is what makes proactive graph updates viable (see the Graphify section below) — delegation changes *how* an update is paid for (tokens/GPU-idle CPU time instead of Claude's context), which is why *when* it runs can be judgment-based instead of "only on explicit request."
 
 ## Git safety
 
