@@ -30,6 +30,22 @@ var _arc_start_position: Vector2 = Vector2.ZERO
 var _homing_target: Node2D = null
 var _homing_turn_speed: float = 5.0
 
+## Fenêtre pendant laquelle un contact avec un MUR (node "Floor", cf.
+## _on_body_entered) est ignoré depuis le tir -- retour utilisateur : un
+## tireur collé pieds/corps contre un mur (la capsule "jambes" qui bloque
+## physiquement le déplacement est plus petite et décalée par rapport à
+## l'origine du tireur, d'où part le tir -- ex: y=46 contre y=0 côté joueur,
+## cf. scenes/player.tscn) a son point de tir déjà à l'intérieur du polygone
+## de collision du mur ; sans cette fenêtre, le tir s'y résout instantanément
+## au lieu de partir. Scope volontairement limité aux MURS par NOM de node
+## ("Floor" seulement, jamais "PropsBlocking") plutôt qu'à toute géométrie
+## solide : un mur de salle est incontournable, un prop est un obstacle
+## évitable -- pas de raison de le rendre traversable même brièvement (cf.
+## retour utilisateur sur l'exploit "tirer au travers en restant collé à un
+## prop").
+const SPAWN_WALL_GRACE_TIME: float = 0.15
+var _time_since_launch: float = 0.0
+
 func setup(p_damage: float, p_speed: float, p_lifetime: float = 3.0, p_trajectory: TrajectoryType = TrajectoryType.LINEAR) -> void:
 	damage = p_damage
 	_base_speed = p_speed
@@ -62,6 +78,7 @@ func launch(from_position: Vector2, aim_direction: Vector2) -> void:
 		timer.timeout.connect(queue_free)
 
 func _physics_process(delta: float) -> void:
+	_time_since_launch += delta
 	match trajectory:
 		TrajectoryType.LINEAR:
 			_process_linear(delta)
@@ -103,6 +120,8 @@ func _process_homing(delta: float) -> void:
 ## sans liste à maintenir ici.
 func _on_body_entered(body: Node) -> void:
 	if body.has_node("Hurtbox"):
+		return
+	if body.name == "Floor" and _time_since_launch < SPAWN_WALL_GRACE_TIME:
 		return
 	_resolve_hit(body)
 

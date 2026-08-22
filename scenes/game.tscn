@@ -39,6 +39,7 @@ y_sort_enabled = true
 [node name="HUD" type="Node2D" parent="." unique_id=720780475]
 
 [node name="Projectiles" type="Node2D" parent="." unique_id=333140679]
+y_sort_enabled = true
 
 [node name="ProjectileSpawner" type="MultiplayerSpawner" parent="." unique_id=1935931926]
 spawn_path = NodePath("../Projectiles")

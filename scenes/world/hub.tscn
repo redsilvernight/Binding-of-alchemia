@@ -56,6 +56,7 @@ shadow_enabled = false
 tile_set = ExtResource("7_shop_tileset")
 
 [node name="RoomTrigger" type="Area2D" parent="."]
+collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RoomTrigger"]
 position = Vector2(672, 480)

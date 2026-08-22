@@ -50,6 +50,7 @@ position = Vector2(0, 480)
 position = Vector2(1344, 480)
 
 [node name="RoomTrigger" type="Area2D" parent="."]
+collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RoomTrigger"]
 position = Vector2(672, 480)

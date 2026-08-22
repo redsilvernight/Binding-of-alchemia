@@ -22,6 +22,7 @@ script = ExtResource("1_room")
 tile_set = ExtResource("2_tileset")
 
 [node name="RoomTrigger" type="Area2D" parent="." unique_id=1055907428]
+collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RoomTrigger" unique_id=2111537739]
 position = Vector2(672, 480)
