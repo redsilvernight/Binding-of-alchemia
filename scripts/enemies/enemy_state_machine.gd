@@ -1,7 +1,3 @@
-## FSM minimale (Phase 7.2) : pas de noeuds enfants, juste des objets
-## EnemyState enchaînés à la main — suffisant tant qu'aucun état n'a besoin
-## d'être un noeud de la scène (timers, animations...) ; à revoir si 7.3/7.4
-## en ont besoin.
 class_name EnemyStateMachine
 extends RefCounted
 

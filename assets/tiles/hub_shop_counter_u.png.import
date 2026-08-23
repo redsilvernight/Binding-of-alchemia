@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://de2852rjbp28d"
-path="res://.godot/imported/hub_shop_counter.png-346c389240d86912310f5fbdd525f98c.ctex"
+uid="uid://d2atx6r26b82s"
+path="res://.godot/imported/hub_shop_counter_u.png-f1a7dad09db0a0d3f513e722a09a5757.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/hub_shop_counter.png"
-dest_files=["res://.godot/imported/hub_shop_counter.png-346c389240d86912310f5fbdd525f98c.ctex"]
+source_file="res://assets/tiles/hub_shop_counter_u.png"
+dest_files=["res://.godot/imported/hub_shop_counter_u.png-f1a7dad09db0a0d3f513e722a09a5757.ctex"]
 
 [params]
 

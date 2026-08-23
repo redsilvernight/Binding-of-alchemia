@@ -1,13 +1,9 @@
-# weapon.gd
 extends Node2D
 class_name Weapon
 
 signal ammo_changed(current: float, max: float)
 signal projectile_requested(data: Dictionary)
-## Émis à chaque équipement de pièce (cf. equip()), pour que l'UI (écran
-## d'inventaire, "arme à trous") puisse se rafraîchir sans avoir à poller.
 signal part_equipped(piece: Resource)
-## Émis à chaque mise à jour de la mixture chargée (cf. mixture_ingredient_paths).
 signal mixture_changed(ingredient_paths: Array[String])
 
 const WATER_BULLET_SCENE: String = "res://scenes/projectiles/bullet_water.tscn"
@@ -37,19 +33,12 @@ var mixture_cooldown_accum: float = 0.0
 var water_trajectory: Bullet.TrajectoryType = Bullet.TrajectoryType.LINEAR
 var mixture_trajectory: Bullet.TrajectoryType = Bullet.TrajectoryType.LINEAR
 var mixture_impact_effect: ImpactEffect = null
-# Composition (resource_path des ingrédients, doublons compris) de la mixture
-# actuellement chargée -- purement informatif (8.6, panneau de résumé de run),
-# ImpactEffect ne conserve pas cette info après conversion (cf. MixtureToEffect).
 var mixture_ingredient_paths: Array[String] = []
 
 func _ready() -> void:
 	_recalculate_stats()
 
 func _process(delta: float) -> void:
-	# Chaque client instancie une copie de CHAQUE arme (la sienne et celles des
-	# autres joueurs, voir game.gd). Seule la copie de l'hôte doit faire autorité
-	# sur les munitions, sinon chaque client régénère ses munitions localement
-	# sans jamais voir la vraie consommation décidée côté hôte (désync du HUD).
 	if not multiplayer.is_server():
 		return
 
@@ -81,10 +70,6 @@ func equip(piece: Resource) -> void:
 	part_equipped.emit(piece)
 
 func equip_networked(piece: Resource) -> void:
-	# Propage l'équipement à tous les pairs (même pattern que _broadcast_ammo) :
-	# chaque client possède sa propre copie du noeud Weapon (cf. commentaire
-	# _process), donc equip() en local ne suffit pas à garder les copies en
-	# phase. Seul l'hôte doit appeler ceci (cf. Player.request_equip_weapon_part).
 	if is_inside_tree():
 		_rpc_equip.rpc(piece.resource_path)
 	else:
@@ -93,18 +78,9 @@ func equip_networked(piece: Resource) -> void:
 @rpc("any_peer", "call_local", "reliable")
 func _rpc_equip(part_path: String) -> void:
 	equip(load(part_path))
-	# is_multiplayer_authority() : chaque pair possède une copie de CHAQUE
-	# arme (la sienne et celles des autres joueurs, cf. _process) -- sans
-	# cette garde, équiper une pièce ferait sonner l'écran de TOUS les
-	# joueurs, pas seulement celui qui vient d'équiper.
 	if is_multiplayer_authority():
 		AudioManager.play_sfx("weapon_equip")
 
-## Même pattern que equip_networked/_rpc_equip : chaque client possède sa
-## propre copie du noeud Weapon, donc affecter mixture_ingredient_paths en
-## local ne suffit pas à garder les copies des autres pairs en phase (8.6,
-## panneau de résumé de run affichant la mixture de CHAQUE joueur sur
-## chaque écran). Seul l'hôte doit appeler ceci (cf. Player.request_craft_mixture).
 func set_mixture_ingredients_networked(ingredient_paths: Array[String]) -> void:
 	if is_inside_tree():
 		_rpc_set_mixture_ingredients.rpc(ingredient_paths)
@@ -116,7 +92,7 @@ func set_mixture_ingredients_networked(ingredient_paths: Array[String]) -> void:
 func _rpc_set_mixture_ingredients(ingredient_paths: Array[String]) -> void:
 	mixture_ingredient_paths = ingredient_paths
 	mixture_changed.emit(ingredient_paths)
-	if is_multiplayer_authority(): # même garde que _rpc_equip
+	if is_multiplayer_authority():
 		AudioManager.play_sfx("craft_success")
 
 func _recalculate_stats() -> void:
@@ -154,9 +130,6 @@ func _recalculate_stats() -> void:
 		speed_modifier = core.projectile_speed_modifier
 		range_modifier = core.range_modifier
 		core_damage = core.base_damage
-	# Le cœur ajoute ses propres dégâts aux deux tirs (9.5, équilibrage --
-	# jusque-là GunCore.base_damage était renseigné sur chaque pièce mais
-	# jamais lu ici, donc les cœurs n'avaient aucune identité de dégâts).
 	water_damage += core_damage
 	mixture_damage_multiplier += core_damage
 	water_projectile_speed = base_speed_water * speed_modifier
@@ -170,17 +143,8 @@ func _recalculate_stats() -> void:
 		_initialized = true
 	else:
 		current_mixture_ammo = min(current_mixture_ammo, mixture_max_capacity)
-	# Emit local uniquement : cette valeur initiale est identique sur tous les
-	# pairs (même Resource exportée), pas besoin de RPC ici. Les changements
-	# ultérieurs (tir, regen) passent par _broadcast_ammo().
 	ammo_changed.emit(current_mixture_ammo, mixture_max_capacity)
 
-## Lecture seule, sans effet de bord (contrairement à try_fire_mixture) --
-## utilisée côté client (Player._on_sprite_animation_finished, Phase 9.4)
-## pour choisir le SFX "tir"/"réservoir vide" avant même que l'hôte ait
-## traité la requête. Sûr sur un client : current_mixture_ammo est répliqué
-## par _update_ammo (call_local), contrairement à mixture_cooldown_accum qui
-## ne progresse que côté hôte (cf. _process) et serait faux ici.
 func can_fire_mixture_locally() -> bool:
 	return can_fire_mixture and tank != null and current_mixture_ammo >= tank.mixture_cost_per_shot
 
@@ -195,8 +159,6 @@ func try_fire_water(direction: Vector2) -> bool:
 	return true
 
 func try_fire_mixture(direction: Vector2) -> bool:
-	# Défensif : ne devrait être appelé que depuis player.gd::request_fire,
-	# qui est déjà gardé côté hôte, mais on documente l'invariant ici aussi.
 	if not multiplayer.is_server():
 		return false
 	if not can_fire_mixture:
@@ -215,8 +177,6 @@ func try_fire_mixture(direction: Vector2) -> bool:
 	return true
 
 func _broadcast_ammo() -> void:
-	# Les scripts debug (weapon_test.gd) instancient un Weapon hors de l'arbre
-	# de scène : pas de RPC possible dans ce cas, on retombe sur un emit local.
 	if is_inside_tree():
 		_update_ammo.rpc(current_mixture_ammo, mixture_max_capacity)
 	else:
@@ -229,10 +189,6 @@ func _update_ammo(current: float, max_ammo: float) -> void:
 	ammo_changed.emit(current_mixture_ammo, mixture_max_capacity)
 
 func _fire_bullet(damage: float, speed: float, direction: Vector2, trajectory: Bullet.TrajectoryType, effect: ImpactEffect, scene_path: String) -> void:
-	# get_parent() est le Player propriétaire de cette arme (Weapon est
-	# toujours $Weapon d'un player.tscn en jeu réel) ; is_valid_int() protège
-	# le cas d'un Weapon de test instancié hors arbre (cf. is_inside_tree()
-	# ailleurs dans ce fichier), qui n'a pas de vrai peer_id pour nom.
 	var shooter_id: int = 0
 	var parent_node := get_parent()
 	if parent_node != null and parent_node.name.is_valid_int():
@@ -248,9 +204,5 @@ func _fire_bullet(damage: float, speed: float, direction: Vector2, trajectory: B
 		"shooter_id": shooter_id,
 	}
 	if effect != null:
-		# On sérialise les données de l'effet plutôt que son resource_path :
-		# un effet pré-fabriqué en .tres a un chemin valide, mais un effet
-		# généré à la volée (ex: MixtureToEffect, Phase 4.4) a resource_path
-		# vide -> load("") plantait. to_dict()/from_dict() marche dans les deux cas.
 		data["impact_effect_data"] = effect.to_dict()
 	projectile_requested.emit(data)

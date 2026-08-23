@@ -1,12 +1,4 @@
 extends Control
-## Menu principal (Phase 8.4), nouveau point d'entrée (project.godot run/main_scene).
-## "Jouer" = solo, aucun réseau impliqué (NetworkManager.play_solo()).
-## "Multijoueur" = écran host/join existant (scenes/menu.tscn), inchangé.
-##
-## Sélection de profil (Phase 8.5) : purement un choix de SaveManager.active_profile
-## avant de lancer une partie -- Play/Multiplayer lisent ce profil au moment de
-## hosting()/play_solo()/joining() (cf. network_manager.gd), donc changer de
-## profil ici suffit, aucune autre logique réseau/meta_progression à toucher.
 
 @onready var _play_button: Button = $Panel/MenuVBox/Play
 @onready var _multiplayer_button: Button = $Panel/MenuVBox/Multiplayer
@@ -50,9 +42,6 @@ func _ready() -> void:
 		_profile_buttons[i].pressed.connect(_on_profile_selected.bind(i))
 	_profile_back_button.pressed.connect(_on_profile_back_pressed)
 
-	# Retour sonore générique (Phase 9.4) : aucun pattern de bouton partagé
-	# dans le projet (cf. exploration audio), donc un seul branchement en
-	# boucle ici plutôt qu'un appel répété dans chaque handler _on_*_pressed.
 	var clickable_buttons: Array[Button] = [
 		_play_button, _multiplayer_button, _options_button, _change_profile_button,
 		_quit_button, _back_button, _profile_back_button,

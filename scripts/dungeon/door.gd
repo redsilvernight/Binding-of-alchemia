@@ -1,19 +1,6 @@
 class_name Door
 extends Node2D
 
-# Habillage VISUEL d'une embrasure de porte (Phase 10, collision passée aux
-# tuiles en Phase 10.x). La porte n'a plus de collision propre : c'est
-# Room._set_door_gap_tiles() qui bloque le passage en repeignant l'embrasure
-# (Room._paint_walls()) en tuile de mur pendant un verrouillage, via le
-# physics layer de dungeon_stone_terrain.tres -- avoir deux systèmes de
-# collision distincts (mur en tuiles + StaticBody2D de porte) togglés en
-# parallèle laissait des fenêtres où l'un désynchronisait l'autre et le
-# joueur passait à travers une porte pourtant fermée à l'écran. Ce script ne
-# gère donc plus que le fondu visuel entre les deux sprites et le son.
-# Deux sprites (Closed/Open) plutôt qu'une AnimatedSprite2D à frames
-# interpolées : un fondu enchaîné entre les deux états suffit à lire le
-# changement de porte et évite une génération d'animation PixelLab
-# supplémentaire (coût + attente) pour un effet purement cosmétique.
 
 const FADE_DURATION: float = 0.3
 
@@ -22,10 +9,6 @@ const FADE_DURATION: float = 0.3
 
 var _open: bool = false
 var _tween: Tween
-## Phase 9.4 : la toute première application d'état (dungeon_generator, via
-## Room.set_open_sides -> _apply_walls) ouvrirait sinon TOUTES les portes du
-## donjon fraîchement généré en même temps -- silencieuse, seuls les VRAIS
-## verrouillages/déverrouillages de combat (appels suivants) sonnent.
 var _initialized: bool = false
 
 

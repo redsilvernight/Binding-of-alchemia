@@ -1,12 +1,5 @@
 extends Control
 
-# Mini-map (Phase 6.4). Purement lecture : lit game.gd (trouvé via le groupe
-# "Game", cf. game.gd._ready) qui tient dungeon_map à jour pour tout le monde
-# sans RPC dédié à la mini-map elle-même — la carte complète existe déjà chez
-# chaque pair dès le début de partie (toutes les salles sont spawnées
-# d'un coup, cf. game.gd._ready), seul le champ "visited" par salle change
-# ensuite. Ce noeud est instancié localement par joueur (via hud.tscn), donc
-# jamais répliqué et n'a besoin d'aucune autorité réseau propre.
 
 const CELL_SIZE: float = 18.0
 const CELL_GAP: float = 4.0
@@ -68,7 +61,7 @@ func _draw() -> void:
 		elif _is_adjacent_to_visited(grid_position, room_info):
 			color = COLOR_UNVISITED_ADJACENT
 		else:
-			continue # salle ni visitée ni révélée : totalement cachée
+			continue
 		var top_left: Vector2 = center + Vector2(grid_position) * step - Vector2(CELL_SIZE, CELL_SIZE) / 2.0
 		var cell_rect := Rect2(top_left, Vector2(CELL_SIZE, CELL_SIZE))
 		draw_rect(cell_rect, color)
@@ -76,9 +69,6 @@ func _draw() -> void:
 			draw_rect(cell_rect, COLOR_CURRENT_OUTLINE, false, 2.0)
 
 
-## Une salle non visitée est révélée (affichée en pointillé) dès qu'elle est
-## voisine d'une salle déjà visitée — même principe de "fog of war" que les
-## roguelites type Isaac, sans exposer tout le donjon d'un coup.
 func _is_adjacent_to_visited(grid_position: Vector2i, room_info: Dictionary) -> bool:
 	for side in room_info["open_sides"]:
 		var neighbor: Vector2i = grid_position + DungeonGenerator.DIRECTIONS[side]

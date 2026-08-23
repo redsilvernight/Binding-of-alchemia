@@ -51,3 +51,9 @@ Prefer clear names over abbreviations.
 - Do not silently swallow errors.
 - Do not add defensive checks solely to hide an underlying bug.
 - Prefer identifying and fixing the root cause.
+
+## Comments
+
+- Do not write comments explaining what code does or why a decision was made (rationale, user feedback context, references to a task/fix/caller) — well-named identifiers and the commit/PR history cover that.
+- The only comments allowed are `# TODO` markers for future work and explicit notes about known technical debt.
+- When in doubt, don't comment.

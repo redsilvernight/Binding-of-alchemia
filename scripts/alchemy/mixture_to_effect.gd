@@ -1,10 +1,6 @@
 class_name MixtureToEffect
 extends RefCounted
 
-## zone_base des ingrédients est une unité "de conception" (1.0-3.5, cf.
-## resources/Ingredients/*.tres) -- converti ici en pixels via ce facteur.
-## Calibré sur ImpactArea.tres (radius=200 pour une zone "pleine"), pertinent
-## à l'échelle des salles (ROOM_CELL_SIZE = 1344x960, cf. game.gd).
 const ZONE_SCALE: float = 60.0
 
 static func convertir(mixture: Mixture) -> ImpactEffect:
@@ -20,11 +16,6 @@ static func convertir(mixture: Mixture) -> ImpactEffect:
 	return composite
 
 
-## type est nécessaire pour distinguer SOIN (vol de vie sur le tireur) des
-## types offensifs (dégâts sur la cible touchée) -- avant cette correction,
-## un ingrédient Soin (degats_base négatif) soignait l'ENNEMI touché au lieu
-## du joueur, puisque ImpactDamage/ImpactArea appliquent toujours leur effet
-## sur la cible du tir, jamais sur le tireur.
 static func _creer_impact(type: Ingredient.TypeAlchimie, effet_par_type: Mixture.EffetParType) -> ImpactEffect:
 	if type == Ingredient.TypeAlchimie.SOIN:
 		var impact_heal := ImpactHeal.new()

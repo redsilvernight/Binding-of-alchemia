@@ -1,16 +1,5 @@
 extends CanvasLayer
 
-# Menu pause (retour utilisateur : la première version togguait juste sa
-# propre visibilité localement, le jeu continuait de tourner derrière). Pause
-# désormais RÉELLE et PARTAGÉE via RunManager.is_paused/pause_changed
-# (get_tree().paused synchronisé par RPC sur tous les pairs, cf.
-# run_manager.gd) : ce script ne fait plus que REQUÊTER le bascule et
-# REFLÉTER l'état reçu, il ne décide jamais lui-même d'afficher root.
-#
-# process_mode = PROCESS_MODE_ALWAYS (cf. .tscn) : sans ça, ce noeud arrête
-# de recevoir _unhandled_input/les clics sur ses propres boutons dès que
-# get_tree().paused passe à true (comportement par défaut de tout Node) --
-# on ne pourrait plus jamais rouvrir/refermer le panneau une fois en pause.
 
 @onready var root: Control = $Root
 @onready var _resume_button: Button = $Root/Panel/VBox/Resume
@@ -39,11 +28,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		_request_toggle_pause()
 
 
-## N'importe quel pair peut demander le bascule (touche "pause" ou bouton
-## Reprendre) -- request_toggle_pause() ne fait qu'exprimer l'intention,
-## seul l'hôte décide réellement et rediffuse l'état réel via pause_changed
-## (cf. run_manager.gd) : root.visible n'est jamais mis à jour ici
-## directement, seulement depuis _on_pause_changed.
 func _request_toggle_pause() -> void:
 	RunManager.request_toggle_pause.rpc()
 
@@ -59,10 +43,5 @@ func _on_pause_changed(paused: bool) -> void:
 	AudioManager.play_sfx("ui_toggle")
 
 
-## request_return_to_hub (RunManager) réinitialise l'étage et ramène TOUT le
-## groupe au hub (même RPC que le bouton "Rejouer" du panneau de résumé de
-## run après une défaite) -- un pair qui abandonne met donc fin à la run pour
-## tout le monde, pas seulement pour lui-même. Le libellé du bouton
-## ("Abandonner la run") reflète cette portée volontairement.
 func _on_abandon_run_pressed() -> void:
 	RunManager.request_return_to_hub.rpc()

@@ -1,11 +1,5 @@
 extends CanvasLayer
 
-# Écran de crafting d'arme (Phase 5.4, restylé : arme à trous géante au
-# centre + liste de pièces cliquables/glissables, cf. retour utilisateur
-# post-inventaire). Comme avant, cet écran ne modifie JAMAIS l'état lui-même
-# -- équiper une pièce (clic OU drag & drop dans le bon trou) envoie
-# l'intention par RPC vers l'hôte (Player.request_equip_weapon_part), qui
-# seul valide la possession et applique l'équipement (cf. architecture_reseau.md).
 
 const WEAPON_PART_FALLBACK_ICON: Texture2D = preload("res://assets/test/water_bullet_test.png")
 
@@ -24,9 +18,6 @@ var weapon: Weapon
 
 func _ready() -> void:
 	root.visible = false
-	# get_parent().weapon : même pattern que l'ancienne _refresh_equipped_labels
-	# -- weapon_crafting est toujours instancié comme enfant de Player, après
-	# que son propre @onready var weapon ait déjà résolu (cf. player.gd::_ready).
 	weapon = get_parent().weapon
 	weapon.part_equipped.connect(_on_part_equipped)
 
@@ -61,9 +52,6 @@ func is_open() -> bool:
 	return root.visible
 
 
-## Retour utilisateur : se ferme avec la même touche qu'à l'ouverture (E, via
-## Interactable -> Player.open_weapon_crafting()) plutôt qu'avec Échap --
-## Échap est réservé au menu pause (pause_menu.gd).
 func toggle() -> void:
 	if root.visible:
 		close()
@@ -107,10 +95,5 @@ func _part_display_name(part: Resource) -> String:
 	return part.resource_path.get_file() if part.resource_path != "" else part.get_class()
 
 
-## Point d'entrée unique pour équiper, quel que soit le déclencheur (clic sur
-## la liste ou drop dans un trou) -- cf. item_chip.gd::activated et
-## weapon_socket.gd::part_dropped, tous deux connectés ici.
 func _request_equip(part: Resource) -> void:
-	# L'hôte revalidera la possession avant d'équiper ; on ne fait ici
-	# qu'exprimer l'intention, jamais d'application locale directe.
 	get_parent().request_equip_weapon_part.rpc_id(1, part.resource_path)

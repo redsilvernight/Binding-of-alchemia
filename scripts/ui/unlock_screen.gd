@@ -1,12 +1,5 @@
 extends CanvasLayer
 
-# Écran de déblocage méta (Phase 8.2). Contrairement à alchemy_crafting.gd/
-# weapon_crafting.gd (bind_inventory sur le Node par-joueur), cet écran lit
-# directement l'autoload MetaProgression : la monnaie/les déblocages ne sont
-# PAS dans Inventory (qui est détruit/recréé à chaque run, cf. run_manager.gd),
-# ils doivent survivre au cycle hub <-> donjon. N'agit jamais lui-même : il
-# envoie l'intention d'achat par RPC vers l'hôte (MetaProgression.request_unlock),
-# qui seul valide le coût et débite (cf. architecture_reseau.md).
 
 @onready var root: Control = $Root
 @onready var currency_label: Label = $Root/Content/CurrencyLabel
@@ -15,11 +8,6 @@ extends CanvasLayer
 @onready var result_label: Label = $Root/Content/ResultLabel
 
 var _local_peer_id: int = 0
-## Item_path affichés dans unlock_list, DANS LE MÊME ORDRE que les lignes
-## ajoutées par _refresh_list() -- MetaProgression.UNLOCKABLES n'est plus
-## utilisable comme index direct maintenant que la liste n'affiche qu'un
-## sous-ensemble (le pool de la boutique, cf. get_shop_pool()), pas le
-## catalogue entier.
 var _visible_entries: Array[Dictionary] = []
 
 
@@ -48,10 +36,6 @@ func is_open() -> bool:
 	return root.visible
 
 
-## Retour utilisateur : se ferme désormais avec la même touche qu'à
-## l'ouverture (E, via Interactable -> Player.open_unlock_screen()) plutôt
-## qu'avec Échap -- Échap est maintenant réservé au menu pause
-## (pause_menu.gd), les deux se disputaient la même touche.
 func toggle() -> void:
 	if root.visible:
 		close()
@@ -65,20 +49,11 @@ func _on_currency_changed(_new_amount: int) -> void:
 
 
 func _on_unlocks_changed() -> void:
-	# Gardé par root.visible (comme _refresh_list) : unlocks_changed rejoue
-	# aussi au rattrapage d'un pair qui rejoint la partie avec des
-	# déblocages déjà acquis (cf. hub.gd._on_peer_connected -> _rpc_unlocked)
-	# -- sans cette garde, se reconnecter ferait sonner "achat" pour chaque
-	# déblocage déjà possédé, alors que l'écran n'a jamais été ouvert.
 	if root.visible:
 		AudioManager.play_sfx("craft_success")
 		_refresh_list()
 
 
-## Même garde que _on_unlocks_changed : évite un refresh/son parasite au
-## rattrapage réseau (hub.gd._on_peer_connected) si l'écran n'est pas ouvert.
-## Pas de SFX ici contrairement à _on_unlocks_changed -- un renouvellement de
-## vitrine (nouvelle run) n'est pas une action du joueur, juste un rafraîchissement.
 func _on_shop_pool_changed() -> void:
 	if root.visible:
 		_refresh_list()
@@ -88,11 +63,6 @@ func _refresh_currency() -> void:
 	currency_label.text = "Monnaie : %d" % MetaProgression.get_currency(_local_peer_id)
 
 
-## N'affiche que la vitrine actuelle du pair (cf. MetaProgression.get_shop_pool()),
-## pas tout MetaProgression.UNLOCKABLES -- retour utilisateur : "pas tous
-## d'un coup". Un objet déjà débloqué reste affiché (désactivé) tant qu'il
-## est dans le pool -- il n'en sort qu'au prochain reroll (nouvelle run,
-## cf. RunManager.request_start_run), pas retiré à la volée ici.
 func _refresh_list() -> void:
 	unlock_list.clear()
 	_visible_entries.clear()
@@ -121,7 +91,5 @@ func _on_unlock_pressed() -> void:
 		result_label.text = "Déjà débloqué."
 		return
 
-	# L'hôte revalidera le coût/le stock de monnaie avant de débiter quoi que
-	# ce soit ; on ne fait ici qu'exprimer l'intention.
 	MetaProgression.request_unlock.rpc_id(1, entry["item_path"])
 	result_label.text = "Déblocage demandé..."

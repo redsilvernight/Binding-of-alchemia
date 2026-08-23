@@ -7,7 +7,7 @@ class EffetParType:
 	var zone: float = 0.0
 
 @export var type_dominant: Ingredient.TypeAlchimie
-var effets_par_type: Dictionary = {} # Dictionary[Ingredient.TypeAlchimie, EffetParType]
+var effets_par_type: Dictionary = {}
 
 func get_effet(type: Ingredient.TypeAlchimie) -> EffetParType:
 	return effets_par_type.get(type, null)

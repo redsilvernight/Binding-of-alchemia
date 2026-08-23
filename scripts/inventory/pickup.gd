@@ -1,16 +1,10 @@
 class_name Pickup
 extends Area2D
 
-@export var item_resource: Resource # Ingredient ou pièce d'arme (GunBarrelWater, etc.)
-@export var item_type: String = "ingredient" # "ingredient", "weapon_part" ou "currency"
-@export var currency_amount: int = 0 # utilisé seulement si item_type == "currency"
+@export var item_resource: Resource
+@export var item_type: String = "ingredient"
+@export var currency_amount: int = 0
 
-## Un drop de kill (Phase 9.2 : request_enemy_drop/request_currency_drop)
-## apparaît à la position de mort de l'ennemi, souvent collée au joueur en
-## mêlée -- sans délai, body_entered se déclenche dès l'instanciation et le
-## pickup disparaît avant même d'être visible. monitoring désactivé le temps
-## de ce délai, sur chaque pair indépendamment (état purement local/visuel,
-## pas de coordination réseau nécessaire).
 const PICKUP_DELAY: float = 0.3
 
 @onready var sprite: Sprite2D = $Sprite2D
@@ -20,15 +14,11 @@ func _ready() -> void:
 	monitoring = false
 	body_entered.connect(_on_body_entered)
 	_apply_icon()
-	# process_always=false (retour utilisateur, menu pause) : sans lui ce
-	# délai continue de décompter même arbre en pause, cf. bullet.gd::launch().
 	await get_tree().create_timer(PICKUP_DELAY, false).timeout
 	if is_instance_valid(self):
 		monitoring = true
 
 
-## item_resource porte son propre icon (Ingredient, Phase 9.3) -- sinon on
-## garde le sprite placeholder déjà posé dans la scène (couleur par item_type).
 func _apply_icon() -> void:
 	if item_resource == null or not ("icon" in item_resource):
 		return
@@ -41,20 +31,11 @@ func _apply_icon() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if not body.is_in_group("Players"):
 		return
-	# SFX joué avant la garde hôte (Phase 9.4), même raisonnement que
-	# Bullet._on_body_entered : ce pickup existe réellement chez chaque pair
-	# (spawné via pickup_spawner), sa position est figée dès l'apparition
-	# (pas de mouvement à désynchroniser) donc la détection de collision
-	# locale à chaque pair suffit à faire sonner le ramassage partout.
 	AudioManager.play_sfx("pickup_currency" if item_type == "currency" else "pickup_ingredient")
 	if not multiplayer.is_server():
 		return
 
 	if item_type == "currency":
-		# Partagée à toute la partie dès le ramassage par n'importe quel
-		# joueur (pas individuelle) : les améliorations méta débloquables
-		# (Phase 8.2) n'ont de sens que si l'équipe progresse ensemble,
-		# même logique que l'ancien crédit instantané de kill.
 		for peer_id in NetworkManager.get_peers():
 			MetaProgression.add_currency(peer_id, currency_amount)
 		MetaProgression.add_currency(NetworkManager.get_unique_id(), currency_amount)

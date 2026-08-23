@@ -6,8 +6,8 @@ signal ingredient_removed(ingredient: Ingredient, new_quantity: int)
 signal weapon_part_added(part: Resource)
 signal weapon_part_removed(part: Resource)
 
-var ingredients: Dictionary = {} # String (resource_path) -> int (quantity)
-var ingredient_resources: Dictionary = {} # String (resource_path) -> Ingredient (cache pour retrouver la Resource depuis la clé)
+var ingredients: Dictionary = {}
+var ingredient_resources: Dictionary = {}
 var weapon_parts: Array[Resource] = []
 
 
@@ -42,11 +42,6 @@ func remove_ingredient(ingredient: Ingredient, amount: int = 1) -> bool:
 
 
 func _notify_owner_ingredient_update(key: String, new_quantity: int) -> void:
-	# rpc_id call_local ne s'exécute localement que si la cible est soi-même
-	# ou 0 (broadcast) ; comme owner_peer_id vise un pair précis (le client
-	# propriétaire), le serveur doit s'appliquer la mise à jour lui-même
-	# via _apply_ingredient_update (cf. bug crafting multi : ingrédients
-	# jamais consommés côté hôte-autoritaire).
 	var owner_peer_id: int = _get_owner_peer_id()
 	if owner_peer_id != multiplayer.get_unique_id():
 		_rpc_ingredient_updated.rpc_id(owner_peer_id, key, new_quantity)
@@ -56,10 +51,6 @@ func get_ingredient_count(ingredient: Ingredient) -> int:
 	return ingredients.get(ingredient.resource_path, 0)
 
 
-## Restaure un instantané pris avant un changement de scène (cf.
-## RunManager.save_run_state, game.gd._on_boss_defeated/_spawn_player) --
-## réutilise les mêmes chemins d'application/notification que
-## add_ingredient/add_weapon_part plutôt que de dupliquer la logique RPC.
 func restore_snapshot(ingredients_snapshot: Dictionary, weapon_part_paths: Array) -> void:
 	if not multiplayer.is_server():
 		return
@@ -109,7 +100,6 @@ func _notify_owner_weapon_part_removed(part_path: String) -> void:
 
 
 func _get_owner_peer_id() -> int:
-	# Le noeud Player parent est nommé str(peer_id) (convention PlayerManager)
 	return int(get_parent().name)
 
 

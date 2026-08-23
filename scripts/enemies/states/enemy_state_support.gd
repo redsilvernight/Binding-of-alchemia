@@ -1,12 +1,3 @@
-## Ennemi "soigneur" (Phase 9.2, 3e passe, nouveau comportement) : fuit le
-## joueur le plus proche s'il s'approche trop, sinon se rapproche de l'allié
-## vivant le plus blessé à portée de recherche et le soigne à intervalle
-## régulier une fois à portée de soin. Ne blesse jamais directement -- sa
-## seule menace est indirecte (prolonge la vie des autres ennemis de la
-## salle), donc une cible naturellement prioritaire pour le joueur.
-## Le script concret doit exposer `speed` (float), `heal_cooldown` (float),
-## `heal_range` (float), `flee_range` (float), `heal_target` (Node2D),
-## `_update_heal_target()` (écrit `heal_target`) et `heal_at(target)`.
 class_name EnemyStateSupport
 extends EnemyState
 

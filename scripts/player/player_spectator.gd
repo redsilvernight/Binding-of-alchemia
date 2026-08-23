@@ -1,11 +1,6 @@
 class_name PlayerSpectator
 extends RefCounted
 
-## Extrait de player.gd (File Size, cf. .claude/rules/gdscript.md) : mode
-## spectateur après la mort (Phase 9.3, façon Binding of Isaac) -- choix/
-## cycle d'une cible parmi les coéquipiers vivants, et suivi caméra. `_player`
-## est le Player propriétaire (nécessaire pour get_tree() et se comparer
-## lui-même dans la recherche de candidats) ; `_camera` est sa Camera2D.
 
 var _player: Node2D
 var _camera: Camera2D
@@ -15,9 +10,6 @@ func _init(player: Node2D, camera: Camera2D) -> void:
 	_player = player
 	_camera = camera
 
-## update_room_limits : Callable (PlayerCameraController.update_room_limits)
-## appelée uniquement en mode donjon (cf. Player._dungeon_camera_mode), même
-## contrat que dans Player._physics_process.
 func process(dungeon_camera_mode: bool, update_room_limits: Callable) -> void:
 	if Input.is_action_just_pressed("spectate_next"):
 		pick_target(true)

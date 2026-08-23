@@ -5,13 +5,7 @@ const AREA_VFX_SCENE: String = "res://scenes/effects/area_effect_vfx.tscn"
 
 @export var damage: float = 1.0
 @export var radius: float = 50.0
-## Même sémantique que ImpactDamage.duration : 0 = instantané, sinon dégâts
-## répartis en tics par ennemi touché (le rayon n'est mesuré qu'une fois, à
-## l'impact -- pas de re-scan pendant les tics).
 @export var duration: float = 0.0
-## Type d'origine (cf. MixtureToEffect._creer_impact) : purement visuel, ne
-## joue aucun rôle dans apply() -- détermine quel sprite area_effect_vfx.gd
-## affiche pour cette zone.
 @export var type_alchimie: Ingredient.TypeAlchimie = Ingredient.TypeAlchimie.FEU
 
 func apply(target: Node, source_position: Vector2, _shooter_id: int = 0) -> void:

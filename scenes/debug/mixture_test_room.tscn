@@ -12,8 +12,14 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
 size = Vector2(928, 576)
 
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_alchemy_station"]
+polygon = PackedVector2Array(6, -60, 13, -53, 9, -47, 13, -34, 31, -52, 29, -43, 35, -40, 37, -27, 58, -16, 52, -1, 52, 33, 41, 33, 38, 25, -7, 44, -9, 57, -14, 59, -20, 57, -21, 46, -40, 37, -46, 44, -52, 42, -52, 7, -57, -7, -44, -13, -42, -45, -35, -45, -32, -17, -27, -34, -20, -23, -17, -40, -10, -26, -5, -51, 0, -30, 5, -31, 5, -47, 1, -50, 5, -59)
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_station"]
 radius = 80.0
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_weapon_station"]
+polygon = PackedVector2Array(7, -44, 46, -26, 44, 22, 36, 22, 35, 3, 34, 17, 25, 31, 3, 30, 4, 25, 12, 20, 11, 15, -7, 24, -9, 47, -12, 49, -17, 47, -18, 25, -20, 37, -25, 40, -33, 39, -36, 33, -44, 33, -47, 6, -17, -9, -14, -14, -6, -15, -2, -21, 3, -19, 6, -43)
 
 [node name="MixtureTestRoom" type="Node2D" unique_id=428087454]
 script = ExtResource("1_room")
@@ -34,6 +40,16 @@ script = ExtResource("3_alchemy_station")
 
 [node name="BenchVisual" type="Sprite2D" parent="AlchemyStation" unique_id=1676148373]
 texture = ExtResource("6_alchemy_tex")
+
+[node name="Occluder" type="LightOccluder2D" parent="AlchemyStation" unique_id=2042867498]
+occluder = SubResource("OccluderPolygon2D_alchemy_station")
+
+[node name="Body" type="StaticBody2D" parent="AlchemyStation" unique_id=1034225211]
+collision_layer = 8
+collision_mask = 0
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="AlchemyStation/Body" unique_id=670835220]
+polygon = PackedVector2Array(-44, -18, 58, -16, 52, -1, 52, 33, 41, 33, 38, 25, -7, 44, -9, 57, -16, 59, -20, 57, -20, 47, -29, 42, -40, 37, -46, 44, -52, 42, -52, 7, -57, -7, -45, -12, -44, -17)
 
 [node name="Interactable" type="Area2D" parent="AlchemyStation" unique_id=215049541]
 script = ExtResource("5_interactable")
@@ -57,6 +73,16 @@ script = ExtResource("4_weapon_station")
 [node name="BenchVisual" type="Sprite2D" parent="WeaponStation" unique_id=76130127]
 texture = ExtResource("7_weapon_tex")
 
+[node name="Occluder" type="LightOccluder2D" parent="WeaponStation" unique_id=341352792]
+occluder = SubResource("OccluderPolygon2D_weapon_station")
+
+[node name="Body" type="StaticBody2D" parent="WeaponStation" unique_id=1074705573]
+collision_layer = 8
+collision_mask = 0
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="WeaponStation/Body" unique_id=1546570095]
+polygon = PackedVector2Array(-3, -20, 45, -20, 44, 22, 36, 22, 35, 3, 34, 17, 25, 31, 3, 30, 4, 25, 12, 20, 11, 15, -7, 24, -9, 47, -12, 49, -17, 47, -18, 25, -22, 39, -30, 40, -36, 33, -43, 34, -47, 6, -17, -9, -14, -14, -11, -12, -4, -19)
+
 [node name="Interactable" type="Area2D" parent="WeaponStation" unique_id=708792681]
 script = ExtResource("5_interactable")
 prompt_text = "Appuyer sur E pour l'atelier d'arme"
@@ -73,6 +99,7 @@ text = "Appuyer sur E pour l'atelier d'arme"
 horizontal_alignment = 1
 
 [node name="Players" type="Node2D" parent="." unique_id=1459185635]
+y_sort_enabled = true
 
 [node name="Enemies" type="Node2D" parent="." unique_id=1260919947]
 

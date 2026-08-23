@@ -1,18 +1,4 @@
 extends Node
-## Sauvegarde disque (Phase 8.3) : lit/écrit UNIQUEMENT la progression du
-## joueur LOCAL (monnaie + déblocages), sans connaissance du réseau ni de
-## MetaProgression. Volontairement agnostique du peer_id (qui change à
-## chaque connexion, cf. meta_progression.gd) : c'est à l'appelant
-## (network_manager.gd) de réinjecter cette donnée sous le bon peer_id de
-## la session en cours.
-##
-## Profils multiples (Phase 8.5) : 3 profils distincts sur un même poste
-## (ex. plusieurs joueurs locaux), chacun dans son propre fichier. Le profil
-## actif est choisi depuis main_menu.gd et persiste entre les lancements du
-## jeu via active_profile.json. load_progression()/save_progression() gardent
-## la même signature qu'avant : les appelants (network_manager.gd,
-## meta_progression.gd) restent agnostiques du profil, comme ils le sont déjà
-## du peer_id.
 
 const PROFILE_COUNT: int = 3
 const SAVE_DIR: String = "user://saves/"
@@ -48,8 +34,6 @@ func save_progression(currency: int, unlocked: Array) -> void:
 	file.close()
 
 
-## Lit un profil sans changer le profil actif (ex : peupler le sélecteur de
-## profils dans main_menu.gd avec un aperçu de la monnaie).
 func get_profile_preview(index: int) -> Dictionary:
 	var path: String = _profile_path(index)
 	if not FileAccess.file_exists(path):

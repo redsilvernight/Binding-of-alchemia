@@ -1,9 +1,5 @@
 extends CanvasLayer
 
-# Écran d'inventaire du joueur local (Phase 5.2, restylé pour afficher aussi
-# la mixture chargée et l'arme équipée). Toggle avec l'action
-# "toggle_inventory" (Tab). Purement affichage : ne modifie jamais l'état de
-# l'Inventory/Weapon (autorité hôte), se contente de refléter leurs signaux.
 
 const INGREDIENT_FALLBACK_ICON: Texture2D = preload("res://assets/test/mixture_bullet_test.png")
 const WEAPON_PART_FALLBACK_ICON: Texture2D = preload("res://assets/test/water_bullet_test.png")
@@ -26,9 +22,6 @@ var weapon: Weapon
 
 func _ready() -> void:
 	root.visible = false
-	# Monnaie méta (8.2) affichée ici à titre indicatif : elle vit dans
-	# MetaProgression (autoload, par-peer), pas dans Inventory (Node par-joueur
-	# recréé à chaque run) — cet écran ne fait qu'y lire/écouter, jamais écrire.
 	MetaProgression.currency_changed.connect(_on_currency_changed)
 	_on_currency_changed(MetaProgression.get_currency(NetworkManager.get_unique_id()))
 
@@ -47,8 +40,6 @@ func bind_inventory(p_inventory: Inventory) -> void:
 	_refresh_weapon_parts()
 
 
-## Séparé de bind_inventory (appelé juste après par player.gd) : la mixture
-# et les sockets vivent sur Weapon, pas Inventory.
 func bind_weapon(p_weapon: Weapon) -> void:
 	weapon = p_weapon
 	weapon.part_equipped.connect(_on_part_equipped)

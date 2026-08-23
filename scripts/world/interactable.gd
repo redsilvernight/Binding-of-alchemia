@@ -1,27 +1,8 @@
 class_name Interactable
 extends Area2D
 
-# Composant générique d'interaction (Phase 5.3).
-#
-# Convention réseau : ce noeud ne modifie JAMAIS d'état de jeu lui-même.
-# Il ne fait que détecter que LE JOUEUR LOCAL est dans la zone et que ce
-# joueur a appuyé sur "interact", puis émet un signal. C'est au script qui
-# écoute ce signal (ex : station d'alchimie, atelier d'arme) de respecter
-# le modèle d'autorité (RPC vers l'hôte, cf. architecture_reseau.md) —
-# Interactable ne fait aucune hypothèse sur ce que "interagir" signifie.
-#
-# Détection multijoueur : body_entered/exited se déclenchent chez TOUS les
-# pairs dès qu'un Player (local ou distant) entre dans la zone (réplication
-# de position via MultiplayerSynchronizer). On ne doit afficher le prompt et
-# écouter l'input QUE pour le joueur dont ce client a l'autorité, sinon
-# chaque client afficherait un prompt pour n'importe quel joueur distant
-# passant dans la zone.
 
 signal interacted(player: Node2D)
-## Émis quand LE JOUEUR LOCAL quitte la zone (même restriction d'autorité que
-## interacted, cf. _on_body_entered) -- consommateurs typiques : fermer un
-## écran ouvert depuis cette station plutôt que de le laisser affiché alors
-## que le joueur s'est déjà éloigné (cf. AlchemyStation).
 signal player_left(player: Node2D)
 
 @export var prompt_text: String = "Appuyer sur E"
@@ -43,7 +24,7 @@ func _on_body_entered(body: Node2D) -> void:
 	if not body.is_in_group("Players"):
 		return
 	if not body.is_multiplayer_authority():
-		return # joueur distant : ce client n'affiche pas de prompt pour lui
+		return
 	_local_player_inside = body
 	if prompt_label:
 		prompt_label.visible = true

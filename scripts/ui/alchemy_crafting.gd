@@ -1,15 +1,5 @@
 extends CanvasLayer
 
-# Écran de crafting d'alchimie (Phase 5.5, restylé : chaudron interactif +
-# liste d'ingrédients cliquables/glissables, même paradigme que
-# weapon_crafting.gd adapté à l'alchimie -- pas d'emplacements typés fixes
-# ici (une mixture accepte un nombre et un mélange d'ingrédients
-# quelconques), donc un chaudron qui accumule une liste EN LOCAL (jamais
-# envoyée tant que "Composer" n'est pas cliqué) plutôt que des sockets.
-# Comme avant, cet écran ne modifie JAMAIS l'état lui-même -- il envoie
-# l'intention de mix par RPC vers l'hôte (Player.request_craft_mixture), qui
-# seul valide le stock, consomme les ingrédients et résout la recette (cf.
-# architecture_reseau.md).
 
 const INGREDIENT_FALLBACK_ICON: Texture2D = preload("res://assets/test/mixture_bullet_test.png")
 
@@ -25,14 +15,7 @@ const INGREDIENT_FALLBACK_ICON: Texture2D = preload("res://assets/test/mixture_b
 
 var inventory: Inventory
 var weapon: Weapon
-## Ingrédients ajoutés au chaudron mais pas encore envoyés à l'hôte (cf.
-## _on_compose_pressed) -- purement local, jamais répliqué : personne d'autre
-## n'a besoin de voir "en cours de composition" avant confirmation.
 var _pending_paths: Array[String] = []
-## Peer_id du joueur propriétaire de cet écran (cf. get_parent() ci-dessous) --
-## résolu une fois en _ready(), utilisé pour interroger RunManager.has_used_alchemy()
-## côté CE joueur uniquement (le verrou est maintenant par joueur, pas par
-## groupe, cf. RunManager.alchemy_used_by_peer).
 var _owner_peer_id: int = 0
 
 
@@ -41,9 +24,6 @@ func _ready() -> void:
 	compose_button.pressed.connect(_on_compose_pressed)
 	cauldron_preview.item_dropped.connect(_add_to_pending)
 	cauldron_preview.item_activated.connect(_remove_from_pending)
-	# get_parent().weapon : même pattern que weapon_crafting.gd -- toujours
-	# instancié comme enfant de Player, après que son propre @onready var
-	# weapon ait déjà résolu (cf. player.gd::_ready).
 	weapon = get_parent().weapon
 	_owner_peer_id = int(get_parent().name)
 	weapon.mixture_changed.connect(_refresh_loaded_summary)
@@ -75,9 +55,6 @@ func is_open() -> bool:
 	return root.visible
 
 
-## Retour utilisateur : se ferme avec la même touche qu'à l'ouverture (E, via
-## Interactable -> Player.open_alchemy_crafting()) plutôt qu'avec Échap --
-## Échap est réservé au menu pause (pause_menu.gd).
 func toggle() -> void:
 	if root.visible:
 		close()
@@ -90,10 +67,6 @@ func _on_inventory_changed(_ingredient: Ingredient, _new_quantity: int) -> void:
 		_refresh_available()
 
 
-## Indicateur discret (icône + compte) dans l'entête -- contrairement au
-## chaudron, pas de grille d'ingrédients ici : la mixture déjà chargée n'est
-## qu'un rappel de contexte, pas une zone d'interaction (cf. retour
-## utilisateur, un aperçu complet façon MixturePreview prenait trop de place).
 func _refresh_loaded_summary(ingredient_paths: Array[String]) -> void:
 	if not root.visible:
 		return
@@ -102,7 +75,7 @@ func _refresh_loaded_summary(ingredient_paths: Array[String]) -> void:
 		loaded_label.text = "Mixture chargée : aucune"
 		return
 
-	var occurrences_by_type: Dictionary = {} # Ingredient.TypeAlchimie -> int
+	var occurrences_by_type: Dictionary = {}
 	for path in ingredient_paths:
 		var ingredient: Ingredient = inventory.ingredient_resources.get(path)
 		if ingredient == null:
@@ -121,10 +94,6 @@ func _refresh_loaded_summary(ingredient_paths: Array[String]) -> void:
 	loaded_label.text = "Mixture chargée : %d ingrédient%s" % [count, "s" if count > 1 else ""]
 
 
-## Ajout depuis la grille "disponibles" (clic OU drop dans le chaudron) --
-## refuse silencieusement si le joueur n'en possède plus assez pour honorer
-## ce qui est déjà en attente (désync possible si l'inventaire change pendant
-## que l'écran est ouvert, cf. _refresh_available).
 func _add_to_pending(ingredient: Resource) -> void:
 	if inventory == null or not (ingredient is Ingredient):
 		return
@@ -146,8 +115,6 @@ func _add_to_pending(ingredient: Resource) -> void:
 	cauldron_preview.display(_pending_paths, inventory)
 
 
-## Retire UNE occurrence -- cliquer un ingrédient du chaudron l'enlève un par
-## un plutôt que tout d'un coup, symétrique à l'ajout par clic.
 func _remove_from_pending(ingredient: Resource) -> void:
 	if not (ingredient is Ingredient):
 		return
@@ -188,23 +155,13 @@ func _on_compose_pressed() -> void:
 		result_label.text = "Ajoute au moins un ingrédient au chaudron."
 		return
 
-	# L'hôte revalidera le stock avant de retirer quoi que ce soit ; on ne
-	# fait ici qu'exprimer l'intention, jamais de calcul de résultat local.
 	get_parent().request_craft_mixture.rpc_id(1, _pending_paths.duplicate())
 	_pending_paths.clear()
 	_refresh_available()
 	cauldron_preview.display(_pending_paths, inventory)
-	# Retour utilisateur : l'écran se ferme tout seul après une composition
-	# envoyée, plutôt que de rester ouvert sur un chaudron vide.
 	close()
 
 
-## Reflète le verrouillage "un craft par étage PAR JOUEUR" (cf.
-## RunManager.alchemy_lock_changed) -- purement visuel ici, la vérité vit dans
-## RunManager, appliquée côté hôte dans Player.request_craft_mixture. Filtre
-## sur _owner_peer_id : le signal est diffusé pour TOUS les joueurs (leurs
-## fioles respectives, cf. AlchemyStation), cet écran ne doit réagir qu'à
-## l'état de son propre propriétaire.
 func _on_lock_changed(peer_id: int, used: bool) -> void:
 	if peer_id != _owner_peer_id:
 		return

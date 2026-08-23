@@ -4,7 +4,6 @@ extends Control
 @onready var quantity_label: Label = $QuantityLabel
 
 
-## quantity == -1 : pas de quantité affichée (pièce d'arme, unique par nature)
 func setup(icon: Texture2D, quantity: int = -1, tooltip: String = "") -> void:
 	icon_rect.texture = icon
 	tooltip_text = tooltip

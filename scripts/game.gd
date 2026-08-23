@@ -1,4 +1,3 @@
-# game.gd
 extends Control
 @onready var _canvas_modulate: CanvasModulate = $CanvasModulate
 @onready var _ambient_light: DirectionalLight2D = $AmbientLight
@@ -16,14 +15,7 @@ extends Control
 @onready var props: Node2D = $Props
 @onready var prop_spawner: MultiplayerSpawner = $PropSpawner
 
-# Phase 6.1 : toutes les salles ont le même gabarit (modèle grille fixe,
-# cf. DungeonGenerator) — obligatoire pour que les portes de deux salles
-# voisines s'alignent toujours sans avoir à les valider au cas par cas.
 const ROOM_CELL_SIZE: Vector2 = Vector2(1344, 960)
-# Phase 9 (étages) : BASE_ROOM_COUNT est la taille d'origine (étage 1,
-# inchangée) -- chaque étage suivant ajoute des salles jusqu'à ROOM_COUNT_CAP,
-# cf. _room_count_for_floor. Le plafond évite un donjon ingérable (temps de
-# génération, taille de la grille) après une longue série de victoires.
 const BASE_ROOM_COUNT: int = 6
 const ROOM_COUNT_PER_FLOOR: int = 1
 const ROOM_COUNT_CAP: int = 12
@@ -31,196 +23,77 @@ const ROOM_TEMPLATE_PATHS: Array[String] = [
 	"res://scenes/rooms/room_template_a.tscn",
 	"res://scenes/rooms/room_template_b.tscn",
 ]
-# Une seule salle spéciale par donjon, choisie au hasard entre alchimie et
-# arme — jamais les deux ensemble (cf. room_alchemy.tscn / room_weapon.tscn).
 const SPECIAL_ROOM_TEMPLATE_PATHS: Array[String] = [
 	"res://scenes/rooms/room_alchemy.tscn",
 	"res://scenes/rooms/room_weapon.tscn",
 ]
-# Phase 7.4 : salle de boss, jamais tirée au hasard (cf. DungeonGenerator —
-# toujours la cellule la plus éloignée du départ) — le boss lui-même est
-# spawné à part, hors de la spawn table pondérée des ennemis normaux.
 const BOSS_ROOM_TEMPLATE_PATH: String = "res://scenes/rooms/boss_room.tscn"
-# Phase 9.2 : salle au trésor, une par étage (comme la salle de boss, jamais
-# absente), contient le coffre de pièces d'arme (cf. chest.gd) -- distincte
-# de SPECIAL_ROOM_TEMPLATE_PATHS (alchimie/arme), pas en concurrence avec elles.
 const TREASURE_ROOM_TEMPLATE_PATH: String = "res://scenes/rooms/room_treasure.tscn"
 const BOSS_SCENE_PATH: String = "res://scenes/enemies/boss_01.tscn"
 const BOSS_HEALTHBAR_SCENE_PATH: String = "res://scenes/ui/boss_healthbar.tscn"
-# Phase 8.6 : panneau de résumé affiché à tous les pairs quand tout le monde
-# est mort (cf. _check_all_players_dead) -- remplace l'ancien retour immédiat
-# au hub, laisse le choix "Rejouer"/"Retour au menu" (scripts/ui/run_summary_panel.gd).
 const RUN_SUMMARY_PANEL_SCENE_PATH: String = "res://scenes/ui/run_summary_panel.tscn"
-# Phase 8.2 : battement avant le retour au hub après la mort du boss (voir
-# _on_boss_defeated) — contrairement à la fin de run par mort collective (où
-# plus personne n'envoie de RPC de jeu, tout le monde étant déjà spectateur),
-# le boss peut mourir pendant que des joueurs jouent encore activement. Un
-# changement de scène immédiat fait alors arriver leurs RPC en vol (tir,
-# etc.) après que la scène soit déjà détruite chez le destinataire (erreurs
-# réseau constatées en playtest : "Node not found", "on_despawn_receive"
-# ERR_UNAUTHORIZED). Laisser quelques secondes donne le temps à ce trafic de
-# se résorber naturellement pendant que la scène est encore pleinement vivante.
 const BOSS_DEFEAT_TO_HUB_DELAY: float = 2.5
 
-# Phase 6.3 : QUOI/COMBIEN spawn vient de ces tables pondérées (voir
-# scripts/dungeon/spawn_table.gd), le OÙ reste une position aléatoire dans
-# la salle (_random_position_in_room) — pas de Marker2D dédiés tant qu'un
-# seul type d'ennemi et un placement uniforme suffisent.
 const ENEMY_SPAWN_TABLE_PATH: String = "res://resources/spawn_tables/enemies_normal.tres"
 const INGREDIENT_SPAWN_TABLE_PATH: String = "res://resources/spawn_tables/ingredients.tres"
 const WEAPON_PART_SPAWN_TABLE_PATH: String = "res://resources/spawn_tables/weapon_parts.tres"
-# Phase 9.2 : au plus cette fraction des ennemis d'un étage peuvent être
-# "porteurs" d'ingrédient (cf. _generate_dungeon()) -- garantit des kills
-# "vides" même sur un petit étage où le budget d'ingrédients dépasserait
-# sinon l'effectif total. Premier réglage, à ajuster en playtest.
 const INGREDIENT_CARRIER_RATIO_CAP: float = 0.5
 const ROOM_SPAWN_MARGIN: float = 80.0
-# Phase 9 (étages) : tirages pick_one() additionnels par salle normale, en plus
-# de la densité de base (enemy_table.pick_many(), fixée par la SpawnTable elle-
-# même) -- +1 tirage tous les ENEMY_EXTRA_ROLL_FLOORS étages, plafonné à
-# ENEMY_EXTRA_ROLL_CAP, cf. _extra_enemy_rolls_for_floor.
 const ENEMY_EXTRA_ROLL_FLOORS: int = 2
 const ENEMY_EXTRA_ROLL_CAP: int = 4
 
-# Phase 11 (vie du donjon) : 3 pools thématiques, un par étage via
-# (floor_level - 1) % POOL_COUNT -- cycle indéfiniment plutôt qu'un palier
-# fixe, current_floor n'ayant pas de plafond (une run peut monter
-# indéfiniment jusqu'à la mort du groupe). POOL_COUNT découplé de la taille
-# des tableaux ci-dessous (au lieu de PROP_SPAWN_TABLE_PATHS.size()) pour que
-# _pool_index_for_floor() reste correct même si un tableau est un jour
-# réorganisé indépendamment de l'autre.
 const POOL_COUNT: int = 3
 const PROP_SPAWN_TABLE_PATHS: Array[String] = [
 	"res://resources/spawn_tables/props_pool_a.tres",
 	"res://resources/spawn_tables/props_pool_b.tres",
 	"res://resources/spawn_tables/props_pool_c.tres",
 ]
-# Phase 11.4 : le tileset sol/murs suit la même pool que les props (retour
-# utilisateur -- le tileset "dungeon_stone" générique ne correspondait plus
-# au thème une fois les props posés, ex: cristaux minéraux sur des dalles de
-# pierre taillée). Même ordre que PROP_SPAWN_TABLE_PATHS (A=cavernes,
-# B=cryptes, C=alchimie).
 const ROOM_TILESET_PATHS: Array[String] = [
 	"res://resources/tilesets/dungeon_cave_terrain.tres",
 	"res://resources/tilesets/dungeon_crypt_terrain.tres",
 	"res://resources/tilesets/dungeon_alchemy_terrain.tres",
 ]
-# Teinte ambiante de CanvasModulate par pool thématique (retour utilisateur,
-# ambiance visuelle des salles) -- même ordre que ROOM_TILESET_PATHS/
-# PROP_SPAWN_TABLE_PATHS. Variations resserrées autour de la teinte neutre
-# d'origine de game.tscn (0.75, 0.73, 0.8) pour rester dans la même gamme de
-# luminosité (pas d'étage qui devienne subitement trop sombre/clair), seule
-# la dominante de teinte change : bleu-froid humide (cavernes), vert-gris
-# maladif (crypte), violet mystique (alchimie).
 const ROOM_AMBIENT_COLORS: Array[Color] = [
 	Color(0.62, 0.7, 0.8, 1.0),
 	Color(0.68, 0.74, 0.64, 1.0),
 	Color(0.76, 0.66, 0.85, 1.0),
 ]
-# Couleur d'AmbientLight (DirectionalLight2D, $AmbientLight) par pool
-# thématique -- retour utilisateur : CanvasModulate MULTIPLIE le rendu, donc
-# sur les tuiles déjà quasi noires en dehors de la torche du joueur (art très
-# sombre + assombrissement du dynamic_lighting), une teinte proche du blanc
-# reste noire quel que soit sa dominante (blanc * presque-zéro = toujours
-# presque-zéro) -- ROOM_AMBIENT_COLORS ci-dessus ne se voyait donc jamais
-# dans les zones non éclairées, seulement (à peine) dans le halo du joueur.
-# Une DirectionalLight2D ADDITIONNE sa couleur à la scène entière (pas de
-# position/rayon à gérer, uniforme comme CanvasModulate) : c'est ce qui rend
-# la dominante de thème visible dans le noir. shadow_enabled=false sur ce
-# node (cf. game.tscn) -- une lumière directionnelle avec ombres projetterait
-# des ombres de TOUS les occluders du donjon entier simultanément (pas de
-# culling par salle), en plus de dupliquer visuellement les ombres nettes déjà
-# portées par PlayerLight ; celle-ci ne doit rester qu'un halo de couleur plat.
 const AMBIENT_LIGHT_COLORS: Array[Color] = [
 	Color(0.4, 0.65, 0.9, 1.0),
 	Color(0.55, 0.7, 0.45, 1.0),
 	Color(0.7, 0.4, 0.9, 1.0),
 ]
 const AMBIENT_LIGHT_ENERGY: float = 0.35
-# Torche/cristal/brasero murale par thème -- cf. DungeonPropPlacer.WALL_LIGHT_TEXTURE_PATHS
-# (extrait de game.gd, File Size) pour le détail du placement en tuile.
-# Musique de donjon par pool thématique (retour utilisateur : la même piste
-# "dungeon" jouait sur les 3 thèmes). Même ordre que ROOM_TILESET_PATHS
-# (A=cavernes, B=cryptes, C=alchimie) -- clés résolues par
-# AudioManager.play_music() en res://assets/audio/music/{clé}.ogg.
 const MUSIC_KEYS: Array[String] = [
 	"cave",
 	"crypt",
 	"alchemy",
 ]
 
-# Phase 6.4 : carte du donjon pour la mini-map (scripts/ui/minimap.gd). Toutes
-# les salles y sont enregistrées dès leur spawn (_spawn_room tourne sur
-# chaque pair avec les mêmes données répliquées par le RoomSpawner, donc ce
-# dictionnaire est identique partout sans RPC dédié). Seul "visited" change
-# après coup, et seul l'hôte décide quand — répliqué via _rpc_mark_room_visited,
-# même pattern que Room._rpc_set_locked.
 signal dungeon_map_changed
-var dungeon_map: Dictionary = {} # Vector2i (grid_position) -> {is_start, is_special, is_boss, open_sides, visited}
+var dungeon_map: Dictionary = {}
 
-# Phase 7.4 : référence au boss courant, utilisée pour rattraper l'état de
-# vie d'un pair qui rejoint après le début du combat (cf. _on_peer_connected)
-# — sans ça sa boss_healthbar afficherait la vie max jusqu'au prochain coup
-# porté, puisque _update_health est un RPC one-shot jamais rejoué.
 var current_boss: Node = null
 
-## Instanciés en _ready() (File Size, cf. .claude/rules/gdscript.md) :
-## composants extraits de game.gd pour le placement procédural des props
-## (DungeonPropPlacer) et le tirage du butin de coffre/monnaie (LootRoller).
-## Ne sont pas des noeuds de l'arbre de scène -- pur code partagé, aucun état
-## réseau/multijoueur ne leur est délégué (cf. leurs commentaires d'en-tête).
 var _prop_placer: DungeonPropPlacer
 var _loot_roller: LootRoller
 
-# Bugfix hors scope (8.3, trouvé en playtest à plusieurs) : contrairement au
-# tout premier lancement (menu -> game, où les clients se connectent APRÈS ce
-# _ready et le MultiplayerSpawner rattrape nativement l'état déjà spawné via
-# le mécanisme de late-join), une run relancée depuis le hub
-# (RunManager.request_start_run) recharge cette scène alors que tous les
-# pairs sont déjà connectés -- ce mécanisme de rattrapage natif ne se
-# redéclenche PAS pour eux (il est lié à l'évènement peer_connected, pas à
-# l'apparition d'un noeud). L'hôte, sans aller-retour réseau, atteint ce
-# _ready() et spawnerait le donjon quasi immédiatement, bien avant qu'un
-# client (qui doit d'abord recevoir le RPC de changement de scène, détruire
-# le hub, puis charger cette scène) n'ait de RoomSpawner existant pour
-# recevoir ces spawns -- constaté en playtest : donjon non généré côté
-# client. D'où ce handshake explicite, complémentaire à celui de
-# RunManager._change_scene_with_handshake (qui, lui, s'assure que le trafic
-# de l'ANCIENNE scène soit résorbé avant de la détruire -- celui-ci s'assure
-# que la NOUVELLE scène soit prête côté client avant d'y spawn quoi que ce soit).
 const SCENE_READY_TIMEOUT: float = 5.0
 const SCENE_READY_POLL_INTERVAL: float = 0.1
-var _peers_ready_for_dungeon: Dictionary = {} # hôte uniquement : peer_id -> true
+var _peers_ready_for_dungeon: Dictionary = {}
 
-# 8.6 : évite d'instancier plusieurs fois le panneau de résumé si
-# _check_all_players_dead est redéclenché après coup (ex : un pair déjà mort
-# se déconnecte pendant que le panneau est déjà affiché, cf. _on_peer_disconnected).
 var _run_summary_shown: bool = false
 
 func _ready() -> void:
 	add_to_group("Game")
-	# Option "Éclairage dynamique" (retour utilisateur) : purement visuel/
-	# local à ce pair, pas d'état à répliquer. Annule l'assombrissement
-	# ambiant ; cf. player.gd pour le pendant "coupe la torche du joueur"
-	# (les deux ensemble = plus aucune trace visible du système d'éclairage).
-	# Connecté au signal (pas juste lu une fois) : peut être re-basculé en
-	# cours de partie depuis le menu pause, cf. Settings.dynamic_lighting_changed.
 	_canvas_modulate.visible = Settings.dynamic_lighting
 	Settings.dynamic_lighting_changed.connect(func(enabled: bool) -> void: _canvas_modulate.visible = enabled)
 	_ambient_light.visible = Settings.dynamic_lighting
 	Settings.dynamic_lighting_changed.connect(func(enabled: bool) -> void: _ambient_light.visible = enabled)
-	# Teinte par thème de l'étage (Phase 11, ambiance visuelle) -- même calcul
-	# que Room.set_floor_tileset() (_spawn_room()) : pure fonction de
-	# RunManager.current_floor, déjà répliqué à ce stade, donc identique sur
-	# chaque pair sans RPC dédiée.
 	var pool_index_ambient: int = _pool_index_for_floor(RunManager.current_floor)
 	_canvas_modulate.color = ROOM_AMBIENT_COLORS[pool_index_ambient]
 	_ambient_light.color = AMBIENT_LIGHT_COLORS[pool_index_ambient]
 	_ambient_light.energy = AMBIENT_LIGHT_ENERGY
-	# Tourne localement sur chaque pair (comme tout _ready de scène, pas
-	# besoin de RPC) -- remplacé par la musique de boss dès l'entrée dans sa
-	# salle, cf. _rpc_mark_room_visited. Piste par pool thématique (Phase 11.5,
-	# cf. MUSIC_KEYS) plutôt qu'une unique piste "dungeon" pour tous les étages.
 	AudioManager.play_music(MUSIC_KEYS[pool_index_ambient])
 	NetworkManager.multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	NetworkManager.multiplayer.peer_connected.connect(_on_peer_connected)
@@ -240,13 +113,6 @@ func _ready() -> void:
 		notify_scene_ready.rpc_id(1)
 
 
-## Hôte uniquement : attend que chaque pair déjà connecté confirme avoir
-## atteint cette scène avant de générer/spawn le donjon (cf. commentaire
-## au-dessus de _peers_ready_for_dungeon). Timeout de sécurité pour ne pas
-## bloquer indéfiniment si un pair ne répond jamais (déconnexion en plein
-## transit, paquet perdu) -- dans ce cas le donjon est quand même généré,
-## ce pair ratera juste ce spawn initial (même dette que le rattrapage HP
-## boss ponctuel, cf. 7.4/_on_peer_connected).
 func _wait_for_connected_peers_ready() -> void:
 	var expected_peers: PackedInt32Array = NetworkManager.get_peers()
 	if expected_peers.is_empty():
@@ -264,9 +130,6 @@ func _wait_for_connected_peers_ready() -> void:
 		elapsed += SCENE_READY_POLL_INTERVAL
 
 
-## Appelé par chaque client une fois ses spawn_function assignées (donc prêt
-## à recevoir les spawns de l'hôte) -- même garde que les autres RPC
-## "any_peer" du projet (request_unlock, etc.) : seul l'hôte agit dessus.
 @rpc("any_peer", "call_local", "reliable")
 func notify_scene_ready() -> void:
 	if not multiplayer.is_server():
@@ -278,36 +141,20 @@ func notify_scene_ready() -> void:
 
 
 func _generate_dungeon() -> void:
-	# Phase 9 : RunManager.current_floor est déjà répliqué et à jour à ce point
-	# (advance_floor()/reset_floor() tournent avant la bascule de scène qui mène
-	# ici, cf. RunManager._change_scene_with_handshake).
 	var floor_level: int = RunManager.current_floor
 	var room_count: int = _room_count_for_floor(floor_level)
 	var dungeon_layout: Array[Dictionary] = DungeonGenerator.generate(room_count, ROOM_TEMPLATE_PATHS, SPECIAL_ROOM_TEMPLATE_PATHS, BOSS_ROOM_TEMPLATE_PATH, TREASURE_ROOM_TEMPLATE_PATH)
-	# Phase 11 : chargés une fois pour tout l'étage (même pool pour toutes les
-	# salles, cf. _pool_index_for_floor) -- passés à DungeonPropPlacer.prepare_room_props() qui
-	# remplit room_data["decor_cells"]/["decor_source_ids"] et
-	# room_data["blocking_cells"]/["blocking_source_ids"] AVANT le spawn de
-	# chaque salle (cf. commentaire sur set_decor_props()/set_blocking_props()
-	# dans room.gd pour la raison : réplication native avec le reste de
-	# room_data plutôt qu'un RPC séparé, pour rester correct en cas de rejoin
-	# en cours de partie).
 	var pool_index: int = _pool_index_for_floor(floor_level)
 	var prop_table: SpawnTable = load(PROP_SPAWN_TABLE_PATHS[pool_index]) as SpawnTable
 	var room_tile_set: TileSet = load(ROOM_TILESET_PATHS[pool_index]) as TileSet
 	var prop_tile_sources: Dictionary = _prop_placer.prop_tile_sources_by_texture(room_tile_set)
-	var room_nodes: Dictionary = {} # Vector2i (grid_position) -> Room
+	var room_nodes: Dictionary = {}
 	for room_data in dungeon_layout:
 		_prop_placer.prepare_room_props(room_data, prop_table, prop_tile_sources, pool_index, prop_spawner)
 		var room: Room = room_spawner.spawn(room_data)
 		room_nodes[room_data["grid_position"]] = room
 
 	player_spawner.spawn(NetworkManager.get_unique_id())
-	# Phase 8.1 : contrairement au tout premier lancement (menu -> game,
-	# où les clients se connectent APRÈS ce _ready), une run relancée
-	# depuis le hub (RunManager.request_start_run) recharge cette scène
-	# alors que tous les pairs sont déjà connectés — peer_connected ne se
-	# redéclenchera pas pour eux, donc il faut les spawn explicitement ici.
 	for peer_id in NetworkManager.get_peers():
 		player_spawner.spawn(peer_id)
 
@@ -331,17 +178,6 @@ func _generate_dungeon() -> void:
 			room.register_enemy(enemy)
 			floor_enemies.append(enemy)
 
-	# Phase 9.2 : budget d'ingrédients fixe pour tout l'étage (même quantité
-	# que l'ancien scatter, cf. ingredients.tres min_count/max_count), réparti
-	# sur des ennemis choisis au hasard plutôt qu'un tirage indépendant par
-	# mort -- seuls ces ennemis "porteurs" lâchent un ingrédient en mourant
-	# (EnemyBase._on_death()). Plafonné à INGREDIENT_CARRIER_RATIO_CAP de
-	# l'effectif de l'étage : sur les premiers étages (peu de salles, 1-2
-	# ennemis/salle sur enemies_normal.tres), le budget dépassait le nombre
-	# d'ennemis et 100% des morts lâchaient un ingrédient -- ce plafond
-	# garantit qu'une partie des kills restent "vides" quelle que soit la
-	# taille de l'étage. Si l'étage a moins d'ennemis que le budget une fois
-	# plafonné, le surplus n'est simplement pas distribué.
 	var ingredient_table: SpawnTable = load(INGREDIENT_SPAWN_TABLE_PATH) as SpawnTable
 	var ingredient_paths: Array[String] = ingredient_table.pick_many()
 	floor_enemies.shuffle()
@@ -349,8 +185,6 @@ func _generate_dungeon() -> void:
 	for i in mini(ingredient_paths.size(), max_carriers):
 		floor_enemies[i].carries_ingredient_path = ingredient_paths[i]
 
-	# Boss (7.4) : spawn direct et déterministe dans sa salle, pas via la
-	# spawn table pondérée — une seule instance, toujours au même endroit.
 	for room_data in dungeon_layout:
 		if not room_data["is_boss"]:
 			continue
@@ -362,16 +196,9 @@ func _generate_dungeon() -> void:
 		boss_room.register_enemy(boss)
 		current_boss = boss
 		boss.tree_exiting.connect(func(): current_boss = null)
-		# Tuer le boss termine la run pour tout le groupe (victoire), même
-		# destination que la fin de run par mort collective
-		# (_check_all_players_dead -> RunManager.end_run()). "died"
-		# (Character._update_health) n'émet qu'une seule fois (garde not
-		# is_dead), pas de risque de double appel.
 		boss.died.connect(_on_boss_defeated)
 		break
 
-	# Phase 9.2 : le contenu du coffre de la salle au trésor est déterminé
-	# maintenant mais rien n'est spawné avant l'ouverture (cf. chest.gd).
 	for room_data in dungeon_layout:
 		if not room_data["is_treasure"]:
 			continue
@@ -380,33 +207,16 @@ func _generate_dungeon() -> void:
 		chest.set_contents(_loot_roller.roll_chest_contents(room_data, _room_world_rect(room_data), ENEMY_SPAWN_TABLE_PATH, WEAPON_PART_SPAWN_TABLE_PATH))
 		break
 
-	# Phase 9 (loader) : dernier appel, une fois tous les spawns émis --
-	# cf. RunManager.hide_loading_screen.
 	RunManager.hide_loading_screen()
 
 func _spawn_room(data: Dictionary) -> Node:
 	var room: Room = (load(data["template_path"]) as PackedScene).instantiate()
 	room.position = Vector2(data["grid_position"]) * ROOM_CELL_SIZE
 	room.grid_position = data["grid_position"]
-	# Phase 11.4 : AVANT l'entrée dans l'arbre (contrairement à
-	# set_open_sides() juste en dessous) -- _paint_floor() (Room._ready())
-	# lit déjà le tileset pour peindre, cf. Room.set_floor_tileset().
 	room.set_floor_tileset(load(ROOM_TILESET_PATHS[_pool_index_for_floor(RunManager.current_floor)]))
-	# Même contrainte de timing que set_floor_tileset() juste au-dessus (avant
-	# l'entrée dans l'arbre, cf. Room.set_decor_props()/set_blocking_props())
-	# -- room_data porte toujours ces quatre clés, remplies par
-	# DungeonPropPlacer.prepare_room_props() avant le spawn de la salle (cf. _generate_dungeon()).
 	room.set_decor_props(data["decor_cells"], data["decor_source_ids"])
 	room.set_blocking_props(data["blocking_cells"], data["blocking_source_ids"])
-	# Même thème que set_floor_tileset() ci-dessus (pool_index recalculé
-	# localement, pure fonction de RunManager.current_floor) -- la torche
-	# murale prend la même dominante de couleur que l'AmbientLight de la
-	# salle (cf. AMBIENT_LIGHT_COLORS, cohérence visuelle globale du thème).
 	room.set_wall_light(data["wall_light_cells"], AMBIENT_LIGHT_COLORS[_pool_index_for_floor(RunManager.current_floor)])
-	# set_open_sides() lit des noeuds enfants via @onready : le noeud doit
-	# être entré dans l'arbre (donc _ready() déjà passé) avant qu'on
-	# l'appelle, sans quoi les références sont encore nulles (même piège
-	# documenté pour launch() en Phase 3.5).
 	room.set_open_sides.call_deferred(data["open_sides"])
 	room.player_entered.connect(_on_room_player_entered.bind(data["grid_position"]))
 	_register_room_in_map(data)
@@ -419,41 +229,22 @@ func _register_room_in_map(data: Dictionary) -> void:
 		"is_boss": data["is_boss"],
 		"is_treasure": data["is_treasure"],
 		"open_sides": data["open_sides"],
-		"visited": data["is_start"], # la salle de départ est toujours déjà "découverte"
+		"visited": data["is_start"],
 	}
 	dungeon_map_changed.emit()
 
-## Ne s'exécute jamais côté client : Room.player_entered n'est émis que
-## lorsque la salle hôte détecte l'entrée (cf. room.gd, garde is_server()
-## avant l'émission) — pas besoin de re-vérifier ici.
 func _on_room_player_entered(player: Node2D, grid_position: Vector2i) -> void:
 	_rpc_mark_room_visited.rpc(grid_position)
 	_teleport_party_to_room(player, grid_position)
 
-## Façon Binding of Isaac (8.1) : dès qu'un joueur franchit une salle, tout
-## le groupe (vivants ET spectateurs) y est téléporté avec lui. Corrige un
-## vrai blocage constaté en playtest : un joueur mort/spectateur (cf.
-## player.gd.kill()) ne peut plus nettoyer les ennemis de sa salle, donc sa
-## porte reste verrouillée pour toujours (cf. Room._rpc_set_locked) — sans
-## ça, un coéquipier resté ailleurs se retrouvait bloqué dehors. Avec ce
-## comportement le groupe ne peut plus se séparer entre salles, donc ce cas
-## ne peut simplement plus se produire.
 func _teleport_party_to_room(entering_player: Node2D, grid_position: Vector2i) -> void:
 	var room_rect: Rect2 = _room_world_rect({"grid_position": grid_position})
-	# Position de l'entrant lui-même (déjà dans la salle à cet instant, cf.
-	# RoomTrigger) plutôt que le centre de la salle : il vient de passer la
-	# porte, donc apparaître à côté de lui place le reste du groupe près de
-	# cette porte plutôt qu'en plein milieu de la salle.
 	var target_position: Vector2 = entering_player.position
 	for player in players.get_children():
 		if player == entering_player:
 			continue
 		if room_rect.has_point(player.position):
-			continue # déjà dans cette salle : rien à faire
-		# Le joueur hôte a déjà l'autorité sur son propre noeud : affectation
-		# directe. Pour un noeud possédé par un client, seul lui peut modifier
-		# sa position (cf. player.tscn, MultiplayerSynchronizer répliquant
-		# ".:position" depuis l'autorité) — d'où le RPC ciblé vers son pair.
+			continue
 		if player.is_multiplayer_authority():
 			player.position = target_position
 		else:
@@ -478,20 +269,7 @@ func _random_position_in_room(room_data: Dictionary) -> Vector2:
 		rect.position.y + randf_range(ROOM_SPAWN_MARGIN, rect.size.y - ROOM_SPAWN_MARGIN)
 	)
 
-## Phase 11.2 / File Size : placement des décors/obstacles procéduraux
-## délégué à DungeonPropPlacer (scripts/dungeon/dungeon_prop_placer.gd) --
-## _prop_placer est l'unique instance partagée pour tout l'étage, cf. _ready().
 
-## Phase 9.2 : appelé par EnemyBase._on_death() pour l'ennemi "porteur"
-## désigné à la génération (cf. _generate_dungeon()) -- même pipeline que
-## request_enemy_projectile().
-##
-## call_deferred obligatoire ici (même piège que RunManager._rpc_change_scene,
-## cf. Phase 8.1) : _on_death() est atteint depuis take_damage() -> kill(),
-## lui-même appelé depuis Bullet._on_body_entered() -- un callback de
-## collision, donc en pleine "flush" physique. Activer la zone de collision
-## d'un Pickup fraîchement instancié à ce moment précis fait planter le
-## moteur physique ("Can't change this state while flushing queries").
 func request_enemy_drop(position: Vector2, item_resource_path: String) -> void:
 	if multiplayer.is_server():
 		pickup_spawner.spawn.call_deferred({
@@ -500,13 +278,6 @@ func request_enemy_drop(position: Vector2, item_resource_path: String) -> void:
 			"position": position,
 		})
 
-## Phase 9.2 (dynamisme) : la monnaie de kill devient N pickups physiques de
-## valeur fixe (cf. LootRoller.CURRENCY_PER_COIN/currency_coin_positions),
-## ramassés individuellement (Pickup._on_body_entered()) plutôt qu'un crédit
-## instantané à toute la partie -- appelé par EnemyBase._on_death() pour
-## CHAQUE ennemi tué (pas seulement les porteurs d'ingrédient). Même piège de
-## flush physique que request_enemy_drop() ci-dessus : call_deferred
-## obligatoire, ce chemin part aussi de Bullet._on_body_entered().
 func request_currency_drop(position: Vector2, amount: int) -> void:
 	if not multiplayer.is_server():
 		return
@@ -517,9 +288,6 @@ func request_currency_drop(position: Vector2, amount: int) -> void:
 			"position": coin_position,
 		})
 
-## Phase 9.2 : appelé par chest.gd à l'ouverture du coffre de la salle au
-## trésor -- rien n'est spawné avant ce moment. `contents` vient de
-## LootRoller.roll_chest_contents() (tiré à la génération, cf. _generate_dungeon()).
 func request_open_chest(contents: Dictionary) -> void:
 	if not multiplayer.is_server():
 		return
@@ -528,12 +296,6 @@ func request_open_chest(contents: Dictionary) -> void:
 		var enemy_path: String = contents.get("enemy_scene_path", "")
 		if enemy_path != "":
 			var enemy: Node = enemy_spawner.spawn({"scene_path": enemy_path, "position": contents["position"]})
-			# Pas de Room.register_enemy() ici : l'activation normale
-			# (EnemyBase.active) est déclenchée par l'entrée du joueur dans
-			# la salle (Room._on_trigger_body_entered), déjà passée à ce
-			# stade (le joueur est déjà devant le coffre) -- l'enregistrer
-			# maintenant ne (ré)activerait rien. Activation directe à la place ;
-			# pas de verrouillage de porte pour ce piège (hors scope demandé).
 			enemy.active = true
 		return
 
@@ -570,15 +332,7 @@ func _spawn_pickup(data: Dictionary) -> Node:
 	else:
 		pickup.item_resource = load(data["item_resource_path"])
 	return pickup
-	
-## N'est plus emprunté par aucun prop de ce projet à ce jour : les props
-## décoratifs ET bloquants sont désormais tous des tuiles (cf.
-## DungeonPropPlacer.prepare_room_props()/Room.set_decor_props()/set_blocking_props()),
-## y compris la torche/cristal/brasero murale (cf. DungeonPropPlacer.WALL_LIGHT_TEXTURE_PATHS) --
-## sa lumière (WallLight, cf. scripts/props/wall_light.gd) est posée par
-## Room._setup_wall_light(), pas via prop_spawner. Conservé pour un futur
-## prop avec script/comportement propre (interaction, physique non-statique)
-## -- celui-là devra rester une scène, cf. DungeonPropPlacer.prop_tile_sources_by_texture().
+
 func _spawn_prop(data: Dictionary) -> Node:
 	var prop: Node2D = (load(data["scene_path"]) as PackedScene).instantiate()
 	prop.position = data["position"]
@@ -586,29 +340,15 @@ func _spawn_prop(data: Dictionary) -> Node:
 
 func _spawn_player(id: int) -> Node:
 	var player: Node = PlayerManager.spawn_player(id)
-	# La salle de départ est toujours à la cellule de grille (0,0), donc
-	# son centre monde est constant : pas besoin de connaître la layout ici.
 	player.position = ROOM_CELL_SIZE / 2
-	# Active le zoom/clamp caméra sur la grille de salles -- jamais fait dans
-	# le Hub (hub.gd), qui n'a pas cette grille (cf. player.gd).
 	player.enable_dungeon_camera_mode()
 	player.instance_hud.connect(_hud_instance)
 	player.instance_projectile.connect(_on_projectile_requested)
 	if multiplayer.is_server():
 		player.died.connect(_check_all_players_dead)
-		# call_deferred : player n'est pas encore dans l'arbre ici (le
-		# MultiplayerSpawner fait l'add_child juste après le retour de cette
-		# spawn_function, pas avant) -- restore_snapshot()/set_mixture_ingredients_networked()
-		# ont besoin d'un noeud en arbre pour leurs RPC (même piège que
-		# enable_dungeon_camera_mode() ci-dessus).
 		_restore_run_state.call_deferred(id, player)
 	return player
 
-## Cf. _capture_run_state / RunManager.save_run_state : restaure l'inventaire
-## et la mixture chargée du joueur si un instantané a été pris avant le
-## dernier changement de donjon (victoire de boss) -- no-op silencieux sinon
-## (première run, run après une mort, ou nouveau joueur qui rejoint en cours
-## de partie : aucun instantané à restaurer dans ces trois cas).
 func _restore_run_state(id: int, player: Node) -> void:
 	var snapshot: Dictionary = RunManager.take_saved_run_state(id)
 	if snapshot.is_empty():
@@ -618,18 +358,11 @@ func _restore_run_state(id: int, player: Node) -> void:
 	if not mixture_paths.is_empty():
 		player.weapon.mixture_impact_effect = snapshot.get("mixture_impact_effect")
 		player.weapon.set_mixture_ingredients_networked(mixture_paths)
-	# Rééquipe les pièces réellement portées avant le boss (cf. _capture_run_state)
-	# -- l'ownership vient d'être restaurée juste au-dessus par restore_snapshot,
-	# donc equip_networked() peut charger directement chaque chemin sans revalider.
 	for key in ["equipped_water_barrel_path", "equipped_mixture_barrel_path", "equipped_tank_path", "equipped_core_path"]:
 		var part_path: String = snapshot.get(key, "")
 		if not part_path.is_empty():
 			player.weapon.equip_networked(load(part_path))
 
-## scene_path optionnel (Phase 7.3) : les projectiles ennemis (voir
-## enemy_ranged.gd) passent leur propre scène (layer/mask pour toucher les
-## joueurs, pas les ennemis) ; sans cette clé, comportement identique à avant
-## (balle du joueur).
 func _spawn_bullet(data: Dictionary) -> Node:
 	var scene_path: String = data.get("scene_path", "res://scenes/projectiles/bullet_water.tscn")
 	var bullet: Bullet = (load(scene_path) as PackedScene).instantiate()
@@ -638,15 +371,6 @@ func _spawn_bullet(data: Dictionary) -> Node:
 	if scene_path == Weapon.MIXTURE_BULLET_SCENE:
 		bullet.impact_sfx_key = "impact_mixture"
 	elif scene_path == "res://scenes/enemies/enemy_projectile.tscn":
-		# Son de TIR (pas d'impact) joué ici plutôt que dans fire_at() : ce
-		# spawn_function tourne en vrai sur chaque pair (le MultiplayerSpawner
-		# rejoue localement le même appel côté client), contrairement à
-		# fire_at() lui-même qui ne s'exécute que côté hôte (FSM host-only,
-		# cf. enemy_ranged.gd/boss_01.gd) -- même raisonnement que le SFX de
-		# tir du joueur, placé dans player.gd plutôt que weapon.gd. Clé par
-		# type d'ennemi (retour utilisateur : un seul son générique partagé
-		# par tous les ennemis à distance) -- cf. EnemyRanged.attack_sfx_key/
-		# Boss01.fire_at(), repli sur l'ancienne clé unique si absente.
 		AudioManager.play_sfx(data.get("attack_sfx_key", "enemy_attack_ranged"))
 	if data.has("impact_effect_data"):
 		var effect: ImpactEffect = ImpactEffect.from_dict(data["impact_effect_data"])
@@ -657,15 +381,8 @@ func _spawn_bullet(data: Dictionary) -> Node:
 func _spawn_enemy(data: Dictionary) -> Node:
 	var enemy: Node = (load(data["scene_path"]) as PackedScene).instantiate()
 	enemy.position = data["position"]
-	# Tourne identiquement sur chaque pair, y compris pour un pair qui rejoint
-	# après coup (le MultiplayerSpawner rejoue les spawns déjà existants) :
-	# la barre de vie du boss apparaît donc pour tout le monde sans code
-	# spécifique côté connexion, cf. _on_peer_connected pour le rattrapage HP.
 	if data["scene_path"] == BOSS_SCENE_PATH:
 		var healthbar: Node = (load(BOSS_HEALTHBAR_SCENE_PATH) as PackedScene).instantiate()
-		# bind_boss() lit $Bar (@onready) : le noeud doit être entré dans
-		# l'arbre (add_child avant bind) sinon _bar est encore Nil — même
-		# piège documenté pour set_open_sides()/launch() ailleurs dans le projet.
 		HUD.add_child(healthbar)
 		healthbar.bind_boss(enemy)
 	return enemy
@@ -673,14 +390,8 @@ func _spawn_enemy(data: Dictionary) -> Node:
 func _on_peer_disconnected(peer_id) -> void:
 	if players.has_node(str(peer_id)):
 		players.get_node(str(peer_id)).queue_free()
-	# call_deferred : queue_free() ne retire le noeud de "players" qu'à la fin
-	# de la frame, un check immédiat verrait encore l'ancien peer déconnecté
-	# comme "vivant" (dernier joueur vivant qui quitte plutôt que de mourir).
 	_check_all_players_dead.call_deferred()
 
-## Phase 8.1 : mort individuelle (spectateur, cf. player.gd.kill()) mais fin
-## de run globale seulement quand tous les joueurs sont morts — hôte
-## uniquement, appelé à chaque mort et à chaque déconnexion.
 func _check_all_players_dead() -> void:
 	if not multiplayer.is_server():
 		return
@@ -691,44 +402,20 @@ func _check_all_players_dead() -> void:
 	for player in players.get_children():
 		if not player.is_dead:
 			return
-	# 8.6 : n'appelle plus RunManager.end_run() directement -- affiche d'abord
-	# le panneau de résumé sur chaque pair, c'est lui qui déclenche le retour
-	# au hub ("Rejouer") ou au menu principal. Un simple RPC ne détruit ni ne
-	# crée de noeud de scène, pas besoin du call_deferred qu'exigeait
-	# end_run() (cf. commentaire de RunManager._rpc_change_scene).
 	_run_summary_shown = true
 	_show_run_summary.rpc()
 
-## Cf. RUN_SUMMARY_PANEL_SCENE_PATH : instancié sur chaque pair (call_local),
-## chacun affiche ses propres données locales déjà répliquées (pièces d'arme
-## et composition de mixture de CHAQUE joueur, cf. weapon.gd
-## set_mixture_ingredients_networked -- seule sa propre monnaie de run,
-## MetaProgression étant par-pair par conception).
 @rpc("authority", "call_local", "reliable")
 func _show_run_summary() -> void:
 	var panel: Node = (load(RUN_SUMMARY_PANEL_SCENE_PATH) as PackedScene).instantiate()
 	HUD.add_child(panel)
 	panel.show_summary(players.get_children())
 
-## Cf. BOSS_DEFEAT_TO_HUB_DELAY : ne rappelle pas RunManager.end_run()
-## immédiatement pour laisser le trafic réseau en vol au moment du coup de
-## grâce se résorber pendant que la scène est encore chargée partout.
-## Phase 9 : l'étage avance dès la victoire (pas après le délai) pour que
-## RunManager.current_floor soit déjà à jour si un autre système le lit entre-
-## temps (ex : affichage du panneau de résumé, non concerné aujourd'hui).
 func _on_boss_defeated() -> void:
-	# Instantané pris AVANT le retour au hub (cf. _restore_run_state, consommé
-	# au spawn du joueur sur le donjon suivant) : une victoire de boss ne doit
-	# pas faire perdre les objets de la run, contrairement à une mort. Un
-	# joueur mort pendant ce combat (spectateur, cf. Character.is_dead) n'est
-	# volontairement pas sauvegardé : lui a bien perdu ses objets en mourant,
-	# même si le reste de l'équipe a fini par vaincre le boss.
 	for player in players.get_children():
 		if not player.is_dead:
 			RunManager.save_run_state(int(player.name), _capture_run_state(player))
 	RunManager.advance_floor()
-	# process_always=false (retour utilisateur, menu pause) : sans lui ce
-	# délai continue de décompter même arbre en pause, cf. bullet.gd::launch().
 	get_tree().create_timer(BOSS_DEFEAT_TO_HUB_DELAY, false).timeout.connect(RunManager.end_run)
 
 func _capture_run_state(player: Node) -> Dictionary:
@@ -737,11 +424,6 @@ func _capture_run_state(player: Node) -> Dictionary:
 		"weapon_part_paths": player.inventory.weapon_parts.map(func(part: Resource) -> String: return part.resource_path),
 		"mixture_impact_effect": player.weapon.mixture_impact_effect,
 		"mixture_ingredient_paths": player.weapon.mixture_ingredient_paths.duplicate(),
-		# Les 4 pièces réellement ÉQUIPÉES (pas seulement possédées) -- sans ça,
-		# le nouveau Weapon du donjon suivant repart des pièces de départ codées
-		# en dur dans player.tscn (cf. _restore_run_state), perdant silencieusement
-		# tout équipement amélioré en cours de run alors qu'une victoire de boss
-		# ne doit rien faire perdre (contrairement à une mort).
 		"equipped_water_barrel_path": player.weapon.barrel_water.resource_path if player.weapon.barrel_water else "",
 		"equipped_mixture_barrel_path": player.weapon.barrel_mixture.resource_path if player.weapon.barrel_mixture else "",
 		"equipped_tank_path": player.weapon.tank.resource_path if player.weapon.tank else "",
@@ -749,35 +431,20 @@ func _capture_run_state(player: Node) -> Dictionary:
 	}
 
 
-## Phase 9 : +1 salle par étage au-delà de la taille de base (étage 1 = donjon
-## d'origine, inchangé), plafonné à ROOM_COUNT_CAP.
 func _room_count_for_floor(floor_level: int) -> int:
 	return mini(BASE_ROOM_COUNT + (floor_level - 1) * ROOM_COUNT_PER_FLOOR, ROOM_COUNT_CAP)
 
 
-## Phase 9 : tirages pick_one() additionnels par salle normale, en plus de la
-## densité de base -- même logique de crescendo que _room_count_for_floor,
-## plafonnée à ENEMY_EXTRA_ROLL_CAP.
 func _extra_enemy_rolls_for_floor(floor_level: int) -> int:
 	return mini((floor_level - 1) / ENEMY_EXTRA_ROLL_FLOORS, ENEMY_EXTRA_ROLL_CAP)
 
 
-## Phase 11 : pool thématique (props + tileset) de cet étage. Pure fonction
-## de current_floor (déjà répliqué avant l'entrée dans cette scène, cf.
-## commentaire sur _generate_dungeon()) -- appelable identiquement depuis
-## DungeonPropPlacer.prepare_room_props() (hôte uniquement) ET _spawn_room() (tourne sur CHAQUE
-## pair, cf. MultiplayerSpawner), sans avoir besoin d'être glissée dans
-## room_data pour rester synchronisée entre pairs.
 func _pool_index_for_floor(floor_level: int) -> int:
 	return (floor_level - 1) % POOL_COUNT
 
 func _on_peer_connected(peer_id: int) -> void:
 	if multiplayer.is_server():
 		player_spawner.spawn(peer_id)
-		# Rattrape la vie actuelle du boss pour ce pair (7.4) : le
-		# MultiplayerSpawner rejoue le spawn du boss aux pairs qui rejoignent
-		# en cours de partie, mais _update_health est un RPC one-shot déjà
-		# passé — sans ce rattrapage sa boss_healthbar afficherait la vie max.
 		if is_instance_valid(current_boss):
 			current_boss._update_health.rpc_id(peer_id, current_boss.max_lifepoint, current_boss.lifepoint)
 
@@ -788,9 +455,6 @@ func _on_projectile_requested(data: Dictionary) -> void:
 	if multiplayer.is_server():
 		projectile_spawner.spawn(data)
 
-## Même pipeline que _on_projectile_requested, mais appelé directement par un
-## script d'ennemi (EnemyStateRangedAttack via enemy_ranged.gd.fire_at) plutôt
-## que déclenché par un signal joueur.
 func request_enemy_projectile(data: Dictionary) -> void:
 	if multiplayer.is_server():
 		projectile_spawner.spawn(data)

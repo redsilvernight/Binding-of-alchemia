@@ -1,16 +1,3 @@
-## Ennemi "chargeur" (Phase 9.2, 3e passe, nouveau comportement) : approche
-## le joueur normalement, puis à portée de charge marque un temps d'arrêt
-## télégraphié (le joueur voit le coup venir) avant de foncer en ligne
-## droite à vitesse très supérieure. Les dégâts de contact restent gérés par
-## CollisionArea comme les autres types mêlée (ennemi_test.gd/enemy_erratic.gd)
-## -- seule la trajectoire/vitesse change ici. La direction de charge est
-## figée au moment du télégraphe, pas recalculée pendant le dash (même
-## raisonnement que le tir du joueur figé au lancement du swing, Phase 9.3) :
-## un dash engagé va jusqu'au bout même si le joueur esquive entre-temps.
-## Le script concret doit exposer `speed` (float), `dash_speed` (float),
-## `charge_range` (float), `telegraph_duration` (float), `dash_duration`
-## (float), `cooldown_duration` (float), `target` (Node2D), `_update_target()`
-## et `_play_telegraph_animation(direction)`.
 class_name EnemyStateCharge
 extends EnemyState
 
@@ -44,9 +31,6 @@ func _process_approach() -> void:
 		_timer = enemy.telegraph_duration
 		_phase = Phase.TELEGRAPH
 		return
-	# Approche via pathfinding (Phase 11.1) ; le dash lui-même reste en ligne
-	# droite figée (voir _process_dash) -- un charge engagé va jusqu'au bout,
-	# contournement d'obstacle ou non.
 	enemy.move_toward_position(enemy.target.global_position, enemy.speed)
 
 func _process_telegraph(delta: float) -> void:

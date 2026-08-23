@@ -21,7 +21,7 @@ radius = 80.0
 size = Vector2(928, 576)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_weapon_station"]
-polygon = PackedVector2Array(-48, 10, 48, 10, 48, 45, -48, 45)
+polygon = PackedVector2Array(7.0, -44.0, 46.0, -26.0, 44.0, 22.0, 36.0, 22.0, 35.0, 3.0, 34.0, 17.0, 25.0, 31.0, 3.0, 30.0, 4.0, 25.0, 12.0, 20.0, 11.0, 15.0, -7.0, 24.0, -9.0, 47.0, -12.0, 49.0, -17.0, 47.0, -18.0, 25.0, -20.0, 37.0, -25.0, 40.0, -33.0, 39.0, -36.0, 33.0, -44.0, 33.0, -47.0, 6.0, -17.0, -9.0, -14.0, -14.0, -6.0, -15.0, -2.0, -21.0, 3.0, -19.0, 6.0, -43.0)
 
 [node name="RoomWeapon" type="Node2D"]
 script = ExtResource("1_room")
@@ -100,6 +100,13 @@ texture = ExtResource("5_weapon_station")
 
 [node name="Occluder" type="LightOccluder2D" parent="WeaponStation"]
 occluder = SubResource("OccluderPolygon2D_weapon_station")
+
+[node name="Body" type="StaticBody2D" parent="WeaponStation"]
+collision_layer = 8
+collision_mask = 0
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="WeaponStation/Body"]
+polygon = PackedVector2Array(-3.0, -20.0, 45.0, -20.0, 44.0, 22.0, 36.0, 22.0, 35.0, 3.0, 34.0, 17.0, 25.0, 31.0, 3.0, 30.0, 4.0, 25.0, 12.0, 20.0, 11.0, 15.0, -7.0, 24.0, -9.0, 47.0, -12.0, 49.0, -17.0, 47.0, -18.0, 25.0, -22.0, 39.0, -30.0, 40.0, -36.0, 33.0, -43.0, 34.0, -47.0, 6.0, -17.0, -9.0, -14.0, -14.0, -11.0, -12.0, -4.0, -19.0)
 
 [node name="Interactable" type="Area2D" parent="WeaponStation"]
 script = ExtResource("3_interactable")

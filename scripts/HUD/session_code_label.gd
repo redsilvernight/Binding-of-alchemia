@@ -1,6 +1,4 @@
 extends Label
-## Affiche le code de session GameBoarder, visible uniquement côté hôte
-## (peer_id 1) -- les autres pairs ne voient jamais ce label.
 
 func _ready() -> void:
 	visible = false

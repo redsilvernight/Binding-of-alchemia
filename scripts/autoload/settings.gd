@@ -1,6 +1,4 @@
 extends Node
-## Options basiques (Phase 8.4) : volume et plein écran, persistés localement
-## (indépendant de SaveManager, qui ne porte que la progression joueur).
 
 const SETTINGS_PATH: String = "user://settings.json"
 
@@ -8,15 +6,6 @@ var master_volume: float = 1.0
 var music_volume: float = 1.0
 var sfx_volume: float = 1.0
 var fullscreen: bool = false
-## Éclairage 2D dynamique (torche du joueur, assombrissement ambiant, ombres
-## portées -- retour utilisateur). Toujours pas de _apply_dynamic_lighting()
-## ici (Settings n'a pas de référence aux nodes CanvasModulate/PlayerLight,
-## propres à la scène game.tscn/player.tscn) -- mais un signal est nécessaire
-## dès que ce réglage peut changer APRÈS leur _ready() (menu pause en jeu,
-## cf. pause_menu.tscn) : sans lui, seule la lecture initiale au chargement
-## de la scène appliquait la valeur, ce qui le rendait muet une fois une
-## partie déjà lancée (retour utilisateur, marchait seulement depuis le menu
-## principal avant de lancer une run).
 signal dynamic_lighting_changed(enabled: bool)
 var dynamic_lighting: bool = true
 

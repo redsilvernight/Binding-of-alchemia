@@ -1,70 +1,12 @@
 extends Node2D
-## Scène de test jetable (retour utilisateur), même esprit que
-## mixture_test_room_controller.gd / shop_test_room_controller.gd : bac à
-## sable indépendant de toute autre scène pour visualiser ET tester la
-## collision de tous les props décoratifs de donjon, "en conditions réelles"
-## (retour utilisateur).
-##
-## Une VRAIE Room (class_name Room, scripts/dungeon/room.gd) par thème
-## (Cave/Crypte/Alchimie) plutôt qu'un simple TileMapLayer : sol + murs +
-## navigation + torche murale + portes viennent tous du même code que le
-## vrai donjon (Room._paint_floor()/_paint_walls()/_setup_navigation()/
-## _setup_wall_light()), rien réimplémenté ici. Construite entièrement en
-## code (Floor + RoomTrigger + North/South Door ajoutés comme enfants AVANT
-## set_floor_tileset(), cf. contrat de timing documenté sur cette fonction
-## dans room.gd -- DOIT tourner avant l'entrée en arbre de la Room) plutôt
-## qu'un .tscn par thème : 3 quasi-doublons de template pour un bac à sable
-## jetable n'auraient rien apporté.
-##
-## Salles ACCOLÉES (ROOM_GAP_PX retiré, cf. historique -- un vrai espace
-## vide entre deux salles aurait laissé un "trou" sans sol au milieu du
-## couloir) et ouvertes sud/nord entre elles (retour utilisateur : "je peux
-## pas sortir de la première salle") -- via Room.set_open_sides(), embrasure
-## peinte comme en vrai donjon (Room._paint_walls()), plus un vrai Door
-## (scenes/rooms/door.tscn, cf. header room.gd : "chacun pré-câblé avec un
-## node Door") sur chaque côté ouvert -- _apply_walls() (appelée par
-## set_open_sides()) plante sur un $North/Door introuvable dès qu'un côté est
-## structurellement ouvert (cf. _sync_shared_door(), aucune garde de
-## nullité), donc les deux vont nécessairement de pair. grid_position
-## (Vector2i(0, index)) posée avant l'entrée en arbre : c'est ce qui permet à
-## _find_neighbor_room() de reconnaître les salles voisines entre elles (déjà
-## toutes enfants du même parent ici) pour synchroniser l'état de chaque
-## porte partagée, exactement comme entre deux vraies salles de donjon.
-##
-## Props peints via Room.set_decor_props()/set_blocking_props() -- même
-## indirection texture -> source_id -> decor/blocking que
-## DungeonPropPlacer.prop_tile_sources_by_texture() (collision_polygons_count(0) > 0
-## = bloquant), donc la collision (physics_layer_0) et les ombres portées
-## (occlusion_layer_0, déjà présentes sur chaque tuile dans les .tres) sont
-## identiques au vrai jeu, aucune forme réinventée ici. Filtré aux seules
-## sources dont la texture vit sous assets/tiles/props/ (exclut la feuille
-## de terrain sol/mur, source 0) -- scan à l'exécution, pas de liste de
-## props codée en dur.
-##
-## La torche/cristal/brasero murale de chaque thème (déjà l'un des 9 props
-## scannés) est repérée par son texture_path et posée via
-## Room.set_wall_light() -- même WallLight (scripts/props/wall_light.gd,
-## PointLight2D shadow_enabled=true) que le vrai donjon, plus une
-## CanvasModulate + AmbientLight globales (même recette que game.tscn/
-## game.gd) pour l'assombrissement ambiant (retour utilisateur : "je veux
-## voir les ombres des props").
-##
-## Joueur ajouté via PlayerManager.spawn_player(1) (même pattern que
-## mixture_test_room_controller.gd::_spawn_player), spawné DANS la première
-## salle (Cave) : suppose un lancement solo (aucun pair réseau), l'absence
-## de multiplayer_peer fait tourner Godot en mode hors-ligne (is_server() ==
-## true, get_unique_id() == 1) sans rien à initialiser explicitement. Pas de
-## câblage instance_projectile -> spawn de balle (contrairement à
-## mixture_test_room) : hors sujet, cette scène ne teste QUE la collision de
-## déplacement contre les props.
 
 const PROPS_TEXTURE_DIR := "res://assets/tiles/props/"
-const SLOT_CELLS := 4 # espace entre deux props (256px) : couvre le plus grand prop (160px) + marge pour le label.
+const SLOT_CELLS := 4
 const COLS_PER_THEME := 3
-const GRID_OFFSET_COL := 5 # marge par rapport au mur ouest (5*64=320px), grille 3 colonnes centrée dans les 19 colonnes utiles.
-const GRID_OFFSET_ROW := 2 # marge par rapport au mur nord (2*64=128px), grille 3 lignes centrée dans les 13 lignes utiles.
+const GRID_OFFSET_COL := 5
+const GRID_OFFSET_ROW := 2
 const DOOR_SCENE_PATH := "res://scenes/rooms/door.tscn"
-const AMBIENT_COLOR := Color(0.75, 0.73, 0.8, 1.0) # cf. game.tscn CanvasModulate, valeur neutre avant teinte par thème.
+const AMBIENT_COLOR := Color(0.75, 0.73, 0.8, 1.0)
 const AMBIENT_LIGHT_ENERGY := 0.35
 const THEMES := [
 	{
@@ -91,14 +33,6 @@ var _prop_count: int = 0
 
 
 func _ready() -> void:
-	# Chaîne y_sort_enabled=true de bout en bout (retour utilisateur : le
-	# joueur passait derrière un prop même quand il se tenait devant) --
-	# même exigence que Game/Rooms/Players dans game.tscn (cf. leur propre
-	# y_sort_enabled=true) : Room active déjà le tri sur elle-même
-	# (Room._ready()), mais le tri entre Joueur et PropsBlocking ne
-	# fonctionne que si TOUS les noeuds sur le chemin commun (ici PropsGallery
-	# elle-même + le conteneur Players) l'activent aussi -- un maillon
-	# manquant suffit à casser la comparaison Y entre les deux branches.
 	y_sort_enabled = true
 	_build_ambient_lighting()
 	_build_rooms()
@@ -126,14 +60,6 @@ func _build_ambient_lighting() -> void:
 	add_child(ambient_light)
 
 
-## Une Room par thème, accolée à la précédente (aucun espace : cf. header) --
-## toutes construites et peuplées AVANT d'entrer dans l'arbre (contrat de
-## timing de set_floor_tileset()/set_decor_props()/set_blocking_props()/
-## set_wall_light(), cf. room.gd), puis set_open_sides() en call_deferred
-## (même pattern que mixture_test_room_controller.gd::_ready()) une fois
-## Room._ready() passée -- ["south"] pour la première salle, ["north","south"]
-## pour celles du milieu, ["north"] pour la dernière : un simple couloir
-## linéaire, pas un vrai donjon ramifié.
 func _build_rooms() -> void:
 	for i in THEMES.size():
 		var theme: Dictionary = THEMES[i]
@@ -207,12 +133,6 @@ func _build_theme_room(theme: Dictionary, tile_set: TileSet, prop_sources: Array
 	return room
 
 
-## $North/Door et $South/Door : structure attendue par Room._door_by_side
-## (get_node_or_null, cf. header) -- room.gd::_apply_walls() appelle
-## Door.set_state() sans garde de nullité dès qu'un côté est structurellement
-## ouvert (cf. header), donc absent = crash au premier set_open_sides() avec
-## un côté ouvert. Position = milieu du mur concerné, même formule que les
-## templates de salle (cf. room_template_a.tscn).
 func _add_door(room: Room, side_name: String, position: Vector2) -> void:
 	var side_container := Node2D.new()
 	side_container.name = side_name
@@ -224,10 +144,6 @@ func _add_door(room: Room, side_name: String, position: Vector2) -> void:
 	side_container.add_child(door)
 
 
-## Dérivé entièrement du TileSet lui-même (aucun id/chemin en dur) : toute
-## source d'atlas dont la texture vit sous PROPS_TEXTURE_DIR est un prop, et
-## "blocking" suit la même règle que DungeonPropPlacer.prop_tile_sources_by_texture()
-## (un polygone sur physics_layer_0 = prop bloquant).
 func _prop_sources(tile_set: TileSet) -> Array[Dictionary]:
 	var sources: Array[Dictionary] = []
 	for i in tile_set.get_source_count():
@@ -278,10 +194,6 @@ func _add_theme_label(room: Room, theme_name: String) -> void:
 	room.add_child(label)
 
 
-## Même pattern que mixture_test_room_controller.gd::_spawn_player() : la
-## caméra du joueur (activée par Player._ready() dès is_multiplayer_authority())
-## pilote la vue -- pas de caméra libre séparée ici, le but est de marcher
-## dans les props, pas de les survoler.
 func _spawn_player(spawn_position: Vector2, players: Node2D, hud_layer: Node2D) -> void:
 	var player: Node = PlayerManager.spawn_player(1)
 	player.instance_hud.connect(func(hud: Node) -> void: hud_layer.add_child(hud))

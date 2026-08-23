@@ -1,12 +1,4 @@
 extends CanvasLayer
-## Panneau de résumé de run (Phase 8.6), affiché sur chaque pair quand tous
-## les joueurs sont morts (cf. game.gd._check_all_players_dead/_show_run_summary).
-## Purement affichage : lit les noeuds Player déjà présents dans l'arbre
-## (mort = spectateur inerte, cf. player.gd.kill(), jamais retiré de la scène)
-## et leurs données déjà répliquées à tous les pairs (Weapon.barrel_*/tank/core
-## et Weapon.mixture_ingredient_paths), sauf la monnaie qui reste par-pair
-## (MetaProgression) : chaque écran n'affiche donc que SA PROPRE monnaie
-## gagnée cette run, jamais celle des coéquipiers.
 
 const INGREDIENT_FALLBACK_ICON: Texture2D = preload("res://assets/test/mixture_bullet_test.png")
 const WEAPON_PART_FALLBACK_ICON: Texture2D = preload("res://assets/test/water_bullet_test.png")
@@ -38,9 +30,6 @@ func show_summary(players: Array) -> void:
 
 func _add_player_row(player: Node) -> void:
 	var row: Control = player_row_scene.instantiate()
-	# add_child AVANT setup/add_*_slot : run_summary_player_row.gd résout ses
-	# propres @onready (name_label/mixture_grid/weapon_grid) dans _ready(),
-	# pas encore appelé tant que le noeud n'est pas entré dans l'arbre.
 	players_list.add_child(row)
 
 	var peer_id: int = int(player.name)
@@ -65,7 +54,7 @@ func _add_player_row(player: Node) -> void:
 
 
 func _count_ingredients(ingredient_paths: Array[String]) -> Dictionary:
-	var counts: Dictionary = {} # String (resource_path) -> int
+	var counts: Dictionary = {}
 	for path in ingredient_paths:
 		counts[path] = counts.get(path, 0) + 1
 	return counts

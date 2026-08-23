@@ -1,8 +1,3 @@
-## Déplacement erratique (Phase 7.3) : change de direction aléatoirement à
-## intervalle régulier tant que l'ennemi est actif. Contrairement à Chase, ne
-## cible jamais le joueur — les dégâts restent gérés par CollisionArea (même
-## mécanisme que les autres types), donc cet ennemi ne blesse qu'au contact
-## fortuit.
 class_name EnemyStateWander
 extends EnemyState
 

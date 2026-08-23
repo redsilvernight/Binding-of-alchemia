@@ -1,27 +1,13 @@
 extends Control
 class_name MixturePreview
 
-## Fiole teintée par type dominant + grille empilée des ingrédients d'une
-## mixture. Réutilisé pour 3 usages réels (cf. design_no_premature_genericity) :
-## la mixture chargée sur l'arme dans inventory_screen.gd (lecture seule), la
-## même chose dans alchemy_crafting.gd (lecture seule), et le chaudron
-## interactif d'alchemy_crafting.gd (accepts_drops=true, clic pour retirer).
-## Purement affichage sinon -- ne modifie jamais l'Inventory/Weapon, se
-## contente d'émettre des signaux que l'écran appelant interprète comme il
-## veut (ou ignore, en lecture seule).
 
-## Émis quand un ingrédient déjà affiché ici est cliqué (ex : retirer du
-## chaudron). Ignoré si personne ne s'y connecte (lecture seule).
 signal item_activated(payload: Resource)
-## Émis quand quelque chose est glissé depuis ailleurs et déposé ici (ex :
-## ajouter au chaudron) -- seulement si accepts_drops est activé.
 signal item_dropped(payload: Resource)
 
 const INGREDIENT_FALLBACK_ICON: Texture2D = preload("res://assets/test/mixture_bullet_test.png")
 const EMPTY_VIAL_COLOR: Color = Color(0.5, 0.5, 0.55, 0.55)
 
-## Cf. Infos/direction_artistique.md -- seule source de couleur saturée à
-## l'écran, ici réutilisée pour teinter la fiole selon le type dominant.
 const TYPE_COLORS: Dictionary = {
 	Ingredient.TypeAlchimie.FEU: Color(0.95, 0.35, 0.12),
 	Ingredient.TypeAlchimie.GLACE: Color(0.35, 0.75, 0.95),
@@ -33,9 +19,6 @@ const TYPE_COLORS: Dictionary = {
 
 @export var item_chip_scene: PackedScene = preload("res://scenes/ui/item_chip.tscn")
 @export var empty_text: String = "Vide."
-## Le chaudron d'alchemy_crafting.gd est la seule instance interactive --
-## les aperçus en lecture seule (inventaire, mixture chargée) laissent ça à
-## false pour ne pas laisser croire qu'on peut y glisser quelque chose.
 @export var accepts_drops: bool = false
 
 @onready var vial_icon: TextureRect = $Row/VialFrame/VialIcon
@@ -48,9 +31,6 @@ func _ready() -> void:
 	display([], null)
 
 
-## ingredient_paths : Array de resource_path (String, doublons compris).
-## inventory : nécessaire pour résoudre icône/nom/type depuis chaque chemin
-## (via ingredient_resources) -- null accepté (affiche l'état vide).
 func display(ingredient_paths: Array, inventory: Inventory) -> void:
 	for child in grid.get_children():
 		child.queue_free()
@@ -62,11 +42,11 @@ func display(ingredient_paths: Array, inventory: Inventory) -> void:
 
 	empty_label.visible = false
 
-	var counts: Dictionary = {} # String (resource_path) -> int
+	var counts: Dictionary = {}
 	for path in ingredient_paths:
 		counts[path] = counts.get(path, 0) + 1
 
-	var occurrences_by_type: Dictionary = {} # Ingredient.TypeAlchimie -> int
+	var occurrences_by_type: Dictionary = {}
 	for key in counts.keys():
 		var ingredient: Ingredient = inventory.ingredient_resources.get(key)
 		if ingredient == null:
