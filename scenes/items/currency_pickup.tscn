@@ -6,9 +6,6 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_currency"]
 radius = 24.0
 
-[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_currency"]
-polygon = PackedVector2Array(24.0, 0.0, 22.173, 9.184, 16.971, 16.971, 9.184, 22.173, 0.0, 24.0, -9.184, 22.173, -16.971, 16.971, -22.173, 9.184, -24.0, 0.0, -22.173, -9.184, -16.971, -16.971, -9.184, -22.173, -0.0, -24.0, 9.184, -22.173, 16.971, -16.971, 22.173, -9.184)
-
 [node name="CurrencyPickup" type="Area2D" unique_id=1783591796]
 collision_layer = 256
 script = ExtResource("1_pickup")
@@ -18,8 +15,6 @@ item_type = "currency"
 shape = SubResource("CircleShape2D_currency")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=238477546]
+light_mask = 2
 texture = ExtResource("2_tex")
 metadata/_edit_lock_ = true
-
-[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
-occluder = SubResource("OccluderPolygon2D_currency")

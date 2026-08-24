@@ -34,7 +34,7 @@ func roll_chest_contents(room_data: Dictionary, room_world_rect: Rect2, enemy_ta
 		return {
 			"is_trap": true,
 			"enemy_scene_path": enemy_table.pick_one(),
-			"position": chest_position,
+			"position": random_position_near(chest_position, CHEST_LOOT_MIN_RADIUS, CHEST_LOOT_SCATTER_RADIUS),
 		}
 
 	var contents: Dictionary = {
