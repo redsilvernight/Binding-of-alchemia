@@ -5,7 +5,7 @@ const TEST_CURRENCY: int = 999
 
 func _ready() -> void:
 	_disconnect_autosave()
-	MetaProgression.currency_by_peer[NetworkManager.get_unique_id()] = TEST_CURRENCY
+	MetaProgression.currency = TEST_CURRENCY
 
 
 func _disconnect_autosave() -> void:

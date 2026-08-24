@@ -6,6 +6,7 @@ extends Room
 @onready var _canvas_modulate: CanvasModulate = $CanvasModulate
 @onready var _ambient_light: DirectionalLight2D = $AmbientLight
 @onready var _run_start_station: Node2D = $RunStartStation
+@onready var _arrival_portal: Node2D = $ArrivalPortal
 
 const SHOP_LIGHT_COLOR: Color = Color(1.0, 0.78, 0.45)
 const SHOP_LANTERN_SOURCE_ID: int = 1
@@ -35,9 +36,13 @@ const SHOP_ITEM_SLOTS: Array[Vector2] = [
 	Vector2(-28, -42), Vector2(-2, -42), Vector2(24, -42),
 	Vector2(-30, 11), Vector2(0, 11), Vector2(26, 11),
 ]
+const SHOP_SHELF_FRONT_Y: float = 90.0
 
 const PORTAL_LIGHT_COLOR: Color = Color(0.55, 0.45, 0.95)
 const PORTAL_LIGHT_OFFSET: Vector2 = Vector2(0, 80)
+const ARRIVAL_PORTAL_LIGHT_COLOR: Color = Color(0.35, 0.85, 0.8)
+const ARRIVAL_PORTAL_SCALE: float = 0.65
+const ARRIVAL_PORTAL_LIGHT_OFFSET: Vector2 = Vector2(0, -52)
 
 
 func _ready() -> void:
@@ -46,19 +51,18 @@ func _ready() -> void:
 	set_open_sides([])
 	_setup_shop_shelves()
 	_setup_portal_glow()
+	_setup_arrival_portal_glow()
 	_setup_ambient_lighting()
 	AudioManager.play_music("hub")
 	NetworkManager.multiplayer.peer_connected.connect(_on_peer_connected)
 	player_spawner.spawn_function = _spawn_player
 	MetaProgression.shop_pool_changed.connect(_setup_shop_items)
-	MetaProgression.unlocks_changed.connect(_setup_shop_items)
 	if multiplayer.is_server():
 		player_spawner.spawn(NetworkManager.get_unique_id())
-		MetaProgression.ensure_shop_pool(NetworkManager.get_unique_id())
+		MetaProgression.ensure_shop_pool()
 		for peer_id in NetworkManager.get_peers():
 			player_spawner.spawn(peer_id)
-			MetaProgression.ensure_shop_pool(peer_id)
-			MetaProgression._rpc_shop_pool.rpc_id(peer_id, MetaProgression.get_shop_pool(peer_id))
+			MetaProgression._rpc_shop_pool.rpc_id(peer_id, MetaProgression.get_shop_pool())
 		RunManager.hide_loading_screen()
 	_setup_shop_items()
 
@@ -76,11 +80,9 @@ func _hud_instance(hud: Node) -> void:
 func _on_peer_connected(peer_id: int) -> void:
 	if multiplayer.is_server():
 		player_spawner.spawn(peer_id)
-		MetaProgression._rpc_currency_changed.rpc_id(peer_id, MetaProgression.get_currency(peer_id))
-		for item_path in MetaProgression.unlocked_by_peer.get(peer_id, {}).keys():
-			MetaProgression._rpc_unlocked.rpc_id(peer_id, item_path)
-		MetaProgression.ensure_shop_pool(peer_id)
-		MetaProgression._rpc_shop_pool.rpc_id(peer_id, MetaProgression.get_shop_pool(peer_id))
+		MetaProgression._rpc_currency_changed.rpc_id(peer_id, MetaProgression.get_currency())
+		MetaProgression.ensure_shop_pool()
+		MetaProgression._rpc_shop_pool.rpc_id(peer_id, MetaProgression.get_shop_pool())
 
 
 func _setup_shop_wall_lights() -> void:
@@ -123,21 +125,19 @@ func _setup_shop_items() -> void:
 			prop.queue_free()
 	_shop_item_props.clear()
 
-	var local_id: int = NetworkManager.get_unique_id()
-	var pool: Array = MetaProgression.get_shop_pool(local_id)
-	var free_shelves: Array = SHOP_SHELF_POSITIONS.duplicate()
-	free_shelves.shuffle()
+	var pool: Array = MetaProgression.get_shop_pool()
 
-	for item_path in pool:
-		if MetaProgression.is_unlocked(local_id, item_path) or free_shelves.is_empty():
-			continue
-		var entry: Dictionary = _find_unlockable_entry(item_path)
+	for i in pool.size():
+		if i >= SHOP_SHELF_POSITIONS.size():
+			break
+		var entry: Dictionary = _find_unlockable_entry(pool[i])
 		if entry.is_empty():
 			continue
-		var base_pos: Vector2 = free_shelves.pop_back()
 		var prop: ShopItemProp = ShopItemProp.new()
-		prop.setup(entry)
-		prop.position = base_pos + SHOP_ITEM_SLOTS[randi() % SHOP_ITEM_SLOTS.size()]
+		var item_pos: Vector2 = SHOP_SHELF_POSITIONS[i] + SHOP_ITEM_SLOTS[i % SHOP_ITEM_SLOTS.size()]
+		var front_anchor: Vector2 = Vector2(item_pos.x, SHOP_SHELF_POSITIONS[i].y + SHOP_SHELF_FRONT_Y)
+		prop.setup(entry, front_anchor - item_pos)
+		prop.position = item_pos
 		add_child(prop)
 		_shop_item_props.append(prop)
 
@@ -153,6 +153,14 @@ func _setup_portal_glow() -> void:
 	var glow: WallLight = WallLight.new()
 	glow.set_color(PORTAL_LIGHT_COLOR)
 	glow.position = _run_start_station.position + PORTAL_LIGHT_OFFSET
+	add_child(glow)
+
+
+func _setup_arrival_portal_glow() -> void:
+	var glow: WallLight = WallLight.new()
+	glow.set_color(ARRIVAL_PORTAL_LIGHT_COLOR)
+	glow.scale = Vector2.ONE * ARRIVAL_PORTAL_SCALE
+	glow.position = _arrival_portal.position + ARRIVAL_PORTAL_LIGHT_OFFSET
 	add_child(glow)
 
 

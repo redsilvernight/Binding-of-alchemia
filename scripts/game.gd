@@ -403,13 +403,15 @@ func _check_all_players_dead() -> void:
 		if not player.is_dead:
 			return
 	_run_summary_shown = true
-	_show_run_summary.rpc()
+	var final_currency: int = MetaProgression.get_currency()
+	_show_run_summary.rpc(final_currency)
+	MetaProgression.reset_currency()
 
 @rpc("authority", "call_local", "reliable")
-func _show_run_summary() -> void:
+func _show_run_summary(final_currency: int) -> void:
 	var panel: Node = (load(RUN_SUMMARY_PANEL_SCENE_PATH) as PackedScene).instantiate()
 	HUD.add_child(panel)
-	panel.show_summary(players.get_children())
+	panel.show_summary(players.get_children(), final_currency)
 
 func _on_boss_defeated() -> void:
 	for player in players.get_children():

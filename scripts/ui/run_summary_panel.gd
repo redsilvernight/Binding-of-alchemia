@@ -17,8 +17,8 @@ func _ready() -> void:
 	menu_button.pressed.connect(_on_menu_pressed)
 
 
-func show_summary(players: Array) -> void:
-	currency_label.text = "Monnaie gagnée : %d" % MetaProgression.get_run_currency(NetworkManager.get_unique_id())
+func show_summary(players: Array, final_currency: int) -> void:
+	currency_label.text = "Monnaie disponible : %d" % final_currency
 
 	for child in players_list.get_children():
 		child.queue_free()

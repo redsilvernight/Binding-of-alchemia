@@ -55,6 +55,24 @@ func request_return_to_hub() -> void:
 
 
 @rpc("any_peer", "call_local", "reliable")
+func request_return_to_menu() -> void:
+	if not multiplayer.is_server():
+		return
+	reset_floor()
+	MetaProgression.reset_currency()
+	_rpc_return_to_menu.rpc()
+
+
+@rpc("authority", "call_local", "reliable")
+func _rpc_return_to_menu() -> void:
+	if is_paused:
+		is_paused = false
+		get_tree().paused = false
+		pause_changed.emit(false)
+	NetworkManager.leave_to_main_menu()
+
+
+@rpc("any_peer", "call_local", "reliable")
 func request_toggle_pause() -> void:
 	if not multiplayer.is_server():
 		return
@@ -72,7 +90,6 @@ func _rpc_set_paused(value: bool) -> void:
 func request_start_run() -> void:
 	if not multiplayer.is_server():
 		return
-	MetaProgression.reset_run_currency()
 	MetaProgression.reroll_shop_pool_for_all()
 	_change_scene_with_handshake(DUNGEON_SCENE_PATH)
 

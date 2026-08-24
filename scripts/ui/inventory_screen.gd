@@ -23,7 +23,7 @@ var weapon: Weapon
 func _ready() -> void:
 	root.visible = false
 	MetaProgression.currency_changed.connect(_on_currency_changed)
-	_on_currency_changed(MetaProgression.get_currency(NetworkManager.get_unique_id()))
+	_on_currency_changed(MetaProgression.get_currency())
 
 
 func _on_currency_changed(new_amount: int) -> void:

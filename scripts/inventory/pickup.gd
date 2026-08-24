@@ -36,9 +36,7 @@ func _on_body_entered(body: Node2D) -> void:
 		return
 
 	if item_type == "currency":
-		for peer_id in NetworkManager.get_peers():
-			MetaProgression.add_currency(peer_id, currency_amount)
-		MetaProgression.add_currency(NetworkManager.get_unique_id(), currency_amount)
+		MetaProgression.add_currency(currency_amount)
 		queue_free()
 		return
 

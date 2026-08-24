@@ -3,6 +3,7 @@ extends Area2D
 
 
 signal interacted(player: Node2D)
+signal player_entered(player: Node2D)
 signal player_left(player: Node2D)
 
 @export var prompt_text: String = "Appuyer sur E"
@@ -28,6 +29,7 @@ func _on_body_entered(body: Node2D) -> void:
 	_local_player_inside = body
 	if prompt_label:
 		prompt_label.visible = true
+	player_entered.emit(body)
 
 
 func _on_body_exited(body: Node2D) -> void:

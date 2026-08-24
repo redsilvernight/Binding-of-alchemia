@@ -1,7 +1,6 @@
 extends Node
 
 signal currency_changed(new_amount: int)
-signal run_currency_changed(new_amount: int)
 signal unlocks_changed
 signal shop_pool_changed
 
@@ -19,10 +18,10 @@ const UNLOCKABLES: Array[Dictionary] = [
 ]
 const SHOP_POOL_SIZE: int = 3
 
-var currency_by_peer: Dictionary = {}
+var currency: int = 0
 var unlocked_by_peer: Dictionary = {}
-var run_currency_by_peer: Dictionary = {}
-var shop_pool_by_peer: Dictionary = {}
+var shop_pool: Array = []
+var _shop_pool_initialized: bool = false
 
 
 func _ready() -> void:
@@ -30,12 +29,8 @@ func _ready() -> void:
 	unlocks_changed.connect(_on_local_progression_changed)
 
 
-func get_currency(peer_id: int) -> int:
-	return currency_by_peer.get(peer_id, 0)
-
-
-func get_run_currency(peer_id: int) -> int:
-	return run_currency_by_peer.get(peer_id, 0)
+func get_currency() -> int:
+	return currency
 
 
 func is_unlocked(peer_id: int, item_path: String) -> bool:
@@ -49,92 +44,58 @@ func is_unlocked_by_party(item_path: String) -> bool:
 	return false
 
 
-func get_shop_pool(peer_id: int) -> Array:
-	return shop_pool_by_peer.get(peer_id, [])
+func get_shop_pool() -> Array:
+	return shop_pool
 
 
-func add_currency(peer_id: int, amount: int) -> void:
+func add_currency(amount: int) -> void:
 	if not multiplayer.is_server():
 		return
-	currency_by_peer[peer_id] = get_currency(peer_id) + amount
-	run_currency_by_peer[peer_id] = get_run_currency(peer_id) + amount
-	_notify_currency(peer_id)
-	_notify_run_currency(peer_id)
+	currency += amount
+	_rpc_currency_changed.rpc(currency)
 
 
-func reset_run_currency() -> void:
+func reset_currency() -> void:
 	if not multiplayer.is_server():
 		return
-	run_currency_by_peer.clear()
-	_notify_run_currency(NetworkManager.get_unique_id())
-	for peer_id in NetworkManager.get_peers():
-		_notify_run_currency(peer_id)
+	currency = 0
+	_rpc_currency_changed.rpc(currency)
 
 
 func reroll_shop_pool_for_all() -> void:
 	if not multiplayer.is_server():
 		return
-	_reroll_shop_pool(NetworkManager.get_unique_id())
-	for peer_id in NetworkManager.get_peers():
-		_reroll_shop_pool(peer_id)
+	_reroll_shop_pool()
 
 
-func ensure_shop_pool(peer_id: int) -> void:
+func ensure_shop_pool() -> void:
 	if not multiplayer.is_server():
 		return
-	if shop_pool_by_peer.has(peer_id):
+	if _shop_pool_initialized:
 		return
-	_reroll_shop_pool(peer_id)
+	_reroll_shop_pool()
 
 
-func _reroll_shop_pool(peer_id: int) -> void:
+func _reroll_shop_pool() -> void:
 	var candidates: Array = []
 	for entry in UNLOCKABLES:
-		if not is_unlocked(peer_id, entry["item_path"]):
+		if not is_unlocked_by_party(entry["item_path"]):
 			candidates.append(entry["item_path"])
 	candidates.shuffle()
-	shop_pool_by_peer[peer_id] = candidates.slice(0, SHOP_POOL_SIZE)
-	_notify_shop_pool(peer_id)
-
-
-func _notify_shop_pool(peer_id: int) -> void:
-	var pool: Array = get_shop_pool(peer_id)
-	if peer_id == NetworkManager.get_unique_id():
-		shop_pool_changed.emit()
-	else:
-		_rpc_shop_pool.rpc_id(peer_id, pool)
+	_shop_pool_initialized = true
+	_rpc_shop_pool.rpc(candidates.slice(0, SHOP_POOL_SIZE))
 
 
 @rpc("authority", "call_local", "reliable")
 func _rpc_shop_pool(pool: Array) -> void:
-	shop_pool_by_peer[NetworkManager.get_unique_id()] = pool
+	shop_pool = pool
 	shop_pool_changed.emit()
-
-
-func _notify_currency(peer_id: int) -> void:
-	var amount: int = get_currency(peer_id)
-	if peer_id == NetworkManager.get_unique_id():
-		currency_changed.emit(amount)
-	else:
-		_rpc_currency_changed.rpc_id(peer_id, amount)
-
-
-func _notify_run_currency(peer_id: int) -> void:
-	var amount: int = get_run_currency(peer_id)
-	if peer_id == NetworkManager.get_unique_id():
-		run_currency_changed.emit(amount)
-	else:
-		_rpc_run_currency_changed.rpc_id(peer_id, amount)
 
 
 @rpc("authority", "call_local", "reliable")
 func _rpc_currency_changed(amount: int) -> void:
+	currency = amount
 	currency_changed.emit(amount)
-
-
-@rpc("authority", "call_local", "reliable")
-func _rpc_run_currency_changed(amount: int) -> void:
-	run_currency_changed.emit(amount)
 
 
 @rpc("any_peer", "call_local", "reliable")
@@ -145,22 +106,22 @@ func request_unlock(item_path: String) -> void:
 	if sender_id == 0:
 		sender_id = NetworkManager.get_unique_id()
 
-	if is_unlocked(sender_id, item_path):
-		return
-	if item_path not in get_shop_pool(sender_id):
+	if not item_path in shop_pool:
 		return
 	var cost: int = _find_cost(item_path)
 	if cost < 0:
 		return
-	if get_currency(sender_id) < cost:
+	if currency < cost:
 		return
 
-	currency_by_peer[sender_id] = get_currency(sender_id) - cost
+	currency -= cost
 	if not unlocked_by_peer.has(sender_id):
 		unlocked_by_peer[sender_id] = {}
 	unlocked_by_peer[sender_id][item_path] = true
+	shop_pool.erase(item_path)
 
-	_notify_currency(sender_id)
+	_rpc_currency_changed.rpc(currency)
+	_rpc_shop_pool.rpc(shop_pool)
 	_notify_unlock(sender_id, item_path)
 
 
@@ -189,7 +150,7 @@ func _find_cost(item_path: String) -> int:
 
 func apply_local_save_as_host() -> void:
 	var save: Dictionary = SaveManager.load_progression()
-	currency_by_peer[1] = int(save["currency"])
+	currency = int(save["currency"])
 	var unlocked: Dictionary = {}
 	for item_path in save["unlocked"]:
 		unlocked[item_path] = true
@@ -197,25 +158,23 @@ func apply_local_save_as_host() -> void:
 
 
 @rpc("any_peer", "call_local", "reliable")
-func submit_saved_progression(currency: int, unlocked: Array) -> void:
+func submit_saved_progression(unlocked: Array) -> void:
 	if not multiplayer.is_server():
 		return
 	var sender_id: int = multiplayer.get_remote_sender_id()
 	if sender_id == 0:
 		sender_id = NetworkManager.get_unique_id()
 
-	if not currency_by_peer.has(sender_id):
-		currency_by_peer[sender_id] = int(currency)
 	if not unlocked_by_peer.has(sender_id):
 		unlocked_by_peer[sender_id] = {}
 	for item_path in unlocked:
 		unlocked_by_peer[sender_id][item_path] = true
 
-	_notify_currency(sender_id)
+	_rpc_currency_changed.rpc_id(sender_id, currency)
 	for item_path in unlocked_by_peer[sender_id].keys():
 		_notify_unlock(sender_id, item_path)
 
 
 func _on_local_progression_changed() -> void:
 	var local_id: int = NetworkManager.get_unique_id()
-	SaveManager.save_progression(get_currency(local_id), unlocked_by_peer.get(local_id, {}).keys())
+	SaveManager.save_progression(currency, unlocked_by_peer.get(local_id, {}).keys())

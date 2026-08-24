@@ -88,6 +88,6 @@ text = "Plein écran"
 layout_mode = 2
 text = "Éclairage dynamique"
 
-[node name="AbandonRun" type="Button" parent="Root/Panel/VBox"]
+[node name="ReturnToMenu" type="Button" parent="Root/Panel/VBox"]
 layout_mode = 2
-text = "Abandonner la run (retour au hub)"
+text = "Retour au menu principal"

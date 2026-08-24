@@ -8,7 +8,7 @@ extends CanvasLayer
 @onready var _sfx_volume_slider: HSlider = $Root/Panel/VBox/SfxVolumeSlider
 @onready var _fullscreen_check: CheckButton = $Root/Panel/VBox/FullscreenCheck
 @onready var _dynamic_lighting_check: CheckButton = $Root/Panel/VBox/DynamicLightingCheck
-@onready var _abandon_run_button: Button = $Root/Panel/VBox/AbandonRun
+@onready var _return_to_menu_button: Button = $Root/Panel/VBox/ReturnToMenu
 
 
 func _ready() -> void:
@@ -20,7 +20,7 @@ func _ready() -> void:
 	_sfx_volume_slider.value_changed.connect(Settings.set_sfx_volume)
 	_fullscreen_check.toggled.connect(Settings.set_fullscreen)
 	_dynamic_lighting_check.toggled.connect(Settings.set_dynamic_lighting)
-	_abandon_run_button.pressed.connect(_on_abandon_run_pressed)
+	_return_to_menu_button.pressed.connect(_on_return_to_menu_pressed)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -43,5 +43,5 @@ func _on_pause_changed(paused: bool) -> void:
 	AudioManager.play_sfx("ui_toggle")
 
 
-func _on_abandon_run_pressed() -> void:
-	RunManager.request_return_to_hub.rpc()
+func _on_return_to_menu_pressed() -> void:
+	RunManager.request_return_to_menu.rpc()

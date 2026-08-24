@@ -57,7 +57,7 @@ func joining(code: String) -> bool:
 	multiplayer.multiplayer_peer = peer
 	await multiplayer.connected_to_server
 	var save: Dictionary = SaveManager.load_progression()
-	MetaProgression.submit_saved_progression.rpc_id(1, save["currency"], save["unlocked"])
+	MetaProgression.submit_saved_progression.rpc_id(1, save["unlocked"])
 	_switch_to_game()
 	return true
 

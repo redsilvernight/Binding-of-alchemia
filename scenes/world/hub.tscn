@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://scripts/world/hub.gd" id="1_hub"]
 [ext_resource type="Script" path="res://scripts/world/run_start_station.gd" id="2_runstation"]
 [ext_resource type="Script" path="res://scripts/world/interactable.gd" id="3_interactable"]
-[ext_resource type="Script" path="res://scripts/world/unlock_station.gd" id="4_unlockstation"]
 [ext_resource type="Texture2D" path="res://assets/tiles/run_start_station/run_start_station.png" id="5_run_start_station"]
+[ext_resource type="Texture2D" path="res://assets/tiles/arrival_portal/arrival_portal.png" id="6_arrival_portal"]
 [ext_resource type="TileSet" path="res://resources/tilesets/hub_shop_terrain.tres" id="7_shop_tileset"]
 [ext_resource type="Texture2D" path="res://assets/tiles/hub_shop_merchant.png" id="9_merchant"]
 [ext_resource type="Texture2D" path="res://assets/tiles/hub_shop_counter_u.png" id="10_counter_u"]
@@ -66,7 +66,7 @@ position = Vector2(672, 480)
 shape = SubResource("RoomTriggerShape")
 
 [node name="Players" type="Node2D" parent="."]
-position = Vector2(672, 700)
+position = Vector2(672, 880)
 y_sort_enabled = true
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
@@ -113,7 +113,6 @@ label_settings = SubResource("LabelSettings_prompt")
 
 [node name="UnlockStation" type="Node2D" parent="."]
 position = Vector2(672, 480)
-script = ExtResource("4_unlockstation")
 
 [node name="Merchant" type="Sprite2D" parent="UnlockStation"]
 position = Vector2(0, -30)
@@ -150,21 +149,6 @@ polygon = PackedVector2Array(-41.0, -42.0, -19.0, -42.0, -12.0, -40.0, -13.0, -4
 [node name="Occluder" type="LightOccluder2D" parent="UnlockStation/CounterVisual"]
 occluder = SubResource("OccluderPolygon2D_counter_u")
 
-[node name="Interactable" type="Area2D" parent="UnlockStation"]
-position = Vector2(0, 40)
-script = ExtResource("3_interactable")
-prompt_text = "Appuyer sur E pour les déblocages"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="UnlockStation/Interactable"]
-shape = SubResource("CircleShape2D_station")
-
-[node name="PromptLabel" type="Label" parent="UnlockStation/Interactable"]
-position = Vector2(-100, -90)
-size = Vector2(200, 30)
-horizontal_alignment = 1
-text = "Appuyer sur E pour les déblocages"
-label_settings = SubResource("LabelSettings_prompt")
-
 [node name="DeskLamp" type="Node2D" parent="UnlockStation"]
 position = Vector2(-43, -66)
 script = ExtResource("11_desklamp")
@@ -182,3 +166,26 @@ size = Vector2(30, 18)
 horizontal_alignment = 1
 text = "E"
 label_settings = SubResource("LabelSettings_lamp_prompt")
+
+[node name="ArrivalPortal" type="Node2D" parent="."]
+position = Vector2(672, 880)
+scale = Vector2(0.65, 0.65)
+
+[node name="PortalVisual" type="Sprite2D" parent="ArrivalPortal"]
+light_mask = 2
+texture = ExtResource("6_arrival_portal")
+
+[node name="Occluder" type="LightOccluder2D" parent="ArrivalPortal"]
+occluder = SubResource("OccluderPolygon2D_station")
+
+[node name="PortalBody" type="StaticBody2D" parent="ArrivalPortal"]
+collision_layer = 8
+collision_mask = 0
+
+[node name="LeftPillar" type="CollisionShape2D" parent="ArrivalPortal/PortalBody"]
+position = Vector2(-43.5, 50.5)
+shape = SubResource("RectangleShape2D_portal_pillar")
+
+[node name="RightPillar" type="CollisionShape2D" parent="ArrivalPortal/PortalBody"]
+position = Vector2(43.5, 50.5)
+shape = SubResource("RectangleShape2D_portal_pillar")

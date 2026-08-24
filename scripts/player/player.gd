@@ -7,7 +7,6 @@ signal instance_projectile(data: Dictionary)
 @export var inventory_screen_scene: PackedScene = preload("res://scenes/ui/inventory_screen.tscn")
 @export var alchemy_crafting_scene: PackedScene = preload("res://scenes/ui/alchemy_crafting.tscn")
 @export var weapon_crafting_scene: PackedScene = preload("res://scenes/ui/weapon_crafting.tscn")
-@export var unlock_screen_scene: PackedScene = preload("res://scenes/ui/unlock_screen.tscn")
 @export var pause_menu_scene: PackedScene = preload("res://scenes/ui/pause_menu.tscn")
 @onready var player_camera: Camera2D = $Camera2D
 @onready var damage_timer: Timer = $DamageTimer
@@ -27,7 +26,6 @@ var last_movement_activity_time: float = -INF
 var inventory_screen: Node = null
 var alchemy_crafting_screen: Node = null
 var weapon_crafting_screen: Node = null
-var unlock_screen: Node = null
 var _pending_fire_type: String = ""
 var _pending_fire_direction: Vector2 = Vector2.ZERO
 var _footstep_last_frame: int = -1
@@ -72,9 +70,6 @@ func _ready() -> void:
 		add_child(weapon_crafting)
 		weapon_crafting.bind_inventory(inventory)
 		weapon_crafting_screen = weapon_crafting
-		var unlock = unlock_screen_scene.instantiate()
-		add_child(unlock)
-		unlock_screen = unlock
 		add_child(pause_menu_scene.instantiate())
 	else:
 		player_camera.enabled = false
@@ -199,8 +194,6 @@ func _is_ui_open() -> bool:
 		return true
 	if weapon_crafting_screen and weapon_crafting_screen.is_open():
 		return true
-	if unlock_screen and unlock_screen.is_open():
-		return true
 	return false
 
 func _try_play_attack_animation(direction: Vector2, fire_type: String) -> void:
@@ -250,10 +243,6 @@ func open_weapon_crafting() -> void:
 func close_weapon_crafting() -> void:
 	if weapon_crafting_screen:
 		weapon_crafting_screen.close()
-
-func open_unlock_screen() -> void:
-	if unlock_screen:
-		unlock_screen.toggle()
 
 @rpc("any_peer", "call_local", "reliable")
 func request_equip_weapon_part(part_path: String) -> void:
