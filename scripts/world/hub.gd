@@ -70,6 +70,8 @@ func _ready() -> void:
 func _spawn_player(id: int) -> Node:
 	var player = PlayerManager.spawn_player(id)
 	player.instance_hud.connect(_hud_instance)
+	if multiplayer.is_server():
+		RunManager.restore_player_state.call_deferred(player)
 	return player
 
 

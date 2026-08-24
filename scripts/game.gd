@@ -346,22 +346,8 @@ func _spawn_player(id: int) -> Node:
 	player.instance_projectile.connect(_on_projectile_requested)
 	if multiplayer.is_server():
 		player.died.connect(_check_all_players_dead)
-		_restore_run_state.call_deferred(id, player)
+		RunManager.restore_player_state.call_deferred(player)
 	return player
-
-func _restore_run_state(id: int, player: Node) -> void:
-	var snapshot: Dictionary = RunManager.take_saved_run_state(id)
-	if snapshot.is_empty():
-		return
-	player.inventory.restore_snapshot(snapshot.get("ingredients", {}), snapshot.get("weapon_part_paths", []))
-	var mixture_paths: Array = snapshot.get("mixture_ingredient_paths", [])
-	if not mixture_paths.is_empty():
-		player.weapon.mixture_impact_effect = snapshot.get("mixture_impact_effect")
-		player.weapon.set_mixture_ingredients_networked(mixture_paths)
-	for key in ["equipped_water_barrel_path", "equipped_mixture_barrel_path", "equipped_tank_path", "equipped_core_path"]:
-		var part_path: String = snapshot.get(key, "")
-		if not part_path.is_empty():
-			player.weapon.equip_networked(load(part_path))
 
 func _spawn_bullet(data: Dictionary) -> Node:
 	var scene_path: String = data.get("scene_path", "res://scenes/projectiles/bullet_water.tscn")
@@ -415,8 +401,7 @@ func _show_run_summary(final_currency: int) -> void:
 
 func _on_boss_defeated() -> void:
 	for player in players.get_children():
-		if not player.is_dead:
-			RunManager.save_run_state(int(player.name), _capture_run_state(player))
+		RunManager.save_run_state(int(player.name), _capture_run_state(player))
 	RunManager.advance_floor()
 	get_tree().create_timer(BOSS_DEFEAT_TO_HUB_DELAY, false).timeout.connect(RunManager.end_run)
 
