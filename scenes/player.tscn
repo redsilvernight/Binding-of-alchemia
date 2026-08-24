@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b5h016j8mv0m5" path="res://scripts/player/player.gd" id="1_g2els"]
 [ext_resource type="Script" uid="uid://co8bcau5bgddv" path="res://scripts/weapons/weapon.gd" id="3_qhqgy"]
+[ext_resource type="Script" path="res://scripts/player/player_fire_indicator.gd" id="3_fireind"]
 [ext_resource type="Resource" uid="uid://c7nj2gcxyonrd" path="res://resources/GunParts/water_barel_basic.tres" id="4_fjrip"]
 [ext_resource type="Resource" uid="uid://tncetr6q4x53" path="res://resources/GunParts/mixture_barrel_basic.tres" id="5_smehm"]
 [ext_resource type="Resource" uid="uid://mwcvmsgsfh38" path="res://resources/GunParts/tank_basic.tres" id="6_ur7pv"]
@@ -1586,5 +1587,17 @@ core = ExtResource("7_y4r1p")
 
 [node name="Inventory" type="Node" parent="." unique_id=1831496670]
 script = ExtResource("9_ur7pv")
+
+[node name="WaterFireIndicator" type="Node2D" parent="."]
+position = Vector2(-6, -58)
+z_index = 10
+script = ExtResource("3_fireind")
+ready_color = Color(0.25, 0.78, 1, 1)
+
+[node name="MixtureFireIndicator" type="Node2D" parent="."]
+position = Vector2(6, -58)
+z_index = 10
+script = ExtResource("3_fireind")
+ready_color = Color(0.66, 0.25, 0.95, 1)
 
 [connection signal="timeout" from="DamageTimer" to="." method="_on_damage_timer_timeout"]

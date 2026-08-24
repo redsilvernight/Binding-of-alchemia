@@ -165,13 +165,23 @@ func is_water_fire_rate_ready() -> bool:
 func is_mixture_fire_rate_ready() -> bool:
 	return can_fire_mixture and mixture_cooldown_accum >= 1.0 / mixture_fire_rate
 
+func get_water_cooldown_ratio() -> float:
+	if not can_fire_water:
+		return 1.0
+	return clamp(water_cooldown_accum / (1.0 / water_fire_rate), 0.0, 1.0)
+
+func get_mixture_cooldown_ratio() -> float:
+	if not can_fire_mixture:
+		return 1.0
+	return clamp(mixture_cooldown_accum / (1.0 / mixture_fire_rate), 0.0, 1.0)
+
 func try_fire_water(direction: Vector2) -> bool:
 	if not can_fire_water:
 		return false
 	if water_cooldown_accum < 1.0 / water_fire_rate:
 		return false
 
-	water_cooldown_accum = 0.0
+	_broadcast_water_cooldown_reset()
 	_fire_bullet(water_damage, water_projectile_speed, direction, water_trajectory, null, WATER_BULLET_SCENE)
 	return true
 
@@ -185,13 +195,33 @@ func try_fire_mixture(direction: Vector2) -> bool:
 	if current_mixture_ammo < tank.mixture_cost_per_shot:
 		return false
 
-	mixture_cooldown_accum = 0.0
+	_broadcast_mixture_cooldown_reset()
 	current_mixture_ammo -= tank.mixture_cost_per_shot
 	time_since_last_mixture_fire = 0.0
 	_broadcast_ammo()
 
 	_fire_bullet(mixture_damage_multiplier, mixture_projectile_speed, direction, mixture_trajectory, mixture_impact_effect, MIXTURE_BULLET_SCENE)
 	return true
+
+func _broadcast_water_cooldown_reset() -> void:
+	if is_inside_tree():
+		_reset_water_cooldown.rpc()
+	else:
+		water_cooldown_accum = 0.0
+
+@rpc("any_peer", "call_local", "reliable")
+func _reset_water_cooldown() -> void:
+	water_cooldown_accum = 0.0
+
+func _broadcast_mixture_cooldown_reset() -> void:
+	if is_inside_tree():
+		_reset_mixture_cooldown.rpc()
+	else:
+		mixture_cooldown_accum = 0.0
+
+@rpc("any_peer", "call_local", "reliable")
+func _reset_mixture_cooldown() -> void:
+	mixture_cooldown_accum = 0.0
 
 func _broadcast_ammo() -> void:
 	if is_inside_tree():

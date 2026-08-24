@@ -15,6 +15,8 @@ signal instance_projectile(data: Dictionary)
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var sprite: AnimatedSprite2D = $Sprite2D
 @onready var _light: PointLight2D = $PlayerLight
+@onready var water_fire_indicator: PlayerFireIndicator = $WaterFireIndicator
+@onready var mixture_fire_indicator: PlayerFireIndicator = $MixtureFireIndicator
 var was_water_pressed: bool = false
 var was_mixture_pressed: bool = false
 var last_aim_direction: Vector2 = Vector2.RIGHT
@@ -91,6 +93,8 @@ func _on_viewport_size_changed() -> void:
 func _process(_delta: float) -> void:
 	if is_dead:
 		return
+	water_fire_indicator.set_fill_ratio(weapon.get_water_cooldown_ratio())
+	mixture_fire_indicator.set_fill_ratio(weapon.get_mixture_cooldown_ratio())
 	if not sprite.animation.begins_with("walk-"):
 		_footstep_last_frame = -1
 		return
@@ -353,6 +357,8 @@ func kill() -> void:
 
 func _on_died() -> void:
 	collision_shape.set_deferred("disabled", true)
+	water_fire_indicator.visible = false
+	mixture_fire_indicator.visible = false
 	sprite.play(StringName("death-" + FacingDirection.label_for(last_aim_direction)))
 	await sprite.animation_finished
 	if not is_instance_valid(self):
