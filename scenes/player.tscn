@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b5h016j8mv0m5" path="res://scripts/player/player.gd" id="1_g2els"]
 [ext_resource type="Script" uid="uid://co8bcau5bgddv" path="res://scripts/weapons/weapon.gd" id="3_qhqgy"]
-[ext_resource type="Resource" uid="uid://bymni02kbmgtn" path="res://resources/GunParts/water_barel_fast.tres" id="4_fjrip"]
+[ext_resource type="Resource" uid="uid://c7nj2gcxyonrd" path="res://resources/GunParts/water_barel_basic.tres" id="4_fjrip"]
 [ext_resource type="Resource" uid="uid://tncetr6q4x53" path="res://resources/GunParts/mixture_barrel_basic.tres" id="5_smehm"]
 [ext_resource type="Resource" uid="uid://mwcvmsgsfh38" path="res://resources/GunParts/tank_basic.tres" id="6_ur7pv"]
 [ext_resource type="Resource" uid="uid://doe4xdbp6v482" path="res://resources/GunParts/core_basic.tres" id="7_y4r1p"]
