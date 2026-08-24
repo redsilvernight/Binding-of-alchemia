@@ -33,7 +33,12 @@ func prop_tile_sources_by_texture(tile_set: TileSet) -> Dictionary:
 		var tile_data: TileData = source.get_tile_data(Vector2i.ZERO, 0)
 		if tile_data == null:
 			continue
-		if tile_data.get_collision_polygons_count(0) > 0:
+		var has_collision: bool = false
+		for layer_index in tile_set.get_physics_layers_count():
+			if tile_data.get_collision_polygons_count(layer_index) > 0:
+				has_collision = true
+				break
+		if has_collision:
 			blocking[source.texture.resource_path] = source_id
 		else:
 			decor[source.texture.resource_path] = source_id

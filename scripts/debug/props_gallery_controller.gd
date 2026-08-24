@@ -155,11 +155,17 @@ func _prop_sources(tile_set: TileSet) -> Array[Dictionary]:
 		if not texture_path.begins_with(PROPS_TEXTURE_DIR):
 			continue
 		var tile_data: TileData = source.get_tile_data(Vector2i.ZERO, 0)
+		var is_blocking: bool = false
+		if tile_data != null:
+			for layer_index in tile_set.get_physics_layers_count():
+				if tile_data.get_collision_polygons_count(layer_index) > 0:
+					is_blocking = true
+					break
 		sources.append({
 			"source_id": source_id,
 			"texture_path": texture_path,
 			"name": texture_path.get_file().get_basename().replace("_", " "),
-			"blocking": tile_data != null and tile_data.get_collision_polygons_count(0) > 0,
+			"blocking": is_blocking,
 		})
 	sources.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["name"] < b["name"])
 	return sources
