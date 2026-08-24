@@ -28,8 +28,8 @@ var current_mixture_ammo: float = 0.0
 var time_since_last_mixture_fire: float = 0.0
 var can_fire_water: bool = false
 var can_fire_mixture: bool = false
-var water_cooldown_accum: float = 0.0
-var mixture_cooldown_accum: float = 0.0
+var water_cooldown_accum: float = INF
+var mixture_cooldown_accum: float = INF
 var water_trajectory: Bullet.TrajectoryType = Bullet.TrajectoryType.LINEAR
 var mixture_trajectory: Bullet.TrajectoryType = Bullet.TrajectoryType.LINEAR
 var mixture_impact_effect: ImpactEffect = null
@@ -39,11 +39,11 @@ func _ready() -> void:
 	_recalculate_stats()
 
 func _process(delta: float) -> void:
-	if not multiplayer.is_server():
-		return
-
 	water_cooldown_accum += delta
 	mixture_cooldown_accum += delta
+
+	if not multiplayer.is_server():
+		return
 
 	if tank == null:
 		return
@@ -55,6 +55,17 @@ func _process(delta: float) -> void:
 		current_mixture_ammo = min(current_mixture_ammo + mixture_regen_rate * delta, mixture_max_capacity)
 		if current_mixture_ammo != previous_ammo:
 			_broadcast_ammo()
+
+func get_socket_occupant(piece: Resource) -> Resource:
+	if piece is GunBarrelWater:
+		return barrel_water
+	elif piece is GunBarrelMixture:
+		return barrel_mixture
+	elif piece is GunTank:
+		return tank
+	elif piece is GunCore:
+		return core
+	return null
 
 func equip(piece: Resource) -> void:
 	if piece is GunBarrelWater:
@@ -147,6 +158,12 @@ func _recalculate_stats() -> void:
 
 func can_fire_mixture_locally() -> bool:
 	return can_fire_mixture and tank != null and current_mixture_ammo >= tank.mixture_cost_per_shot
+
+func is_water_fire_rate_ready() -> bool:
+	return can_fire_water and water_cooldown_accum >= 1.0 / water_fire_rate
+
+func is_mixture_fire_rate_ready() -> bool:
+	return can_fire_mixture and mixture_cooldown_accum >= 1.0 / mixture_fire_rate
 
 func try_fire_water(direction: Vector2) -> bool:
 	if not can_fire_water:

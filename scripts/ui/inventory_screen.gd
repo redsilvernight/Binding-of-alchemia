@@ -50,6 +50,9 @@ func bind_weapon(p_weapon: Weapon) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_inventory"):
+		if not root.visible and not get_parent().can_open_inventory():
+			AudioManager.play_sfx("ui_error")
+			return
 		root.visible = not root.visible
 		AudioManager.play_sfx("ui_toggle")
 

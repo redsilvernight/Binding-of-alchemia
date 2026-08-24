@@ -33,6 +33,7 @@ y_sort_enabled = true
 y_sort_enabled = true
 
 [node name="Pickups" type="Node2D" parent="."]
+y_sort_enabled = true
 
 [node name="Props" type="Node2D" parent="."]
 

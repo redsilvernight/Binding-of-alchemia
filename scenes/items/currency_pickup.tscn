@@ -15,6 +15,5 @@ item_type = "currency"
 shape = SubResource("CircleShape2D_currency")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=238477546]
-light_mask = 2
 texture = ExtResource("2_tex")
 metadata/_edit_lock_ = true

@@ -113,8 +113,8 @@ func _physics_process(_delta: float) -> void:
 	var input_direction: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var facing_direction: Vector2 = _get_facing_direction(aim_direction, input_direction)
 	_update_facing(facing_direction, input_direction.length() > 0.0)
-	var water_pressed: bool = Input.is_action_pressed("fire_water")
-	var mixture_pressed: bool = Input.is_action_pressed("fire_mixture")
+	var water_pressed: bool = Input.is_action_pressed("fire_water") and weapon.is_water_fire_rate_ready()
+	var mixture_pressed: bool = Input.is_action_pressed("fire_mixture") and weapon.is_mixture_fire_rate_ready()
 	var fire_type := ""
 	if not _is_ui_open():
 		if water_pressed and not mixture_pressed:
@@ -196,6 +196,15 @@ func _is_ui_open() -> bool:
 		return true
 	return false
 
+func _is_other_ui_open(exclude: Node) -> bool:
+	if inventory_screen and inventory_screen != exclude and inventory_screen.is_open():
+		return true
+	if alchemy_crafting_screen and alchemy_crafting_screen != exclude and alchemy_crafting_screen.is_open():
+		return true
+	if weapon_crafting_screen and weapon_crafting_screen != exclude and weapon_crafting_screen.is_open():
+		return true
+	return false
+
 func _try_play_attack_animation(direction: Vector2, fire_type: String) -> void:
 	if fire_type == "" or direction.length() < 0.001:
 		return
@@ -229,20 +238,29 @@ func _on_sprite_animation_changed() -> void:
 	sprite.play()
 
 func open_alchemy_crafting() -> void:
-	if alchemy_crafting_screen:
-		alchemy_crafting_screen.toggle()
+	if alchemy_crafting_screen == null:
+		return
+	if not alchemy_crafting_screen.is_open() and _is_other_ui_open(alchemy_crafting_screen):
+		return
+	alchemy_crafting_screen.toggle()
 
 func close_alchemy_crafting() -> void:
 	if alchemy_crafting_screen:
 		alchemy_crafting_screen.close()
 
 func open_weapon_crafting() -> void:
-	if weapon_crafting_screen:
-		weapon_crafting_screen.toggle()
+	if weapon_crafting_screen == null:
+		return
+	if not weapon_crafting_screen.is_open() and _is_other_ui_open(weapon_crafting_screen):
+		return
+	weapon_crafting_screen.toggle()
 
 func close_weapon_crafting() -> void:
 	if weapon_crafting_screen:
 		weapon_crafting_screen.close()
+
+func can_open_inventory() -> bool:
+	return not _is_other_ui_open(inventory_screen)
 
 @rpc("any_peer", "call_local", "reliable")
 func request_equip_weapon_part(part_path: String) -> void:
@@ -252,15 +270,22 @@ func request_equip_weapon_part(part_path: String) -> void:
 	if sender_id != int(name):
 		return
 
-	var owned: bool = false
+	var owned_part: Resource = null
 	for part in inventory.weapon_parts:
 		if part.resource_path == part_path:
-			owned = true
+			owned_part = part
 			break
-	if not owned:
+	if owned_part == null:
 		return
 
-	weapon.equip_networked(load(part_path))
+	var new_piece: Resource = load(part_path)
+	var old_piece: Resource = weapon.get_socket_occupant(new_piece)
+
+	inventory.remove_weapon_part(owned_part)
+	weapon.equip_networked(new_piece)
+
+	if old_piece != null and old_piece.resource_path != "":
+		inventory.add_weapon_part(old_piece)
 
 const MAX_INGREDIENTS_PER_CRAFT: int = 3
 
