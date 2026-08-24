@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_mvoll")
 icon = ExtResource("2_icon")
+nom = "Canon à Mixture Volée"
 fire_rate = 1.5
 damage_multiplier = 1.2
 projectile_speed = 280.0

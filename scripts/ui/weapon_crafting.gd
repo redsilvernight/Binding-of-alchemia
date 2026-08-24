@@ -77,8 +77,7 @@ func _refresh_parts_grid() -> void:
 		var chip: Button = item_chip_scene.instantiate()
 		parts_grid.add_child(chip)
 		var icon: Texture2D = part.icon if part.icon else WEAPON_PART_FALLBACK_ICON
-		var nom: String = part.resource_path.get_file() if part.resource_path != "" else part.get_class()
-		chip.setup(part, icon, nom)
+		chip.setup(part, icon, _part_display_name(part))
 		chip.activated.connect(_request_equip)
 
 
@@ -92,6 +91,8 @@ func _refresh_sockets() -> void:
 func _part_display_name(part: Resource) -> String:
 	if part == null:
 		return "Emplacement vide"
+	if "nom" in part and part.nom != "":
+		return part.nom
 	return part.resource_path.get_file() if part.resource_path != "" else part.get_class()
 
 

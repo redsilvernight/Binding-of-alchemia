@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_tover")
 icon = ExtResource("2_icon")
+nom = "Réservoir Surcharge"
 max_capacity = 80.0
 regen_rate = 10.0
 mixture_cost_per_shot = 12.0

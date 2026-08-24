@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_tfort")
 icon = ExtResource("2_icon")
+nom = "Réservoir Forteresse"
 max_capacity = 600.0
 regen_rate = 2.0
 mixture_cost_per_shot = 35.0

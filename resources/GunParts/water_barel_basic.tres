@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_65vxp")
 icon = ExtResource("2_icon")
+nom = "Canon à Eau de Base"
 fire_rate = 0.3
 base_damage = 5.0
 projectile_speed = 300.0

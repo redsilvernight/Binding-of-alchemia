@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_jqy3h")
 icon = ExtResource("2_icon")
+nom = "Canon à Mixture de Base"
 fire_rate = 1.0
 damage_multiplier = 1.5
 projectile_speed = 250.0

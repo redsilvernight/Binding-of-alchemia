@@ -49,7 +49,7 @@ func _add_player_row(player: Node) -> void:
 		if part == null:
 			continue
 		var icon: Texture2D = part.icon if part.icon else WEAPON_PART_FALLBACK_ICON
-		var nom: String = part.resource_path.get_file() if part.resource_path != "" else part.get_class()
+		var nom: String = part.nom if ("nom" in part and part.nom != "") else (part.resource_path.get_file() if part.resource_path != "" else part.get_class())
 		row.add_weapon_slot(icon, -1, nom)
 
 

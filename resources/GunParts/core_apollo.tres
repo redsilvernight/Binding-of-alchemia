@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_apollo")
 icon = ExtResource("2_icon")
+nom = "Noyau Apollo"
 range_modifier = 150.0
 base_damage = 6.0
 projectile_speed_modifier = 1.8

@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_treserv")
 icon = ExtResource("2_icon")
+nom = "Réservoir Ample"
 max_capacity = 500.0
 regen_rate = 3.0
 mixture_cost_per_shot = 30.0

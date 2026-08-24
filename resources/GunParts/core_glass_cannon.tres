@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_cglass")
 icon = ExtResource("2_icon")
+nom = "Noyau Canon de Verre"
 range_modifier = 0.0
 base_damage = 10.0
 projectile_speed_modifier = 1.0

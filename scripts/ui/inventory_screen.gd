@@ -101,8 +101,7 @@ func _refresh_weapon_parts() -> void:
 		var slot: Control = slot_scene.instantiate()
 		weapon_part_grid.add_child(slot)
 		var icon: Texture2D = part.icon if part.icon else WEAPON_PART_FALLBACK_ICON
-		var nom: String = part.resource_path.get_file() if part.resource_path != "" else part.get_class()
-		slot.setup(icon, -1, nom)
+		slot.setup(icon, -1, _part_display_name(part))
 
 
 func _refresh_weapon_sockets() -> void:
@@ -117,4 +116,6 @@ func _refresh_weapon_sockets() -> void:
 func _part_display_name(part: Resource) -> String:
 	if part == null:
 		return "Emplacement vide"
+	if "nom" in part and part.nom != "":
+		return part.nom
 	return part.resource_path.get_file() if part.resource_path != "" else part.get_class()

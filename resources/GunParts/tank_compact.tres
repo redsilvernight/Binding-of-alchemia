@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_tcomp")
 icon = ExtResource("2_icon")
+nom = "Réservoir Compact"
 max_capacity = 60.0
 regen_rate = 6.0
 mixture_cost_per_shot = 10.0

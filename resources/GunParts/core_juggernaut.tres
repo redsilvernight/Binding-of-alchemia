@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_cjugg")
 icon = ExtResource("2_icon")
+nom = "Noyau Juggernaut"
 range_modifier = -40.0
 base_damage = 9.0
 projectile_speed_modifier = 0.7

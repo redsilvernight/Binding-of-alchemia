@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_s7khd")
 icon = ExtResource("2_icon")
+nom = "Noyau de Base"
 range_modifier = 50.0
 base_damage = 4.0
 projectile_speed_modifier = 1.2

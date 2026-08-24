@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_csnipe")
 icon = ExtResource("2_icon")
+nom = "Noyau Sniper"
 range_modifier = 200.0
 base_damage = 2.0
 projectile_speed_modifier = 2.2

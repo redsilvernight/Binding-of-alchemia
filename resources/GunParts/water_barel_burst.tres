@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_wburst")
 icon = ExtResource("2_icon")
+nom = "Canon à Eau Rafale"
 fire_rate = 0.5
 base_damage = 4.0
 projectile_speed = 380.0

@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_cbulwk")
 icon = ExtResource("2_icon")
+nom = "Noyau Rempart"
 range_modifier = -20.0
 base_damage = 8.0
 projectile_speed_modifier = 0.8

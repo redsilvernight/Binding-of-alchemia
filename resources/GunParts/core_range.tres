@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_pmlbf")
 icon = ExtResource("2_icon")
+nom = "Noyau Longue Portée"
 range_modifier = 100.0
 base_damage = 3.0
 projectile_speed_modifier = 1.5

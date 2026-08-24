@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_movld")
 icon = ExtResource("2_icon")
+nom = "Canon à Mixture Surcharge"
 fire_rate = 0.45
 damage_multiplier = 5.5
 projectile_speed = 220.0
