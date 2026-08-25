@@ -7,6 +7,7 @@
 script = ExtResource("1_rcond")
 icon = ExtResource("2_icon")
 nom = "Résine Conductrice"
+description = "Résine gluante qui conduit l'électricité et maintient une décharge continue."
 type_alchimie = 3
 degats_base = 2.0
 duree_base = 6.0

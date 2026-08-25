@@ -7,6 +7,7 @@
 script = ExtResource("1_nfoud")
 icon = ExtResource("2_icon")
 nom = "Nerf de Foudre"
+description = "Fibre gorgée d'électricité qui délivre une décharge brève mais puissante."
 type_alchimie = 3
 degats_base = 7.0
 duree_base = 1.0

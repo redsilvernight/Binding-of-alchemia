@@ -7,6 +7,7 @@
 script = ExtResource("1_cglass")
 icon = ExtResource("2_icon")
 nom = "Noyau Canon de Verre"
+description = "Noyau fragile mais dévastateur, entièrement tourné vers les dégâts bruts."
 range_modifier = 0.0
 base_damage = 10.0
 projectile_speed_modifier = 1.0

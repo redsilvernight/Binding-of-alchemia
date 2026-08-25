@@ -7,6 +7,7 @@
 script = ExtResource("1_ebrul")
 icon = ExtResource("2_icon")
 nom = "Écorce Brûlante"
+description = "Écorce imprégnée de résine inflammable qui continue de se consumer longtemps."
 degats_base = 6.0
 duree_base = 3.0
 metadata/_custom_type_script = "uid://bja0da4fhu872"

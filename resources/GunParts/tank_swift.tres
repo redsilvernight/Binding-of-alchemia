@@ -7,6 +7,7 @@
 script = ExtResource("1_tswift")
 icon = ExtResource("2_icon")
 nom = "Réservoir Rapide"
+description = "Petit réservoir très réactif qui se remplit presque instantanément."
 max_capacity = 40.0
 regen_rate = 8.0
 mixture_cost_per_shot = 8.0

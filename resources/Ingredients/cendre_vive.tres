@@ -7,6 +7,7 @@
 script = ExtResource("1_cvive")
 icon = ExtResource("2_icon")
 nom = "Cendre Vive"
+description = "Cendres incandescentes qui continuent de brûler longtemps après le contact initial."
 degats_base = 5.0
 duree_base = 4.0
 metadata/_custom_type_script = "uid://bja0da4fhu872"

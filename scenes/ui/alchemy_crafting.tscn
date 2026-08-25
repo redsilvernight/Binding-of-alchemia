@@ -1,15 +1,15 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3 uid="uid://6t7ngmg5rjox"]
 
-[ext_resource type="Script" path="res://scripts/ui/alchemy_crafting.gd" id="1_craft"]
+[ext_resource type="Script" uid="uid://2d3nlkqvdy3h" path="res://scripts/ui/alchemy_crafting.gd" id="1_craft"]
 [ext_resource type="StyleBox" path="res://resources/ui/panel_frame.tres" id="2_panel"]
 [ext_resource type="PackedScene" path="res://scenes/ui/mixture_preview.tscn" id="3_mixture"]
-[ext_resource type="Texture2D" path="res://assets/ui/mixture_vial.png" id="4_vial_tex"]
+[ext_resource type="Texture2D" uid="uid://d0pmnyijmswkx" path="res://assets/ui/mixture_vial.png" id="4_vial_tex"]
 
-[node name="AlchemyCrafting" type="CanvasLayer"]
+[node name="AlchemyCrafting" type="CanvasLayer" unique_id=1014273235]
 layer = 5
 script = ExtResource("1_craft")
 
-[node name="Root" type="Control" parent="."]
+[node name="Root" type="Control" parent="." unique_id=376966340]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -17,7 +17,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Background" type="ColorRect" parent="Root"]
+[node name="Background" type="ColorRect" parent="Root" unique_id=1065422692]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -26,49 +26,50 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.6)
 
-[node name="FramePanel" type="Panel" parent="Root"]
+[node name="FramePanel" type="Panel" parent="Root" unique_id=1796794118]
+clip_contents = true
 layout_mode = 1
+anchors_preset = -1
 anchor_left = 0.1
 anchor_top = 0.06
 anchor_right = 0.9
 anchor_bottom = 0.94
 grow_horizontal = 2
 grow_vertical = 2
-clip_contents = true
 theme_override_styles/panel = ExtResource("2_panel")
 
-[node name="Margin" type="MarginContainer" parent="Root/FramePanel"]
+[node name="Margin" type="MarginContainer" parent="Root/FramePanel" unique_id=433339702]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 36
-theme_override_constants/margin_top = 28
-theme_override_constants/margin_right = 36
-theme_override_constants/margin_bottom = 28
+theme_override_constants/margin_left = 48
+theme_override_constants/margin_top = 36
+theme_override_constants/margin_right = 48
+theme_override_constants/margin_bottom = 36
 
-[node name="Content" type="VBoxContainer" parent="Root/FramePanel/Margin"]
+[node name="Content" type="VBoxContainer" parent="Root/FramePanel/Margin" unique_id=952784279]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="HeaderRow" type="HBoxContainer" parent="Root/FramePanel/Margin/Content"]
+[node name="HeaderRow" type="HBoxContainer" parent="Root/FramePanel/Margin/Content" unique_id=1518478968]
 layout_mode = 2
 
-[node name="TitleLabel" type="Label" parent="Root/FramePanel/Margin/Content/HeaderRow"]
+[node name="TitleLabel" type="Label" parent="Root/FramePanel/Margin/Content/HeaderRow" unique_id=850338990]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.9, 0.78, 0.5, 1)
 theme_override_font_sizes/font_size = 28
 text = "Table d'alchimie"
 
-[node name="LoadedRow" type="HBoxContainer" parent="Root/FramePanel/Margin/Content/HeaderRow"]
+[node name="LoadedRow" type="HBoxContainer" parent="Root/FramePanel/Margin/Content/HeaderRow" unique_id=759727680]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_constants/separation = 8
 
-[node name="LoadedVialIcon" type="TextureRect" parent="Root/FramePanel/Margin/Content/HeaderRow/LoadedRow"]
+[node name="LoadedVialIcon" type="TextureRect" parent="Root/FramePanel/Margin/Content/HeaderRow/LoadedRow" unique_id=1438668213]
 custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
 size_flags_vertical = 4
@@ -76,63 +77,81 @@ texture = ExtResource("4_vial_tex")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="LoadedLabel" type="Label" parent="Root/FramePanel/Margin/Content/HeaderRow/LoadedRow"]
+[node name="LoadedLabel" type="Label" parent="Root/FramePanel/Margin/Content/HeaderRow/LoadedRow" unique_id=848022833]
 layout_mode = 2
-size_flags_vertical = 4
 theme_override_colors/font_color = Color(0.7, 0.68, 0.65, 1)
 text = "Mixture chargée : aucune"
 
-[node name="HintLabel" type="Label" parent="Root/FramePanel/Margin/Content"]
+[node name="HintLabel" type="Label" parent="Root/FramePanel/Margin/Content" unique_id=1358630265]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.68, 0.65, 1)
 text = "Clique ou glisse un ingrédient dans le chaudron, puis compose la mixture."
 
-[node name="HSeparator1" type="HSeparator" parent="Root/FramePanel/Margin/Content"]
+[node name="DescriptionBox" type="Control" parent="Root/FramePanel/Margin/Content" unique_id=2042515307]
+custom_minimum_size = Vector2(0, 44)
+clip_contents = true
 layout_mode = 2
 
-[node name="CauldronTitle" type="Label" parent="Root/FramePanel/Margin/Content"]
+[node name="DescriptionLabel" type="Label" parent="Root/FramePanel/Margin/Content/DescriptionBox" unique_id=2042515306]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.9, 0.78, 0.5, 1)
+text = "Survole ou sélectionne un ingrédient pour voir sa description."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+max_lines_visible = 2
+
+[node name="HSeparator1" type="HSeparator" parent="Root/FramePanel/Margin/Content" unique_id=1068630494]
+layout_mode = 2
+
+[node name="CauldronTitle" type="Label" parent="Root/FramePanel/Margin/Content" unique_id=1873459987]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Chaudron (clique un ingrédient pour le retirer)"
 
-[node name="CauldronPreview" parent="Root/FramePanel/Margin/Content" instance=ExtResource("3_mixture")]
+[node name="CauldronPreview" parent="Root/FramePanel/Margin/Content" unique_id=1599540039 instance=ExtResource("3_mixture")]
 layout_mode = 2
 size_flags_vertical = 3
 empty_text = "Chaudron vide."
 accepts_drops = true
 
-[node name="HSeparator3" type="HSeparator" parent="Root/FramePanel/Margin/Content"]
+[node name="HSeparator3" type="HSeparator" parent="Root/FramePanel/Margin/Content" unique_id=1074769447]
 layout_mode = 2
 
-[node name="IngredientsTitle" type="Label" parent="Root/FramePanel/Margin/Content"]
+[node name="IngredientsTitle" type="Label" parent="Root/FramePanel/Margin/Content" unique_id=1210398861]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Ingrédients disponibles"
 
-[node name="IngredientsScroll" type="ScrollContainer" parent="Root/FramePanel/Margin/Content"]
-custom_minimum_size = Vector2(0, 150)
+[node name="IngredientsScroll" type="ScrollContainer" parent="Root/FramePanel/Margin/Content" unique_id=1051085609]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="IngredientsGrid" type="GridContainer" parent="Root/FramePanel/Margin/Content/IngredientsScroll"]
+[node name="IngredientsGrid" type="GridContainer" parent="Root/FramePanel/Margin/Content/IngredientsScroll" unique_id=629380341]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 columns = 9
 
-[node name="HSeparator4" type="HSeparator" parent="Root/FramePanel/Margin/Content"]
+[node name="HSeparator4" type="HSeparator" parent="Root/FramePanel/Margin/Content" unique_id=1225259164]
 layout_mode = 2
 
-[node name="ComposeRow" type="HBoxContainer" parent="Root/FramePanel/Margin/Content"]
+[node name="ComposeRow" type="HBoxContainer" parent="Root/FramePanel/Margin/Content" unique_id=1349014937]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="ComposeButton" type="Button" parent="Root/FramePanel/Margin/Content/ComposeRow"]
+[node name="ComposeButton" type="Button" parent="Root/FramePanel/Margin/Content/ComposeRow" unique_id=624079092]
 layout_mode = 2
 text = "Composer la mixture"
 
-[node name="ResultLabel" type="Label" parent="Root/FramePanel/Margin/Content/ComposeRow"]
+[node name="ResultLabel" type="Label" parent="Root/FramePanel/Margin/Content/ComposeRow" unique_id=258606297]
 layout_mode = 2
 size_flags_horizontal = 3
 vertical_alignment = 1

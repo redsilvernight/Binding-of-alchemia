@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_s7khd")
 nom = "Noyau de Base"
+description = "Noyau standard sans particularité, un point de départ fiable."
 range_modifier = 50.0
 base_damage = 4.0
 projectile_speed_modifier = 1.2

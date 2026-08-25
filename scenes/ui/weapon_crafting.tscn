@@ -45,10 +45,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 36
-theme_override_constants/margin_top = 40
-theme_override_constants/margin_right = 36
-theme_override_constants/margin_bottom = 28
+theme_override_constants/margin_left = 48
+theme_override_constants/margin_top = 48
+theme_override_constants/margin_right = 48
+theme_override_constants/margin_bottom = 48
 
 [node name="Content" type="VBoxContainer" parent="Root/FramePanel/Margin" unique_id=1984886828]
 layout_mode = 2
@@ -65,11 +65,30 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.68, 0.65, 1)
 text = "Clique ou glisse une pièce vers son emplacement pour l'équiper."
 
+[node name="DescriptionBox" type="Control" parent="Root/FramePanel/Margin/Content" unique_id=1255240340]
+custom_minimum_size = Vector2(0, 44)
+clip_contents = true
+layout_mode = 2
+
+[node name="DescriptionLabel" type="Label" parent="Root/FramePanel/Margin/Content/DescriptionBox" unique_id=1255240339]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.9, 0.78, 0.5, 1)
+text = "Survole ou sélectionne une pièce pour voir sa description."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+max_lines_visible = 2
+
 [node name="HSeparator1" type="HSeparator" parent="Root/FramePanel/Margin/Content" unique_id=1773822162]
 layout_mode = 2
 
 [node name="WeaponFrame" type="Control" parent="Root/FramePanel/Margin/Content" unique_id=567670486]
-custom_minimum_size = Vector2(480, 240)
+custom_minimum_size = Vector2(460, 230)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
@@ -143,11 +162,11 @@ theme_override_font_sizes/font_size = 20
 text = "Pièces disponibles"
 
 [node name="PartsScroll" type="ScrollContainer" parent="Root/FramePanel/Margin/Content" unique_id=682910539]
-custom_minimum_size = Vector2(0, 170)
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="PartsGridMargin" type="MarginContainer" parent="Root/FramePanel/Margin/Content/PartsScroll"]
+[node name="PartsGridMargin" type="MarginContainer" parent="Root/FramePanel/Margin/Content/PartsScroll" unique_id=295496591]
 layout_mode = 2
 theme_override_constants/margin_bottom = 10
 

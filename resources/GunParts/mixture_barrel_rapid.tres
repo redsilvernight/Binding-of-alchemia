@@ -7,6 +7,7 @@
 script = ExtResource("1_mrapid")
 icon = ExtResource("2_icon")
 nom = "Canon à Mixture Rapide"
+description = "Canon nerveux qui privilégie une cadence très élevée à la puissance par tir."
 fire_rate = 2.0
 damage_multiplier = 0.8
 projectile_speed = 350.0

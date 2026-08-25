@@ -7,6 +7,7 @@
 script = ExtResource("1_gorag")
 icon = ExtResource("2_icon")
 nom = "Griffe d'Orage"
+description = "Griffe chargée d'électricité statique qui laisse une zone crépitante à l'impact."
 type_alchimie = 3
 degats_base = 5.0
 duree_base = 3.0

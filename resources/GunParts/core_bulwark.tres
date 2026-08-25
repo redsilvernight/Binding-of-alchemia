@@ -7,6 +7,7 @@
 script = ExtResource("1_cbulwk")
 icon = ExtResource("2_icon")
 nom = "Noyau Rempart"
+description = "Noyau massif qui privilégie la puissance de frappe au détriment de la portée."
 range_modifier = -20.0
 base_damage = 8.0
 projectile_speed_modifier = 0.8

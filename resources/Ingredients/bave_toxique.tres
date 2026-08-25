@@ -7,6 +7,7 @@
 script = ExtResource("1_xh3le")
 icon = ExtResource("2_icon")
 nom = "Bave Toxique"
+description = "Sécrétion visqueuse et corrosive qui ronge lentement la chair au fil des secondes."
 type_alchimie = 2
 degats_base = 2.0
 duree_base = 6.0

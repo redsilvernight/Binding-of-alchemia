@@ -7,6 +7,7 @@
 script = ExtResource("1_eshra")
 icon = ExtResource("2_icon")
 nom = "Éclat de Shrapnel"
+description = "Nuée d'éclats métalliques tranchants projetés lors d'une brève mais violente détonation."
 type_alchimie = 5
 degats_base = 10.0
 duree_base = 0.8

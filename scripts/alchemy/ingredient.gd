@@ -11,6 +11,7 @@ enum TypeAlchimie {
 }
 
 @export var nom: String = ""
+@export_multiline var description: String = ""
 @export var type_alchimie: TypeAlchimie = TypeAlchimie.FEU
 @export var degats_base: float = 0.0
 @export var duree_base: float = 0.0

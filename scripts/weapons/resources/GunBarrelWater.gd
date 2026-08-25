@@ -2,6 +2,7 @@ extends Resource
 class_name GunBarrelWater
 
 @export var nom: String = ""
+@export_multiline var description: String = ""
 @export var fire_rate: float
 @export var base_damage: float
 @export var projectile_speed: float

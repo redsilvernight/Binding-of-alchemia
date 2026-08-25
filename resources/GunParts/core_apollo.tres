@@ -7,6 +7,7 @@
 script = ExtResource("1_apollo")
 icon = ExtResource("2_icon")
 nom = "Noyau Apollo"
+description = "Noyau solaire équilibré qui augmente nettement la portée et la vitesse des projectiles."
 range_modifier = 150.0
 base_damage = 6.0
 projectile_speed_modifier = 1.8

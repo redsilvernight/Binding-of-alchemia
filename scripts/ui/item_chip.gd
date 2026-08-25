@@ -2,6 +2,8 @@ extends Button
 
 
 signal activated(payload: Resource)
+signal selected(payload: Resource)
+signal deselected()
 
 @onready var icon_rect: TextureRect = $Icon
 @onready var quantity_label: Label = $QuantityLabel
@@ -22,6 +24,10 @@ func setup(p_payload: Resource, icon: Texture2D, tooltip: String = "", quantity:
 
 func _ready() -> void:
 	pressed.connect(func() -> void: activated.emit(payload))
+	mouse_entered.connect(func() -> void: selected.emit(payload))
+	mouse_exited.connect(func() -> void: deselected.emit())
+	focus_entered.connect(func() -> void: selected.emit(payload))
+	focus_exited.connect(func() -> void: deselected.emit())
 
 
 func _get_drag_data(_position: Vector2) -> Variant:

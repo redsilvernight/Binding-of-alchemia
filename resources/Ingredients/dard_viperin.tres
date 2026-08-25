@@ -7,6 +7,7 @@
 script = ExtResource("1_dvipe")
 icon = ExtResource("2_icon")
 nom = "Dard Vipérin"
+description = "Aiguillon empoisonné inspiré du venin de vipère qui inflige des dégâts constants."
 type_alchimie = 2
 degats_base = 7.0
 duree_base = 4.0

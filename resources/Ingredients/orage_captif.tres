@@ -7,6 +7,7 @@
 script = ExtResource("1_ocapt")
 icon = ExtResource("2_icon")
 nom = "Orage Captif"
+description = "Fragment de tempête emprisonné qui décharge la foudre sur une zone entière."
 type_alchimie = 3
 degats_base = 9.0
 duree_base = 2.0

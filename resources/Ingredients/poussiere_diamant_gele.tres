@@ -7,6 +7,7 @@
 script = ExtResource("1_pdiam")
 icon = ExtResource("2_icon")
 nom = "Poussière de Diamant Gelé"
+description = "Éclats de glace scintillants et coupants qui glacent les chairs à l'impact."
 type_alchimie = 1
 degats_base = 4.0
 duree_base = 3.0

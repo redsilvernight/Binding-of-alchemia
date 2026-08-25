@@ -7,6 +7,7 @@
 script = ExtResource("1_cswst")
 icon = ExtResource("2_icon")
 nom = "Noyau Frappe Rapide"
+description = "Noyau agile qui accélère les projectiles pour des frappes vives et réactives."
 range_modifier = 20.0
 base_damage = 5.0
 projectile_speed_modifier = 1.6

@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_jqy3h")
 nom = "Canon à Mixture de Base"
+description = "Canon standard qui projette la mixture à une cadence et une puissance équilibrées."
 fire_rate = 1.0
 damage_multiplier = 1.5
 projectile_speed = 250.0

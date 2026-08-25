@@ -4,6 +4,8 @@ class_name MixturePreview
 
 signal item_activated(payload: Resource)
 signal item_dropped(payload: Resource)
+signal item_selected(payload: Resource)
+signal item_deselected()
 
 const INGREDIENT_FALLBACK_ICON: Texture2D = preload("res://assets/test/mixture_bullet_test.png")
 const EMPTY_VIAL_COLOR: Color = Color(0.5, 0.5, 0.55, 0.55)
@@ -56,6 +58,8 @@ func display(ingredient_paths: Array, inventory: Inventory) -> void:
 		var icon: Texture2D = ingredient.icon if ingredient.icon else INGREDIENT_FALLBACK_ICON
 		chip.setup(ingredient, icon, ingredient.nom, counts[key])
 		chip.activated.connect(func(payload: Resource) -> void: item_activated.emit(payload))
+		chip.selected.connect(func(payload: Resource) -> void: item_selected.emit(payload))
+		chip.deselected.connect(func() -> void: item_deselected.emit())
 		occurrences_by_type[ingredient.type_alchimie] = occurrences_by_type.get(ingredient.type_alchimie, 0) + counts[key]
 
 	vial_icon.modulate = _dominant_type_color(occurrences_by_type)

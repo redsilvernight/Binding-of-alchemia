@@ -7,6 +7,7 @@
 script = ExtResource("1_evive")
 icon = ExtResource("2_icon")
 nom = "Étincelle Vive"
+description = "Petite décharge électrique instable, rapide mais peu durable."
 type_alchimie = 3
 degats_base = 3.0
 duree_base = 1.5

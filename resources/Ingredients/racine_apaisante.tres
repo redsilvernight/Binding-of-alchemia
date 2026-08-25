@@ -7,6 +7,7 @@
 script = ExtResource("1_ytyvu")
 icon = ExtResource("2_icon")
 nom = "Racine Apaisante"
+description = "Racine aux vertus calmantes qui referme instantanément une partie des blessures."
 type_alchimie = 4
 degats_base = -6.0
 metadata/_custom_type_script = "uid://bja0da4fhu872"

@@ -7,6 +7,7 @@
 script = ExtResource("1_ezeus")
 icon = ExtResource("2_icon")
 nom = "Éclair de Zeus"
+description = "Fragment d'orage capturé qui libère une décharge foudroyante à l'impact."
 type_alchimie = 3
 degats_base = 10.0
 duree_base = 2.0

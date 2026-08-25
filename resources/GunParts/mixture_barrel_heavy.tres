@@ -7,6 +7,7 @@
 script = ExtResource("1_fkjf5")
 icon = ExtResource("2_icon")
 nom = "Canon à Mixture Lourd"
+description = "Canon massif qui amplifie fortement la puissance de la mixture au prix de la cadence."
 fire_rate = 0.5
 damage_multiplier = 3.0
 projectile_speed = 200.0

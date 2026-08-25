@@ -7,6 +7,7 @@
 script = ExtResource("1_wsnip")
 icon = ExtResource("2_icon")
 nom = "Canon à Eau Sniper"
+description = "Canon de précision qui tire très rarement mais projette l'eau à une vitesse fulgurante."
 fire_rate = 0.15
 base_damage = 9.0
 projectile_speed = 550.0

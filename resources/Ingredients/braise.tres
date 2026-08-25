@@ -7,6 +7,7 @@
 script = ExtResource("1_ic6my")
 icon = ExtResource("2_icon")
 nom = "Braise"
+description = "Charbon encore incandescent qui embrase durablement tout ce qu'il touche."
 degats_base = 8.0
 duree_base = 3.0
 metadata/_custom_type_script = "uid://bja0da4fhu872"

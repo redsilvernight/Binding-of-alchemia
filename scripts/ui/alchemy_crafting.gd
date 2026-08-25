@@ -12,11 +12,13 @@ const INGREDIENT_FALLBACK_ICON: Texture2D = preload("res://assets/test/mixture_b
 @onready var ingredients_grid: GridContainer = $Root/FramePanel/Margin/Content/IngredientsScroll/IngredientsGrid
 @onready var compose_button: Button = $Root/FramePanel/Margin/Content/ComposeRow/ComposeButton
 @onready var result_label: Label = $Root/FramePanel/Margin/Content/ComposeRow/ResultLabel
+@onready var description_label: Label = $Root/FramePanel/Margin/Content/DescriptionBox/DescriptionLabel
 
 var inventory: Inventory
 var weapon: Weapon
 var _pending_paths: Array[String] = []
 var _owner_peer_id: int = 0
+var _default_description_text: String
 
 
 func _ready() -> void:
@@ -24,6 +26,9 @@ func _ready() -> void:
 	compose_button.pressed.connect(_on_compose_pressed)
 	cauldron_preview.item_dropped.connect(_add_to_pending)
 	cauldron_preview.item_activated.connect(_remove_from_pending)
+	cauldron_preview.item_selected.connect(_show_description)
+	cauldron_preview.item_deselected.connect(_clear_description)
+	_default_description_text = description_label.text
 	weapon = get_parent().weapon
 	_owner_peer_id = int(get_parent().name)
 	weapon.mixture_changed.connect(_refresh_loaded_summary)
@@ -40,6 +45,7 @@ func open() -> void:
 	AudioManager.play_sfx("station_open")
 	root.visible = true
 	_pending_paths.clear()
+	_clear_description()
 	_refresh_available()
 	cauldron_preview.display(_pending_paths, inventory)
 	_refresh_loaded_summary(weapon.mixture_ingredient_paths)
@@ -143,6 +149,8 @@ func _refresh_available() -> void:
 		var nom: String = ingredient.nom if ingredient else key.get_file()
 		chip.setup(ingredient, icon, nom, remaining)
 		chip.activated.connect(_add_to_pending)
+		chip.selected.connect(_show_description)
+		chip.deselected.connect(_clear_description)
 
 
 func _on_compose_pressed() -> void:
@@ -160,6 +168,19 @@ func _on_compose_pressed() -> void:
 	_refresh_available()
 	cauldron_preview.display(_pending_paths, inventory)
 	close()
+
+
+func _show_description(ingredient: Resource) -> void:
+	if not (ingredient is Ingredient):
+		_clear_description()
+		return
+	var item: Ingredient = ingredient as Ingredient
+	var nom: String = item.nom if item.nom != "" else item.resource_path.get_file()
+	description_label.text = "%s — %s" % [nom, item.description] if item.description != "" else nom
+
+
+func _clear_description() -> void:
+	description_label.text = _default_description_text
 
 
 func _on_lock_changed(peer_id: int, used: bool) -> void:

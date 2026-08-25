@@ -7,6 +7,7 @@
 script = ExtResource("1_ttp7m")
 icon = ExtResource("2_icon")
 nom = "Cristal de Givre"
+description = "Éclat de glace pure qui ralentit et engourdit ce qu'il touche."
 type_alchimie = 1
 degats_base = 3.0
 duree_base = 4.0

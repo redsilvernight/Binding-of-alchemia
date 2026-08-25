@@ -7,6 +7,7 @@
 script = ExtResource("1_spcor")
 icon = ExtResource("2_icon")
 nom = "Spore Corrosive"
+description = "Spore vénéneuse à l'effet discret mais qui s'acharne sur une très longue durée."
 type_alchimie = 2
 degats_base = 1.5
 duree_base = 9.0

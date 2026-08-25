@@ -11,15 +11,18 @@ const WEAPON_PART_FALLBACK_ICON: Texture2D = preload("res://assets/test/water_bu
 @onready var socket_mixture: Control = $Root/FramePanel/Margin/Content/WeaponFrame/SocketMixtureBarrel
 @onready var socket_tank: Control = $Root/FramePanel/Margin/Content/WeaponFrame/SocketTank
 @onready var socket_core: Control = $Root/FramePanel/Margin/Content/WeaponFrame/SocketCore
+@onready var description_label: Label = $Root/FramePanel/Margin/Content/DescriptionBox/DescriptionLabel
 
 var inventory: Inventory
 var weapon: Weapon
+var _default_description_text: String
 
 
 func _ready() -> void:
 	root.visible = false
 	weapon = get_parent().weapon
 	weapon.part_equipped.connect(_on_part_equipped)
+	_default_description_text = description_label.text
 
 	socket_water.accepts = func(part: Resource) -> bool: return part is GunBarrelWater
 	socket_mixture.accepts = func(part: Resource) -> bool: return part is GunBarrelMixture
@@ -29,6 +32,9 @@ func _ready() -> void:
 	socket_mixture.part_dropped.connect(_request_equip)
 	socket_tank.part_dropped.connect(_request_equip)
 	socket_core.part_dropped.connect(_request_equip)
+	for socket in [socket_water, socket_mixture, socket_tank, socket_core]:
+		socket.selected.connect(_show_description)
+		socket.deselected.connect(_clear_description)
 
 
 func bind_inventory(p_inventory: Inventory) -> void:
@@ -41,6 +47,7 @@ func open() -> void:
 	AudioManager.play_sfx("station_open")
 	_refresh_parts_grid()
 	_refresh_sockets()
+	_clear_description()
 	root.visible = true
 
 
@@ -79,13 +86,15 @@ func _refresh_parts_grid() -> void:
 		var icon: Texture2D = part.icon if part.icon else WEAPON_PART_FALLBACK_ICON
 		chip.setup(part, icon, _part_display_name(part))
 		chip.activated.connect(_request_equip)
+		chip.selected.connect(_show_description)
+		chip.deselected.connect(_clear_description)
 
 
 func _refresh_sockets() -> void:
-	socket_water.setup(weapon.barrel_water.icon if weapon.barrel_water else null, _part_display_name(weapon.barrel_water))
-	socket_mixture.setup(weapon.barrel_mixture.icon if weapon.barrel_mixture else null, _part_display_name(weapon.barrel_mixture))
-	socket_tank.setup(weapon.tank.icon if weapon.tank else null, _part_display_name(weapon.tank))
-	socket_core.setup(weapon.core.icon if weapon.core else null, _part_display_name(weapon.core))
+	socket_water.setup(weapon.barrel_water.icon if weapon.barrel_water else null, _part_display_name(weapon.barrel_water), weapon.barrel_water)
+	socket_mixture.setup(weapon.barrel_mixture.icon if weapon.barrel_mixture else null, _part_display_name(weapon.barrel_mixture), weapon.barrel_mixture)
+	socket_tank.setup(weapon.tank.icon if weapon.tank else null, _part_display_name(weapon.tank), weapon.tank)
+	socket_core.setup(weapon.core.icon if weapon.core else null, _part_display_name(weapon.core), weapon.core)
 
 
 func _part_display_name(part: Resource) -> String:
@@ -94,6 +103,18 @@ func _part_display_name(part: Resource) -> String:
 	if "nom" in part and part.nom != "":
 		return part.nom
 	return part.resource_path.get_file() if part.resource_path != "" else part.get_class()
+
+
+func _show_description(part: Resource) -> void:
+	if part == null:
+		_clear_description()
+		return
+	var desc: String = part.description if "description" in part else ""
+	description_label.text = "%s — %s" % [_part_display_name(part), desc] if desc != "" else _part_display_name(part)
+
+
+func _clear_description() -> void:
+	description_label.text = _default_description_text
 
 
 func _request_equip(part: Resource) -> void:

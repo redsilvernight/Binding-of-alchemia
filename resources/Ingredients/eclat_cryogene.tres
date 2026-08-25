@@ -7,6 +7,7 @@
 script = ExtResource("1_ecryo")
 icon = ExtResource("2_icon")
 nom = "Éclat Cryogène"
+description = "Cristal glacial qui maintient une morsure de froid prolongée autour de la cible."
 type_alchimie = 1
 degats_base = 3.0
 duree_base = 6.0

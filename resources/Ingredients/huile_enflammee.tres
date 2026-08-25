@@ -7,6 +7,7 @@
 script = ExtResource("1_henfl")
 icon = ExtResource("2_icon")
 nom = "Huile Enflammée"
+description = "Huile visqueuse qui s'enflamme au contact et arrose une petite zone de flammes."
 type_alchimie = 0
 degats_base = 5.0
 duree_base = 2.5

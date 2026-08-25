@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_2ggct")
 nom = "Réservoir de Base"
+description = "Réservoir standard offrant une réserve de mixture équilibrée."
 max_capacity = 100.0
 regen_rate = 2.0
 mixture_cost_per_shot = 20.0

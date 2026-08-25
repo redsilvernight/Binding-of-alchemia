@@ -7,6 +7,7 @@
 script = ExtResource("1_8odrc")
 icon = ExtResource("2_icon")
 nom = "Grand Réservoir"
+description = "Grand réservoir offrant une bonne réserve sans trop sacrifier la régénération."
 max_capacity = 200.0
 regen_rate = 4.0
 mixture_cost_per_shot = 25.0

@@ -7,6 +7,7 @@
 script = ExtResource("1_shydre")
 icon = ExtResource("2_icon")
 nom = "Sang d'Hydre"
+description = "Sang toxique et résistant d'hydre, un poison redoutable qui s'acharne longuement."
 type_alchimie = 2
 degats_base = 6.0
 duree_base = 8.0

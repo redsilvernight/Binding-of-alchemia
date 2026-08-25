@@ -7,6 +7,7 @@
 script = ExtResource("1_pcura")
 icon = ExtResource("2_icon")
 nom = "Pollen Curatif"
+description = "Fine poussière florale aux propriétés apaisantes qui referme légèrement les plaies."
 type_alchimie = 4
 degats_base = -3.0
 duree_base = 2.0

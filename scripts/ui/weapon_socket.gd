@@ -3,6 +3,8 @@ extends Control
 
 var accepts: Callable = func(_part: Resource) -> bool: return true
 signal part_dropped(part: Resource)
+signal selected(part: Resource)
+signal deselected()
 
 const HIGHLIGHT_STYLE: StyleBoxFlat = preload("res://resources/ui/socket_frame_highlight.tres")
 
@@ -10,16 +12,20 @@ const HIGHLIGHT_STYLE: StyleBoxFlat = preload("res://resources/ui/socket_frame_h
 @onready var frame: Panel = $Frame
 
 var _default_frame_style: StyleBox
+var _part: Resource
 
 
 func _ready() -> void:
 	_default_frame_style = frame.get_theme_stylebox("panel")
+	mouse_entered.connect(func() -> void: selected.emit(_part))
+	mouse_exited.connect(func() -> void: deselected.emit())
 
 
-func setup(icon: Texture2D, tooltip: String = "") -> void:
+func setup(icon: Texture2D, tooltip: String = "", part: Resource = null) -> void:
 	icon_rect.texture = icon
 	icon_rect.visible = icon != null
 	tooltip_text = tooltip
+	_part = part
 
 
 func _can_drop_data(_position: Vector2, data: Variant) -> bool:

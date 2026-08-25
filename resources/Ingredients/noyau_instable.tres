@@ -7,6 +7,7 @@
 script = ExtResource("1_ninst")
 icon = ExtResource("2_icon")
 nom = "Noyau Instable"
+description = "Noyau alchimique au bord de la rupture qui libère une explosion à large rayon."
 type_alchimie = 5
 degats_base = 8.0
 duree_base = 1.0

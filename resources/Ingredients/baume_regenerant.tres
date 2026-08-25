@@ -7,6 +7,7 @@
 script = ExtResource("1_bregen")
 icon = ExtResource("2_icon")
 nom = "Baume Régénérant"
+description = "Onguent doux à l'odeur de miel qui referme les blessures sur la durée."
 type_alchimie = 4
 degats_base = -5.0
 duree_base = 3.0

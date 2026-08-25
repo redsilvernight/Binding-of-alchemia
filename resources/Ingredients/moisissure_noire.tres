@@ -7,6 +7,7 @@
 script = ExtResource("1_mnoir")
 icon = ExtResource("2_icon")
 nom = "Moisissure Noire"
+description = "Spores toxiques qui infectent la cible d'un poison rongeant sur une très longue durée."
 type_alchimie = 2
 degats_base = 3.0
 duree_base = 8.0

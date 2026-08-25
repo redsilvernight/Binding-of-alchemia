@@ -7,6 +7,7 @@
 script = ExtResource("1_seve")
 icon = ExtResource("2_icon")
 nom = "Sève de Vie"
+description = "Sève sacrée d'un arbre ancestral qui referme instantanément de profondes blessures."
 type_alchimie = 4
 degats_base = -10.0
 duree_base = 1.0

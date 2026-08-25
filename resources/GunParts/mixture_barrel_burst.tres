@@ -7,6 +7,7 @@
 script = ExtResource("1_mburst")
 icon = ExtResource("2_icon")
 nom = "Canon à Mixture Rafale"
+description = "Canon conçu pour de puissantes salves ponctuelles, efficace mais moins réactif."
 fire_rate = 0.7
 damage_multiplier = 3.5
 projectile_speed = 320.0

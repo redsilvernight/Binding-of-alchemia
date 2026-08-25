@@ -7,6 +7,7 @@
 script = ExtResource("1_vnecro")
 icon = ExtResource("2_icon")
 nom = "Venin Nécrosant"
+description = "Venin nécrosant qui ronge la chair progressivement et durablement."
 type_alchimie = 2
 degats_base = 5.0
 duree_base = 7.0

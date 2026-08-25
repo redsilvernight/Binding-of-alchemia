@@ -7,6 +7,7 @@
 script = ExtResource("1_lbanq")
 icon = ExtResource("2_icon")
 nom = "Larme de Banquise"
+description = "Goutte d'eau glaciale figée qui inflige un froid léger mais très persistant."
 type_alchimie = 1
 degats_base = 1.5
 duree_base = 7.0

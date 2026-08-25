@@ -7,6 +7,7 @@
 script = ExtResource("1_emet")
 icon = ExtResource("2_icon")
 nom = "Éclat de Météore"
+description = "Fragment de roche céleste encore brûlant qui explose violemment au contact."
 type_alchimie = 5
 degats_base = 9.0
 duree_base = 2.0

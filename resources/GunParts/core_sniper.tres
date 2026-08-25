@@ -7,6 +7,7 @@
 script = ExtResource("1_csnipe")
 icon = ExtResource("2_icon")
 nom = "Noyau Sniper"
+description = "Noyau extrême conçu pour projeter des tirs très rapides sur une immense portée."
 range_modifier = 200.0
 base_damage = 2.0
 projectile_speed_modifier = 2.2
