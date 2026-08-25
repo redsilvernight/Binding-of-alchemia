@@ -56,8 +56,6 @@ func restore_snapshot(ingredients_snapshot: Dictionary, weapon_part_paths: Array
 		return
 	for key in ingredients_snapshot.keys():
 		var quantity: int = ingredients_snapshot[key]
-		if quantity <= 0:
-			continue
 		_apply_ingredient_update(key, quantity)
 		_notify_owner_ingredient_update(key, quantity)
 	for part_path in weapon_part_paths:
@@ -105,9 +103,9 @@ func _get_owner_peer_id() -> int:
 
 func _apply_ingredient_update(ingredient_path: String, new_quantity: int) -> void:
 	var ingredient: Ingredient = load(ingredient_path) as Ingredient
+	ingredient_resources[ingredient_path] = ingredient
 	if new_quantity > ingredients.get(ingredient_path, 0):
 		ingredients[ingredient_path] = new_quantity
-		ingredient_resources[ingredient_path] = ingredient
 		ingredient_added.emit(ingredient, new_quantity)
 	else:
 		ingredients[ingredient_path] = new_quantity

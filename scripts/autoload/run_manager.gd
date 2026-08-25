@@ -163,14 +163,14 @@ func restore_player_state(player: Node) -> void:
 	if snapshot.is_empty():
 		return
 	player.inventory.restore_snapshot(snapshot.get("ingredients", {}), snapshot.get("weapon_part_paths", []))
-	var mixture_paths: Array = snapshot.get("mixture_ingredient_paths", [])
-	if not mixture_paths.is_empty():
-		player.weapon.mixture_impact_effect = snapshot.get("mixture_impact_effect")
-		player.weapon.set_mixture_ingredients_networked(mixture_paths)
 	for key in ["equipped_water_barrel_path", "equipped_mixture_barrel_path", "equipped_tank_path", "equipped_core_path"]:
 		var part_path: String = snapshot.get(key, "")
 		if not part_path.is_empty():
 			player.weapon.equip_networked(load(part_path))
+	var mixture_paths: Array = snapshot.get("mixture_ingredient_paths", [])
+	if not mixture_paths.is_empty():
+		player.weapon.mixture_impact_effect = snapshot.get("mixture_impact_effect")
+		player.weapon.set_mixture_ingredients_networked(mixture_paths)
 
 
 @rpc("authority", "call_local", "reliable")
