@@ -6,6 +6,9 @@ extends Area2D
 @export var currency_amount: int = 0
 
 const PICKUP_DELAY: float = 0.3
+const DESPAWN_DELAY: float = 10.0
+const BLINK_START_DELAY: float = 8.0
+const BLINK_INTERVAL: float = 0.15
 
 @onready var sprite: Sprite2D = $Sprite2D
 
@@ -17,6 +20,24 @@ func _ready() -> void:
 	await get_tree().create_timer(PICKUP_DELAY, false).timeout
 	if is_instance_valid(self):
 		monitoring = true
+	if item_type != "currency":
+		get_tree().create_timer(BLINK_START_DELAY, false).timeout.connect(_start_blink)
+		if multiplayer.is_server():
+			get_tree().create_timer(DESPAWN_DELAY, false).timeout.connect(_on_despawn_timeout)
+
+
+func _on_despawn_timeout() -> void:
+	if is_instance_valid(self):
+		queue_free()
+
+
+func _start_blink() -> void:
+	if not is_instance_valid(self):
+		return
+	var tween: Tween = create_tween()
+	tween.tween_property(sprite, "modulate:a", 0.2, BLINK_INTERVAL).set_trans(Tween.TRANS_SINE)
+	tween.tween_property(sprite, "modulate:a", 1.0, BLINK_INTERVAL).set_trans(Tween.TRANS_SINE)
+	tween.tween_callback(_start_blink)
 
 
 func _apply_icon() -> void:
