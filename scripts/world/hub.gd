@@ -31,7 +31,8 @@ var SHOP_SHELF_COLLISION_POLYGON: PackedVector2Array = PackedVector2Array([
 	Vector2(41.0, 75.0), Vector2(39.0, 70.0), Vector2(-40.0, 70.0), Vector2(-42.0, 75.0),
 	Vector2(-49.0, 75.0), Vector2(-49.0, 30.0), Vector2(-51.0, 29.0),
 ])
-var _shop_item_props: Array[Node2D] = []
+var _shop_item_props: Dictionary = {}
+var _shop_slot_assignment: Dictionary = {}
 const SHOP_ITEM_SLOTS: Array[Vector2] = [
 	Vector2(-28, -42), Vector2(-2, -42), Vector2(24, -42),
 	Vector2(-30, 11), Vector2(0, 11), Vector2(26, 11),
@@ -124,27 +125,44 @@ func _setup_shop_shelves() -> void:
 
 
 func _setup_shop_items() -> void:
-	for prop in _shop_item_props:
-		if is_instance_valid(prop):
-			prop.queue_free()
-	_shop_item_props.clear()
-
 	var pool: Array = MetaProgression.get_shop_pool()
+	var pool_set: Dictionary = {}
+	for item_path in pool:
+		pool_set[item_path] = true
 
-	for i in pool.size():
-		if i >= SHOP_SHELF_POSITIONS.size():
-			break
-		var entry: Dictionary = _find_unlockable_entry(pool[i])
+	for item_path in _shop_item_props.keys():
+		if not pool_set.has(item_path):
+			var prop: Node2D = _shop_item_props[item_path]
+			if is_instance_valid(prop):
+				prop.queue_free()
+			_shop_item_props.erase(item_path)
+			_shop_slot_assignment.erase(item_path)
+
+	for item_path in pool:
+		if _shop_item_props.has(item_path):
+			continue
+		var slot_index: int = _next_free_shop_slot()
+		if slot_index < 0:
+			continue
+		var entry: Dictionary = _find_unlockable_entry(item_path)
 		if entry.is_empty():
 			continue
 		var prop: ShopItemProp = ShopItemProp.new()
-		var slot_offset: Vector2 = SHOP_ITEM_SLOTS[i % SHOP_ITEM_SLOTS.size()]
-		var item_pos: Vector2 = SHOP_SHELF_POSITIONS[i] + slot_offset
-		var front_anchor: Vector2 = Vector2(item_pos.x, SHOP_SHELF_POSITIONS[i].y + SHOP_SHELF_FRONT_Y)
+		var slot_offset: Vector2 = SHOP_ITEM_SLOTS[slot_index % SHOP_ITEM_SLOTS.size()]
+		var item_pos: Vector2 = SHOP_SHELF_POSITIONS[slot_index] + slot_offset
+		var front_anchor: Vector2 = Vector2(item_pos.x, SHOP_SHELF_POSITIONS[slot_index].y + SHOP_SHELF_FRONT_Y)
 		prop.setup(entry, front_anchor - item_pos, slot_offset)
 		prop.position = item_pos
 		add_child(prop)
-		_shop_item_props.append(prop)
+		_shop_item_props[item_path] = prop
+		_shop_slot_assignment[item_path] = slot_index
+
+
+func _next_free_shop_slot() -> int:
+	for slot_index in SHOP_SHELF_POSITIONS.size():
+		if not _shop_slot_assignment.values().has(slot_index):
+			return slot_index
+	return -1
 
 
 func _find_unlockable_entry(item_path: String) -> Dictionary:
