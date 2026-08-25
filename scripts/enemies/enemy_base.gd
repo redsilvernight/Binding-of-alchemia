@@ -28,6 +28,7 @@ func _ready() -> void:
 	add_to_group("Enemies")
 	_reset_ambient_timer()
 	_setup_shadow()
+	health_changed.connect(_on_health_changed_blink)
 
 const DEFAULT_SHADOW_CAPSULE_RADIUS: float = 32.0
 
@@ -86,6 +87,22 @@ func _maybe_play_ambient_sound() -> void:
 
 func _get_hit_sfx_key() -> String:
 	return "hit_enemy"
+
+const HIT_BLINK_ALPHA: float = 0.25
+const HIT_BLINK_STEP_DURATION: float = 0.06
+const HIT_BLINK_COUNT: int = 3
+
+func _on_health_changed_blink(_max_lifepoint: float, p_lifepoint: float) -> void:
+	if p_lifepoint <= 0:
+		return
+	var sprite: CanvasItem = get_node_or_null("Sprite2D")
+	if sprite == null:
+		return
+	var base_alpha: float = sprite.modulate.a
+	var tween: Tween = create_tween()
+	tween.set_loops(HIT_BLINK_COUNT)
+	tween.tween_property(sprite, "modulate:a", HIT_BLINK_ALPHA, HIT_BLINK_STEP_DURATION)
+	tween.tween_property(sprite, "modulate:a", base_alpha, HIT_BLINK_STEP_DURATION)
 
 func _on_death() -> void:
 	var game: Node = get_tree().get_first_node_in_group("Game")
