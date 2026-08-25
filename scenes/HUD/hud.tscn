@@ -3,33 +3,124 @@
 [ext_resource type="Script" uid="uid://cgtlkupgtrgm0" path="res://scripts/HUD/life_bar.gd" id="1_c0cnr"]
 [ext_resource type="Script" uid="uid://c1e0yn1njhaj4" path="res://scripts/HUD/mixture_bar.gd" id="2_glunx"]
 [ext_resource type="PackedScene" path="res://scenes/ui/minimap.tscn" id="3_minimap"]
-[ext_resource type="Script" path="res://scripts/HUD/floor_label.gd" id="4_floorlabel"]
-[ext_resource type="Script" path="res://scripts/HUD/session_code_label.gd" id="5_sessioncode"]
+[ext_resource type="Script" uid="uid://b6g4k810bywpw" path="res://scripts/HUD/floor_label.gd" id="4_floorlabel"]
+[ext_resource type="Script" uid="uid://dabbb0r2qp66j" path="res://scripts/HUD/session_code_label.gd" id="5_sessioncode"]
+[ext_resource type="Texture2D" uid="uid://bdu4i7n6qsna7" path="res://assets/ui/life_vial_empty.png" id="6_lifeempty"]
+[ext_resource type="Texture2D" uid="uid://cvd4h1dfc7u6a" path="res://assets/ui/life_vial_full.png" id="7_lifefull"]
+[ext_resource type="Texture2D" uid="uid://4qt1jho1lx75" path="res://assets/ui/mixture_vial_full.png" id="8_mixturefull"]
+[ext_resource type="Texture2D" uid="uid://b06c05npimb2f" path="res://assets/ui/vial_pouch.png" id="9_pouch"]
+[ext_resource type="StyleBox" uid="uid://j1g1pkr08g4s" path="res://resources/ui/vial_strap.tres" id="10_strap"]
+[ext_resource type="StyleBox" path="res://resources/ui/vial_strap_buckle.tres" id="11_buckle"]
+[ext_resource type="Script" uid="uid://chf6s0yr7xavt" path="res://scripts/HUD/vial_pouch.gd" id="12_vialpouch"]
 
 [node name="HUD" type="CanvasLayer" unique_id=39818824]
 
-[node name="VBoxBar" type="VBoxContainer" parent="." unique_id=1048034969]
-custom_minimum_size = Vector2(300, 0)
-offset_left = 23.0
-offset_top = 20.0
-offset_right = 323.0
-offset_bottom = 78.0
-theme_override_constants/separation = 13
+[node name="VialPouch" type="Control" parent="." unique_id=1238171550]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 21.0
+offset_top = 18.0
+offset_right = 246.0
+offset_bottom = 154.591
+script = ExtResource("12_vialpouch")
 
-[node name="LifeBar" type="ProgressBar" parent="VBoxBar" unique_id=1514857040]
+[node name="PouchBG" type="TextureRect" parent="VialPouch" unique_id=1490781335]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("9_pouch")
+expand_mode = 1
+
+[node name="VBoxBar" type="VBoxContainer" parent="VialPouch" unique_id=1048034969]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 26.049988
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 13
+alignment = 1
+
+[node name="LifeBar" type="TextureProgressBar" parent="VialPouch/VBoxBar" unique_id=1514857040]
 layout_mode = 2
-step = 1.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_under = ExtResource("6_lifeempty")
+texture_progress = ExtResource("7_lifefull")
 script = ExtResource("1_c0cnr")
 
-[node name="MixtureBar" type="ProgressBar" parent="VBoxBar" unique_id=2068122114]
+[node name="Strap" type="Panel" parent="VialPouch/VBoxBar/LifeBar" unique_id=1893048222]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.44
+anchor_top = -0.04
+anchor_right = 0.47
+anchor_bottom = 1.04
+offset_left = 5.760002
+offset_right = 5.760002
+mouse_filter = 2
+theme_override_styles/panel = ExtResource("10_strap")
+
+[node name="Buckle" type="Panel" parent="VialPouch/VBoxBar/LifeBar/Strap" unique_id=232021560]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -5.0
+offset_top = -5.0
+offset_right = 5.0
+offset_bottom = 5.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = ExtResource("11_buckle")
+
+[node name="MixtureBar" type="TextureProgressBar" parent="VialPouch/VBoxBar" unique_id=2068122114]
 layout_mode = 2
-step = 1.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_under = ExtResource("6_lifeempty")
+texture_progress = ExtResource("8_mixturefull")
 script = ExtResource("2_glunx")
 
-[node name="Minimap" parent="." instance=ExtResource("3_minimap")]
+[node name="Strap" type="Panel" parent="VialPouch/VBoxBar/MixtureBar" unique_id=1235222446]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.44
+anchor_top = -0.04
+anchor_right = 0.47
+anchor_bottom = 1.04
+offset_left = 5.760002
+offset_right = 5.760002
+mouse_filter = 2
+theme_override_styles/panel = ExtResource("10_strap")
 
-[node name="FloorLabel" type="Label" parent="."]
-layout_mode = 3
+[node name="Buckle" type="Panel" parent="VialPouch/VBoxBar/MixtureBar/Strap" unique_id=1169921311]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -5.0
+offset_top = -5.0
+offset_right = 5.0
+offset_bottom = 5.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = ExtResource("11_buckle")
+
+[node name="Minimap" parent="." unique_id=1829734706 instance=ExtResource("3_minimap")]
+
+[node name="FloorLabel" type="Label" parent="." unique_id=1465333629]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -41,8 +132,7 @@ grow_horizontal = 0
 horizontal_alignment = 2
 script = ExtResource("4_floorlabel")
 
-[node name="SessionCodeLabel" type="Label" parent="."]
-layout_mode = 3
+[node name="SessionCodeLabel" type="Label" parent="." unique_id=196310118]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0

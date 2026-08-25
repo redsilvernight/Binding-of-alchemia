@@ -1,13 +1,13 @@
 [gd_resource type="Resource" script_class="GunBarrelMixture" format=3 uid="uid://tncetr6q4x53"]
 
 [ext_resource type="Script" uid="uid://djakeanr5q30h" path="res://scripts/weapons/resources/GunBarrelMixture.gd" id="1_jqy3h"]
-[ext_resource type="Texture2D" path="res://assets/icons/weapon_parts/mixture_barrel_basic.png" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://chdvc1qwn47ll" path="res://assets/icons/weapon_parts/mixture_barrel_basic.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_jqy3h")
-icon = ExtResource("2_icon")
 nom = "Canon à Mixture de Base"
 fire_rate = 1.0
 damage_multiplier = 1.5
 projectile_speed = 250.0
+icon = ExtResource("2_icon")
 metadata/_custom_type_script = "uid://djakeanr5q30h"
