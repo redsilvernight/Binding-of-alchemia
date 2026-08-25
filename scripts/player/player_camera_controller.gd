@@ -22,3 +22,17 @@ func update_room_limits(reference_position: Vector2) -> void:
 	_camera.limit_top = room_row * Room.ROOM_HEIGHT_PX
 	_camera.limit_right = (room_col + 1) * Room.ROOM_WIDTH_PX
 	_camera.limit_bottom = (room_row + 1) * Room.ROOM_HEIGHT_PX
+
+var _shake_tween: Tween
+
+func shake(amount: float, duration: float) -> void:
+	if _shake_tween != null and _shake_tween.is_valid():
+		_shake_tween.kill()
+	_camera.offset = Vector2.ZERO
+	_shake_tween = _camera.create_tween()
+	var steps: int = maxi(1, roundi(duration / 0.03))
+	for i in steps:
+		var falloff: float = 1.0 - float(i) / float(steps)
+		var jitter := Vector2(randf_range(-amount, amount), randf_range(-amount, amount)) * falloff
+		_shake_tween.tween_property(_camera, "offset", jitter, 0.03)
+	_shake_tween.tween_property(_camera, "offset", Vector2.ZERO, 0.03)

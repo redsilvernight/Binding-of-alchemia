@@ -584,7 +584,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack-east",
-"speed": 10.0
+"speed": 16.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -607,7 +607,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack-north",
-"speed": 10.0
+"speed": 16.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -630,7 +630,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack-north-east",
-"speed": 10.0
+"speed": 16.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -653,7 +653,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack-north-west",
-"speed": 10.0
+"speed": 16.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -676,7 +676,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack-south",
-"speed": 10.0
+"speed": 16.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -699,7 +699,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack-south-east",
-"speed": 10.0
+"speed": 16.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -722,7 +722,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack-south-west",
-"speed": 10.0
+"speed": 16.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -745,7 +745,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"attack-west",
-"speed": 10.0
+"speed": 16.0
 }, {
 "frames": [{
 "duration": 1.0,

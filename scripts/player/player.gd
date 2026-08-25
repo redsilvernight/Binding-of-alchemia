@@ -1,8 +1,14 @@
 extends Character
 signal instance_hud(hud: Node)
 signal instance_projectile(data: Dictionary)
-@export var speed: float = 300.0
+@export var speed: float = 330.0
 @export var invulnerability_duration: float = 1.0
+const DASH_SPEED_MULTIPLIER: float = 2.6
+const DASH_DURATION: float = 0.18
+const DASH_COOLDOWN: float = 0.65
+const DASH_INVULN_DURATION: float = 0.22
+const DASH_TRAIL_INTERVAL: float = 0.03
+const DASH_TRAIL_FADE_DURATION: float = 0.18
 @export var hud_scene: PackedScene = preload("res://scenes/HUD/hud.tscn")
 @export var inventory_screen_scene: PackedScene = preload("res://scenes/ui/inventory_screen.tscn")
 @export var alchemy_crafting_scene: PackedScene = preload("res://scenes/ui/alchemy_crafting.tscn")
@@ -34,6 +40,11 @@ var _footstep_last_frame: int = -1
 var _death_animation_done: bool = false
 var _dungeon_camera_mode: bool = false
 var _combat_enabled: bool = true
+var _dash_time_left: float = 0.0
+var _dash_cooldown_left: float = 0.0
+var _dash_direction: Vector2 = Vector2.ZERO
+var _dash_trail_timer: float = 0.0
+var _remote_dash_trail_time_left: float = 0.0
 var _camera_controller: PlayerCameraController
 var _spectator: PlayerSpectator
 
@@ -100,9 +111,15 @@ func _on_viewport_size_changed() -> void:
 	if _dungeon_camera_mode:
 		_camera_controller.update_zoom(get_viewport_rect().size)
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if is_dead:
 		return
+	if _remote_dash_trail_time_left > 0.0:
+		_remote_dash_trail_time_left -= delta
+		_dash_trail_timer -= delta
+		if _dash_trail_timer <= 0.0:
+			_dash_trail_timer = DASH_TRAIL_INTERVAL
+			_spawn_dash_trail()
 	if _combat_enabled:
 		water_fire_indicator.set_fill_ratio(weapon.get_water_cooldown_ratio())
 		mixture_fire_indicator.set_fill_ratio(weapon.get_mixture_cooldown_ratio())
@@ -117,17 +134,21 @@ func _process(_delta: float) -> void:
 	if current_frame == 0 or current_frame == frame_count / 2:
 		AudioManager.play_sfx(RunManager.footstep_key_for_floor(RunManager.current_floor))
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if not is_multiplayer_authority():
 		return
 	if is_dead:
 		if _death_animation_done:
 			_spectator.process(_dungeon_camera_mode, _camera_controller.update_room_limits)
 		return
+	if _dash_cooldown_left > 0.0:
+		_dash_cooldown_left -= delta
 	var aim_direction: Vector2 = _get_aim_direction()
 	var input_direction: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var facing_direction: Vector2 = _get_facing_direction(aim_direction, input_direction)
 	_update_facing(facing_direction, input_direction.length() > 0.0)
+	if _dash_time_left <= 0.0 and _dash_cooldown_left <= 0.0 and _combat_enabled and not _is_ui_open() and Input.is_action_just_pressed("dash"):
+		_start_dash(input_direction, facing_direction)
 	var water_pressed: bool = _combat_enabled and Input.is_action_pressed("fire_water") and weapon.is_water_fire_rate_ready()
 	var mixture_pressed: bool = _combat_enabled and Input.is_action_pressed("fire_mixture") and weapon.is_mixture_fire_rate_ready()
 	var fire_type := ""
@@ -146,9 +167,65 @@ func _physics_process(_delta: float) -> void:
 	_try_play_attack_animation(aim_direction, fire_type)
 	was_water_pressed = water_pressed
 	was_mixture_pressed = mixture_pressed
-	move(input_direction, speed)
+	if _dash_time_left > 0.0:
+		_dash_time_left -= delta
+		_dash_trail_timer -= delta
+		if _dash_trail_timer <= 0.0:
+			_dash_trail_timer = DASH_TRAIL_INTERVAL
+			_spawn_dash_trail()
+		move(_dash_direction, speed * DASH_SPEED_MULTIPLIER)
+	else:
+		move(input_direction, speed)
 	if _dungeon_camera_mode:
 		_camera_controller.update_room_limits(global_position)
+
+func _start_dash(input_direction: Vector2, facing_direction: Vector2) -> void:
+	var direction: Vector2 = input_direction if input_direction.length() > 0.0 else facing_direction
+	if direction.length() < 0.001:
+		return
+	_dash_direction = direction.normalized()
+	_dash_time_left = DASH_DURATION
+	_dash_cooldown_left = DASH_COOLDOWN
+	_dash_trail_timer = 0.0
+	_camera_controller.shake(4.0, 0.12)
+	_rpc_start_dash_trail.rpc()
+	request_dash.rpc_id(1)
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_start_dash_trail() -> void:
+	_remote_dash_trail_time_left = DASH_DURATION
+	_dash_trail_timer = 0.0
+
+func _spawn_dash_trail() -> void:
+	var frame_texture: Texture2D = sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
+	if frame_texture == null:
+		return
+	var ghost := Sprite2D.new()
+	ghost.texture = frame_texture
+	ghost.global_position = sprite.global_position
+	ghost.global_rotation = sprite.global_rotation
+	ghost.global_scale = sprite.global_scale
+	ghost.flip_h = sprite.flip_h
+	ghost.flip_v = sprite.flip_v
+	ghost.modulate = Color(0.7, 0.9, 1.0, 0.5)
+	get_parent().add_child(ghost)
+	var tween: Tween = ghost.create_tween()
+	tween.tween_property(ghost, "modulate:a", 0.0, DASH_TRAIL_FADE_DURATION)
+	tween.tween_callback(ghost.queue_free)
+
+@rpc("any_peer", "call_local", "reliable")
+func request_dash() -> void:
+	if not multiplayer.is_server():
+		return
+	var sender_id: int = multiplayer.get_remote_sender_id()
+	if sender_id != int(name):
+		return
+	if is_dead:
+		return
+	can_take_damage = false
+	await get_tree().create_timer(DASH_INVULN_DURATION).timeout
+	if is_instance_valid(self) and not is_dead:
+		can_take_damage = true
 
 @rpc("any_peer", "call_local", "reliable")
 func request_fire(fire_type: String, direction: Vector2) -> void:
@@ -244,6 +321,8 @@ func _on_sprite_animation_finished() -> void:
 		AudioManager.play_sfx("weapon_empty")
 	else:
 		AudioManager.play_sfx("fire_water" if _pending_fire_type == "water" else "fire_mixture")
+		if is_multiplayer_authority():
+			_camera_controller.shake(2.5, 0.08)
 	request_fire.rpc_id(1, _pending_fire_type, _pending_fire_direction)
 	_pending_fire_type = ""
 
@@ -385,6 +464,8 @@ func _on_died() -> void:
 func _on_health_changed(_max_lifepoint: float, lifepoint: float) -> void:
 	if lifepoint <= 0:
 		return
+	if is_multiplayer_authority():
+		_camera_controller.shake(7.0, 0.25)
 	if sprite.animation.begins_with("attack"):
 		return
 	sprite.play(StringName("hit-" + FacingDirection.label_for(last_aim_direction)))

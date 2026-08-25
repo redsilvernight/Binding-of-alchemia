@@ -55,6 +55,7 @@ func _update_health(p_max_lifepoint: float, p_lifepoint: float) -> void:
 	health_changed.emit(max_lifepoint, lifepoint)
 	if lifepoint < previous_lifepoint:
 		AudioManager.play_sfx(_get_hit_sfx_key())
+		_flash_hit()
 	if lifepoint <= 0 and not is_dead:
 		is_dead = true
 		died.emit()
@@ -72,3 +73,12 @@ func _get_death_sfx_key() -> String:
 
 func _get_hit_sfx_key() -> String:
 	return "hit"
+
+func _flash_hit() -> void:
+	var sprite: CanvasItem = get_node_or_null("Sprite2D")
+	if sprite == null:
+		return
+	var base_modulate: Color = sprite.modulate
+	var tween: Tween = create_tween()
+	sprite.modulate = base_modulate * Color(1.6, 1.6, 1.6, 1.0)
+	tween.tween_property(sprite, "modulate", base_modulate, 0.12)
