@@ -240,7 +240,7 @@ func _on_room_player_entered(player: Node2D, grid_position: Vector2i) -> void:
 func _teleport_party_to_room(entering_player: Node2D, grid_position: Vector2i) -> void:
 	var room_rect: Rect2 = _room_world_rect({"grid_position": grid_position})
 	var target_position: Vector2 = entering_player.position
-	for player in players.get_children():
+	for player in get_tree().get_nodes_in_group("Players"):
 		if player == entering_player:
 			continue
 		if room_rect.has_point(player.position):
@@ -381,11 +381,12 @@ func _on_peer_disconnected(peer_id) -> void:
 func _check_all_players_dead() -> void:
 	if not multiplayer.is_server():
 		return
-	if players.get_child_count() == 0:
+	var active_players: Array = get_tree().get_nodes_in_group("Players")
+	if active_players.is_empty():
 		return
 	if _run_summary_shown:
 		return
-	for player in players.get_children():
+	for player in active_players:
 		if not player.is_dead:
 			return
 	_run_summary_shown = true
@@ -397,10 +398,10 @@ func _check_all_players_dead() -> void:
 func _show_run_summary(final_currency: int) -> void:
 	var panel: Node = (load(RUN_SUMMARY_PANEL_SCENE_PATH) as PackedScene).instantiate()
 	HUD.add_child(panel)
-	panel.show_summary(players.get_children(), final_currency)
+	panel.show_summary(get_tree().get_nodes_in_group("Players"), final_currency)
 
 func _on_boss_defeated() -> void:
-	for player in players.get_children():
+	for player in get_tree().get_nodes_in_group("Players"):
 		RunManager.save_run_state(int(player.name), _capture_run_state(player))
 	RunManager.advance_floor()
 	get_tree().create_timer(BOSS_DEFEAT_TO_HUB_DELAY, false).timeout.connect(RunManager.end_run)
