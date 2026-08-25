@@ -70,6 +70,8 @@ func _ready() -> void:
 func _spawn_player(id: int) -> Node:
 	var player = PlayerManager.spawn_player(id)
 	player.instance_hud.connect(_hud_instance)
+	player.enable_dungeon_camera_mode()
+	player.disable_combat()
 	if multiplayer.is_server():
 		RunManager.restore_player_state.call_deferred(player)
 	return player
@@ -136,9 +138,10 @@ func _setup_shop_items() -> void:
 		if entry.is_empty():
 			continue
 		var prop: ShopItemProp = ShopItemProp.new()
-		var item_pos: Vector2 = SHOP_SHELF_POSITIONS[i] + SHOP_ITEM_SLOTS[i % SHOP_ITEM_SLOTS.size()]
+		var slot_offset: Vector2 = SHOP_ITEM_SLOTS[i % SHOP_ITEM_SLOTS.size()]
+		var item_pos: Vector2 = SHOP_SHELF_POSITIONS[i] + slot_offset
 		var front_anchor: Vector2 = Vector2(item_pos.x, SHOP_SHELF_POSITIONS[i].y + SHOP_SHELF_FRONT_Y)
-		prop.setup(entry, front_anchor - item_pos)
+		prop.setup(entry, front_anchor - item_pos, slot_offset)
 		prop.position = item_pos
 		add_child(prop)
 		_shop_item_props.append(prop)

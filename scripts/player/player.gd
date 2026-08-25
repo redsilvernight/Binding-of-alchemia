@@ -33,6 +33,7 @@ var _pending_fire_direction: Vector2 = Vector2.ZERO
 var _footstep_last_frame: int = -1
 var _death_animation_done: bool = false
 var _dungeon_camera_mode: bool = false
+var _combat_enabled: bool = true
 var _camera_controller: PlayerCameraController
 var _spectator: PlayerSpectator
 
@@ -54,10 +55,11 @@ func _ready() -> void:
 		player_camera.enabled = true
 		get_viewport().size_changed.connect(_on_viewport_size_changed)
 		var hud = hud_scene.instantiate()
-		health_changed.connect(hud.get_node("VBoxBar").get_node("LifeBar")._on_heal_changed)
-		var mixture_bar = hud.get_node("VBoxBar").get_node("MixtureBar")
+		health_changed.connect(hud.get_node("VialPouch/VBoxBar").get_node("LifeBar")._on_heal_changed)
+		var mixture_bar = hud.get_node("VialPouch/VBoxBar").get_node("MixtureBar")
 		weapon.ammo_changed.connect(mixture_bar._on_ammo_changed)
 		mixture_bar._on_ammo_changed(weapon.mixture_max_capacity, weapon.current_mixture_ammo)
+		hud.get_node("VialPouch").bind_player(self)
 		instance_hud.emit(hud)
 		var inventory_screen_instance = inventory_screen_scene.instantiate()
 		add_child(inventory_screen_instance)
@@ -86,6 +88,14 @@ func enable_dungeon_camera_mode() -> void:
 	_camera_controller.update_zoom(get_viewport_rect().size)
 	_camera_controller.update_room_limits(global_position)
 
+func disable_combat() -> void:
+	_combat_enabled = false
+	if not is_inside_tree():
+		call_deferred("disable_combat")
+		return
+	water_fire_indicator.visible = false
+	mixture_fire_indicator.visible = false
+
 func _on_viewport_size_changed() -> void:
 	if _dungeon_camera_mode:
 		_camera_controller.update_zoom(get_viewport_rect().size)
@@ -93,8 +103,9 @@ func _on_viewport_size_changed() -> void:
 func _process(_delta: float) -> void:
 	if is_dead:
 		return
-	water_fire_indicator.set_fill_ratio(weapon.get_water_cooldown_ratio())
-	mixture_fire_indicator.set_fill_ratio(weapon.get_mixture_cooldown_ratio())
+	if _combat_enabled:
+		water_fire_indicator.set_fill_ratio(weapon.get_water_cooldown_ratio())
+		mixture_fire_indicator.set_fill_ratio(weapon.get_mixture_cooldown_ratio())
 	if not sprite.animation.begins_with("walk-"):
 		_footstep_last_frame = -1
 		return
@@ -117,8 +128,8 @@ func _physics_process(_delta: float) -> void:
 	var input_direction: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var facing_direction: Vector2 = _get_facing_direction(aim_direction, input_direction)
 	_update_facing(facing_direction, input_direction.length() > 0.0)
-	var water_pressed: bool = Input.is_action_pressed("fire_water") and weapon.is_water_fire_rate_ready()
-	var mixture_pressed: bool = Input.is_action_pressed("fire_mixture") and weapon.is_mixture_fire_rate_ready()
+	var water_pressed: bool = _combat_enabled and Input.is_action_pressed("fire_water") and weapon.is_water_fire_rate_ready()
+	var mixture_pressed: bool = _combat_enabled and Input.is_action_pressed("fire_mixture") and weapon.is_mixture_fire_rate_ready()
 	var fire_type := ""
 	if not _is_ui_open():
 		if water_pressed and not mixture_pressed:
@@ -377,4 +388,3 @@ func _on_health_changed(_max_lifepoint: float, lifepoint: float) -> void:
 	if sprite.animation.begins_with("attack"):
 		return
 	sprite.play(StringName("hit-" + FacingDirection.label_for(last_aim_direction)))
-
