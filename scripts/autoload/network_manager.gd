@@ -26,14 +26,14 @@ func hosting() -> void:
 	multiplayer.multiplayer_peer = peer
 	MetaProgression.apply_local_save_as_host()
 	RunManager.reset_floor()
-	_switch_to_game()
+	RunManager.request_start_run.rpc_id(1)
 	_register_session()
 
 
 func play_solo() -> void:
 	MetaProgression.apply_local_save_as_host()
 	RunManager.reset_floor()
-	_switch_to_game()
+	RunManager.request_start_run.rpc_id(1)
 
 
 func joining(code: String) -> bool:

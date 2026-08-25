@@ -83,6 +83,7 @@ const SCENE_READY_POLL_INTERVAL: float = 0.1
 var _peers_ready_for_dungeon: Dictionary = {}
 
 var _run_summary_shown: bool = false
+var _scene_cache: Dictionary = {}
 
 func _ready() -> void:
 	add_to_group("Game")
@@ -159,6 +160,8 @@ func _generate_dungeon() -> void:
 		player_spawner.spawn(peer_id)
 
 	var enemy_table: SpawnTable = load(ENEMY_SPAWN_TABLE_PATH) as SpawnTable
+	for entry in enemy_table.entries:
+		_load_scene(entry.item_path)
 	var extra_enemy_rolls: int = _extra_enemy_rolls_for_floor(floor_level)
 	var floor_enemies: Array[Node] = []
 	for room_data in dungeon_layout:
@@ -365,13 +368,18 @@ func _spawn_bullet(data: Dictionary) -> Node:
 	return bullet
 
 func _spawn_enemy(data: Dictionary) -> Node:
-	var enemy: Node = (load(data["scene_path"]) as PackedScene).instantiate()
+	var enemy: Node = _load_scene(data["scene_path"]).instantiate()
 	enemy.position = data["position"]
 	if data["scene_path"] == BOSS_SCENE_PATH:
-		var healthbar: Node = (load(BOSS_HEALTHBAR_SCENE_PATH) as PackedScene).instantiate()
+		var healthbar: Node = _load_scene(BOSS_HEALTHBAR_SCENE_PATH).instantiate()
 		HUD.add_child(healthbar)
 		healthbar.bind_boss(enemy)
 	return enemy
+
+func _load_scene(path: String) -> PackedScene:
+	if not _scene_cache.has(path):
+		_scene_cache[path] = load(path) as PackedScene
+	return _scene_cache[path]
 
 func _on_peer_disconnected(peer_id) -> void:
 	if players.has_node(str(peer_id)):
