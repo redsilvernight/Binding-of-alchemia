@@ -33,6 +33,7 @@ projectile_speed = 380.0
 currency_reward = 10.0
 max_lifepoint = 22.0
 attack_sfx_key = "enemy_attack_ranged_artillery"
+projectile_scene_path = "res://scenes/enemies/enemy_projectile_artillery.tscn"
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1

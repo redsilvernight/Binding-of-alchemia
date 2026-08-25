@@ -356,7 +356,7 @@ func _spawn_bullet(data: Dictionary) -> Node:
 	bullet.shooter_id = data.get("shooter_id", 0)
 	if scene_path == Weapon.MIXTURE_BULLET_SCENE:
 		bullet.impact_sfx_key = "impact_mixture"
-	elif scene_path == "res://scenes/enemies/enemy_projectile.tscn":
+	elif scene_path.begins_with("res://scenes/enemies/enemy_projectile"):
 		AudioManager.play_sfx(data.get("attack_sfx_key", "enemy_attack_ranged"))
 	if data.has("impact_effect_data"):
 		var effect: ImpactEffect = ImpactEffect.from_dict(data["impact_effect_data"])

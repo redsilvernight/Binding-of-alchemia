@@ -65,7 +65,7 @@ func fire_at(p_target: Node2D) -> void:
 	var fire_direction := global_position.direction_to(p_target.global_position)
 	sprite.play(StringName("attack-ranged-" + FacingDirection.label_for(fire_direction)))
 	game.request_enemy_projectile({
-		"scene_path": "res://scenes/enemies/enemy_projectile.tscn",
+		"scene_path": "res://scenes/enemies/enemy_projectile_boss.tscn",
 		"damage": projectile_damage,
 		"speed": projectile_speed,
 		"lifetime": 2.0,

@@ -6,6 +6,7 @@ extends EnemyBase
 @export var fire_cooldown: float = 1.5
 @export var projectile_speed: float = 320.0
 @export var attack_sfx_key: String = "enemy_attack_ranged"
+@export var projectile_scene_path: String = "res://scenes/enemies/enemy_projectile.tscn"
 var target: Node2D = null
 @onready var sprite: AnimatedSprite2D = $Sprite2D
 var _last_facing_direction: Vector2 = Vector2.DOWN
@@ -48,7 +49,7 @@ func fire_at(p_target: Node2D) -> void:
 	var fire_direction := global_position.direction_to(p_target.global_position)
 	sprite.play(StringName("attack-" + FacingDirection.label_for(fire_direction)))
 	game.request_enemy_projectile({
-		"scene_path": "res://scenes/enemies/enemy_projectile.tscn",
+		"scene_path": projectile_scene_path,
 		"damage": damage,
 		"speed": projectile_speed,
 		"lifetime": 2.0,
