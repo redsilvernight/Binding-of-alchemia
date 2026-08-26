@@ -15,6 +15,9 @@ const WEAPON_PART_FALLBACK_ICON: Texture2D = preload("res://assets/test/water_bu
 @onready var socket_mixture: Control = $Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponFrame/SocketMixtureBarrel
 @onready var socket_tank: Control = $Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponFrame/SocketTank
 @onready var socket_core: Control = $Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponFrame/SocketCore
+@onready var weapon_frame: Control = $Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponFrame
+@onready var weapon_stats_preview: WeaponStatsPreview = $Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponStatsPreview
+@onready var stats_toggle_button: Button = $Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/StatsToggleButton
 
 var inventory: Inventory
 var weapon: Weapon
@@ -24,6 +27,8 @@ func _ready() -> void:
 	root.visible = false
 	MetaProgression.currency_changed.connect(_on_currency_changed)
 	_on_currency_changed(MetaProgression.get_currency())
+	stats_toggle_button.toggled.connect(_on_stats_toggle)
+	_on_stats_toggle(stats_toggle_button.button_pressed)
 
 
 func _on_currency_changed(new_amount: int) -> void:
@@ -48,13 +53,15 @@ func bind_weapon(p_weapon: Weapon) -> void:
 	_refresh_mixture_preview(weapon.mixture_ingredient_paths)
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_inventory"):
 		if not root.visible and not get_parent().can_open_inventory():
 			AudioManager.play_sfx("ui_error")
+			get_viewport().set_input_as_handled()
 			return
 		root.visible = not root.visible
 		AudioManager.play_sfx("ui_toggle")
+		get_viewport().set_input_as_handled()
 
 
 func is_open() -> bool:
@@ -118,6 +125,20 @@ func _refresh_weapon_sockets() -> void:
 	socket_mixture.setup(weapon.barrel_mixture.icon if weapon.barrel_mixture else null, _part_display_name(weapon.barrel_mixture))
 	socket_tank.setup(weapon.tank.icon if weapon.tank else null, _part_display_name(weapon.tank))
 	socket_core.setup(weapon.core.icon if weapon.core else null, _part_display_name(weapon.core))
+	_refresh_weapon_stats_preview()
+
+
+func _refresh_weapon_stats_preview() -> void:
+	var stats: WeaponStats = WeaponStatsResolver.resoudre(weapon.barrel_water, weapon.barrel_mixture, weapon.tank, weapon.core)
+	weapon_stats_preview.display_stats(stats)
+
+
+func _on_stats_toggle(showing_stats: bool) -> void:
+	weapon_frame.visible = not showing_stats
+	weapon_stats_preview.visible = showing_stats
+	stats_toggle_button.text = "Statistiques" if showing_stats else "Arme"
+	if showing_stats and weapon != null:
+		_refresh_weapon_stats_preview()
 
 
 func _part_display_name(part: Resource) -> String:

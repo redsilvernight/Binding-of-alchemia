@@ -107,45 +107,26 @@ func _rpc_set_mixture_ingredients(ingredient_paths: Array[String]) -> void:
 		AudioManager.play_sfx("craft_success")
 
 func _recalculate_stats() -> void:
-	var base_speed_water: float = 0.0
-	var base_speed_mixture: float = 0.0
+	var stats: WeaponStats = WeaponStatsResolver.resoudre(barrel_water, barrel_mixture, tank, core)
+	water_fire_rate = stats.water_fire_rate
+	water_damage = stats.water_damage
+	water_projectile_speed = stats.water_projectile_speed
+	mixture_fire_rate = stats.mixture_fire_rate
+	mixture_damage_multiplier = stats.mixture_damage_multiplier
+	mixture_projectile_speed = stats.mixture_projectile_speed
+	mixture_max_capacity = stats.mixture_max_capacity
+	mixture_regen_rate = stats.mixture_regen_rate
+	_range = stats.range_value
+
 	if barrel_water:
-		water_fire_rate = barrel_water.fire_rate
-		water_damage = barrel_water.base_damage
-		base_speed_water = barrel_water.projectile_speed
 		water_trajectory = barrel_water.trajectory
 	else:
-		water_fire_rate = 0
-		water_damage = 0
 		push_warning("Weapon: aucun barrel_water équipé, le tir eau est désactivé.")
 	if barrel_mixture:
-		mixture_fire_rate = barrel_mixture.fire_rate
-		mixture_damage_multiplier = barrel_mixture.damage_multiplier
-		base_speed_mixture = barrel_mixture.projectile_speed
 		mixture_trajectory = barrel_mixture.trajectory
 		mixture_impact_effect = barrel_mixture.impact_effect
 	else:
-		mixture_fire_rate = 0
-		mixture_damage_multiplier = 0
 		mixture_impact_effect = null
-	if tank:
-		mixture_max_capacity = tank.max_capacity
-		mixture_regen_rate = tank.regen_rate
-	else:
-		mixture_max_capacity = 0
-		mixture_regen_rate = 0
-	var speed_modifier: float = 1.0
-	var range_modifier: float = 0.0
-	var core_damage: float = 0.0
-	if core:
-		speed_modifier = core.projectile_speed_modifier
-		range_modifier = core.range_modifier
-		core_damage = core.base_damage
-	water_damage += core_damage
-	mixture_damage_multiplier += core_damage
-	water_projectile_speed = base_speed_water * speed_modifier
-	mixture_projectile_speed = base_speed_mixture * speed_modifier
-	_range = range_modifier
 
 	can_fire_water = water_fire_rate > 0
 	can_fire_mixture = mixture_fire_rate > 0 and tank != null

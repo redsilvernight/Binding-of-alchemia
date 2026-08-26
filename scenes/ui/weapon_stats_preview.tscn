@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://b5tc1t7ty6xcx"]
+
+[ext_resource type="Script" uid="uid://7temx8c37anh" path="res://scripts/ui/weapon_stats_preview.gd" id="1_stats"]
+
+[node name="WeaponStatsPreview" type="Control" unique_id=2115681363]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_stats")
+
+[node name="Column" type="VBoxContainer" parent="." unique_id=610988296]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="StatsRow" type="HBoxContainer" parent="Column" unique_id=1911758823]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="FireGrid" type="GridContainer" parent="Column/StatsRow" unique_id=1624515515]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 4
+columns = 5
+
+[node name="Spacer" type="Control" parent="Column/StatsRow" unique_id=1911758824]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SecondaryGrid" type="GridContainer" parent="Column/StatsRow" unique_id=1587262367]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 4
+columns = 2

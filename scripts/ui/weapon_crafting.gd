@@ -7,11 +7,12 @@ const WEAPON_PART_FALLBACK_ICON: Texture2D = preload("res://assets/test/water_bu
 
 @onready var root: Control = $Root
 @onready var parts_grid: GridContainer = $Root/FramePanel/Margin/Content/PartsScroll/PartsGridMargin/PartsGrid
-@onready var socket_water: Control = $Root/FramePanel/Margin/Content/WeaponFrame/SocketWaterBarrel
-@onready var socket_mixture: Control = $Root/FramePanel/Margin/Content/WeaponFrame/SocketMixtureBarrel
-@onready var socket_tank: Control = $Root/FramePanel/Margin/Content/WeaponFrame/SocketTank
-@onready var socket_core: Control = $Root/FramePanel/Margin/Content/WeaponFrame/SocketCore
+@onready var socket_water: Control = $Root/FramePanel/Margin/Content/WeaponRow/WeaponFrame/SocketWaterBarrel
+@onready var socket_mixture: Control = $Root/FramePanel/Margin/Content/WeaponRow/WeaponFrame/SocketMixtureBarrel
+@onready var socket_tank: Control = $Root/FramePanel/Margin/Content/WeaponRow/WeaponFrame/SocketTank
+@onready var socket_core: Control = $Root/FramePanel/Margin/Content/WeaponRow/WeaponFrame/SocketCore
 @onready var description_label: Label = $Root/FramePanel/Margin/Content/DescriptionBox/DescriptionLabel
+@onready var stats_preview: WeaponStatsPreview = $Root/FramePanel/Margin/Content/WeaponRow/StatsPreview
 
 var inventory: Inventory
 var weapon: Weapon
@@ -48,6 +49,7 @@ func open() -> void:
 	_refresh_parts_grid()
 	_refresh_sockets()
 	_clear_description()
+	_refresh_stats_preview()
 	root.visible = true
 
 
@@ -74,6 +76,7 @@ func _on_weapon_parts_changed(_part: Resource) -> void:
 func _on_part_equipped(_piece: Resource) -> void:
 	if root.visible:
 		_refresh_sockets()
+		_refresh_stats_preview()
 
 
 func _refresh_parts_grid() -> void:
@@ -111,10 +114,28 @@ func _show_description(part: Resource) -> void:
 		return
 	var desc: String = part.description if "description" in part else ""
 	description_label.text = "%s — %s" % [_part_display_name(part), desc] if desc != "" else _part_display_name(part)
+	stats_preview.display_stats(_current_stats(), _combined_stats_with(part))
 
 
 func _clear_description() -> void:
 	description_label.text = _default_description_text
+	_refresh_stats_preview()
+
+
+func _refresh_stats_preview() -> void:
+	stats_preview.display_stats(_current_stats())
+
+
+func _current_stats() -> WeaponStats:
+	return WeaponStatsResolver.resoudre(weapon.barrel_water, weapon.barrel_mixture, weapon.tank, weapon.core)
+
+
+func _combined_stats_with(hovered_part: Resource) -> WeaponStats:
+	var water: GunBarrelWater = hovered_part if hovered_part is GunBarrelWater else weapon.barrel_water
+	var mixture: GunBarrelMixture = hovered_part if hovered_part is GunBarrelMixture else weapon.barrel_mixture
+	var tank_part: GunTank = hovered_part if hovered_part is GunTank else weapon.tank
+	var core_part: GunCore = hovered_part if hovered_part is GunCore else weapon.core
+	return WeaponStatsResolver.resoudre(water, mixture, tank_part, core_part)
 
 
 func _request_equip(part: Resource) -> void:

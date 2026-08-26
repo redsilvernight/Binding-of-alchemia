@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/inventory_screen.gd" id="1_screen"]
 [ext_resource type="StyleBox" path="res://resources/ui/panel_frame.tres" id="2_panel"]
@@ -6,6 +6,10 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/weapon_socket.tscn" id="4_socket"]
 [ext_resource type="PackedScene" path="res://scenes/ui/mixture_preview.tscn" id="5_mixture"]
 [ext_resource type="Theme" path="res://resources/ui/scrollbar_theme.tres" id="6_scrollbar_theme"]
+[ext_resource type="PackedScene" path="res://scenes/ui/weapon_stats_preview.tscn" id="7_weapon_stats"]
+[ext_resource type="StyleBox" path="res://resources/ui/button_frame.tres" id="8_btn_normal"]
+[ext_resource type="StyleBox" path="res://resources/ui/button_frame_hover.tres" id="9_btn_hover"]
+[ext_resource type="StyleBox" path="res://resources/ui/button_frame_active.tres" id="10_btn_active"]
 
 [node name="InventoryScreen" type="CanvasLayer"]
 layer = 5
@@ -45,8 +49,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+grow_horizontal = 1
+grow_vertical = 1
 theme_override_constants/margin_left = 36
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 36
@@ -136,12 +140,23 @@ stats_position_below = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 8
+theme_override_constants/separation = 14
 
-[node name="WeaponTitle" type="Label" parent="Root/FramePanel/Margin/Content/BottomRow/WeaponColumn"]
+[node name="StatsToggleButton" type="Button" parent="Root/FramePanel/Margin/Content/BottomRow/WeaponColumn"]
+custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Arme équipée"
+size_flags_horizontal = 0
+alignment = 1
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.9, 0.78, 0.5, 1)
+theme_override_colors/font_hover_color = Color(1, 0.9, 0.6, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.85, 0.35, 1)
+theme_override_styles/normal = ExtResource("8_btn_normal")
+theme_override_styles/hover = ExtResource("9_btn_hover")
+theme_override_styles/pressed = ExtResource("10_btn_active")
+theme_override_styles/hover_pressed = ExtResource("10_btn_active")
+toggle_mode = true
+text = "Arme"
 
 [node name="WeaponFrame" type="Control" parent="Root/FramePanel/Margin/Content/BottomRow/WeaponColumn"]
 custom_minimum_size = Vector2(320, 160)
@@ -204,3 +219,11 @@ offset_left = -22.0
 offset_top = -22.0
 offset_right = 22.0
 offset_bottom = 22.0
+
+[node name="WeaponStatsPreview" parent="Root/FramePanel/Margin/Content/BottomRow/WeaponColumn" instance=ExtResource("7_weapon_stats")]
+visible = false
+layout_mode = 2
+size_flags_vertical = 4
+stack_secondary_below = true
+group_separation = 14
+fire_row_separation = 8

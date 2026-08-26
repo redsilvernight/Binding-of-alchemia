@@ -4,7 +4,8 @@
 [ext_resource type="StyleBox" path="res://resources/ui/panel_frame.tres" id="2_panel"]
 [ext_resource type="Texture2D" uid="uid://ct4yetggix8mf" path="res://assets/ui/weapon_frame.png" id="3_weapon_tex"]
 [ext_resource type="PackedScene" path="res://scenes/ui/weapon_socket.tscn" id="4_socket"]
-[ext_resource type="Theme" path="res://resources/ui/scrollbar_theme.tres" id="5_scrollbar_theme"]
+[ext_resource type="Theme" uid="uid://5g01lytubds" path="res://resources/ui/scrollbar_theme.tres" id="5_scrollbar_theme"]
+[ext_resource type="PackedScene" uid="uid://b5tc1t7ty6xcx" path="res://scenes/ui/weapon_stats_preview.tscn" id="6_stats"]
 
 [node name="WeaponCrafting" type="CanvasLayer" unique_id=1322654063]
 layer = 5
@@ -47,14 +48,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 48
-theme_override_constants/margin_top = 48
-theme_override_constants/margin_right = 48
-theme_override_constants/margin_bottom = 48
+theme_override_constants/margin_left = 19
+theme_override_constants/margin_top = 19
+theme_override_constants/margin_right = 19
+theme_override_constants/margin_bottom = 19
 
 [node name="Content" type="VBoxContainer" parent="Root/FramePanel/Margin" unique_id=1984886828]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 10
 
 [node name="TitleLabel" type="Label" parent="Root/FramePanel/Margin/Content" unique_id=1634637859]
 layout_mode = 2
@@ -68,8 +69,8 @@ theme_override_colors/font_color = Color(0.7, 0.68, 0.65, 1)
 text = "Clique ou glisse une pièce vers son emplacement pour l'équiper."
 
 [node name="DescriptionBox" type="Control" parent="Root/FramePanel/Margin/Content" unique_id=1255240340]
-custom_minimum_size = Vector2(0, 44)
 clip_contents = true
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 
 [node name="DescriptionLabel" type="Label" parent="Root/FramePanel/Margin/Content/DescriptionBox" unique_id=1255240339]
@@ -89,13 +90,18 @@ max_lines_visible = 2
 [node name="HSeparator1" type="HSeparator" parent="Root/FramePanel/Margin/Content" unique_id=1773822162]
 layout_mode = 2
 
-[node name="WeaponFrame" type="Control" parent="Root/FramePanel/Margin/Content" unique_id=567670486]
-custom_minimum_size = Vector2(460, 230)
+[node name="WeaponRow" type="HBoxContainer" parent="Root/FramePanel/Margin/Content" unique_id=567670485]
+layout_mode = 2
+theme_override_constants/separation = 56
+alignment = 1
+
+[node name="WeaponFrame" type="Control" parent="Root/FramePanel/Margin/Content/WeaponRow" unique_id=567670486]
+custom_minimum_size = Vector2(400, 200)
 layout_mode = 2
 size_flags_horizontal = 4
-size_flags_vertical = 3
+size_flags_vertical = 4
 
-[node name="WeaponBody" type="TextureRect" parent="Root/FramePanel/Margin/Content/WeaponFrame" unique_id=1068509172]
+[node name="WeaponBody" type="TextureRect" parent="Root/FramePanel/Margin/Content/WeaponRow/WeaponFrame" unique_id=1068509172]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -107,7 +113,7 @@ texture = ExtResource("3_weapon_tex")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="SocketWaterBarrel" parent="Root/FramePanel/Margin/Content/WeaponFrame" unique_id=476113997 instance=ExtResource("4_socket")]
+[node name="SocketWaterBarrel" parent="Root/FramePanel/Margin/Content/WeaponRow/WeaponFrame" unique_id=476113997 instance=ExtResource("4_socket")]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.07
@@ -119,7 +125,7 @@ offset_top = -34.0
 offset_right = 34.0
 offset_bottom = 34.0
 
-[node name="SocketMixtureBarrel" parent="Root/FramePanel/Margin/Content/WeaponFrame" unique_id=1042963148 instance=ExtResource("4_socket")]
+[node name="SocketMixtureBarrel" parent="Root/FramePanel/Margin/Content/WeaponRow/WeaponFrame" unique_id=1042963148 instance=ExtResource("4_socket")]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.3
@@ -131,29 +137,34 @@ offset_top = -34.0
 offset_right = 34.0
 offset_bottom = 34.0
 
-[node name="SocketTank" parent="Root/FramePanel/Margin/Content/WeaponFrame" unique_id=885203508 instance=ExtResource("4_socket")]
+[node name="SocketTank" parent="Root/FramePanel/Margin/Content/WeaponRow/WeaponFrame" unique_id=885203508 instance=ExtResource("4_socket")]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.61
-anchor_top = 0.3
-anchor_right = 0.61
-anchor_bottom = 0.3
+anchor_left = 0.5875
+anchor_top = 0.25
+anchor_right = 0.5875
+anchor_bottom = 0.25
 offset_left = -34.0
 offset_top = -34.0
 offset_right = 34.0
 offset_bottom = 34.0
 
-[node name="SocketCore" parent="Root/FramePanel/Margin/Content/WeaponFrame" unique_id=1179178933 instance=ExtResource("4_socket")]
+[node name="SocketCore" parent="Root/FramePanel/Margin/Content/WeaponRow/WeaponFrame" unique_id=1179178933 instance=ExtResource("4_socket")]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.7
-anchor_top = 0.5
-anchor_right = 0.7
-anchor_bottom = 0.5
+anchor_left = 0.7225
+anchor_top = 0.55
+anchor_right = 0.7225
+anchor_bottom = 0.55
 offset_left = -34.0
 offset_top = -34.0
 offset_right = 34.0
 offset_bottom = 34.0
+
+[node name="StatsPreview" parent="Root/FramePanel/Margin/Content/WeaponRow" unique_id=980675077 instance=ExtResource("6_stats")]
+layout_mode = 2
+size_flags_vertical = 4
+stack_secondary_below = true
 
 [node name="HSeparator2" type="HSeparator" parent="Root/FramePanel/Margin/Content" unique_id=1952396123]
 layout_mode = 2
@@ -164,17 +175,19 @@ theme_override_font_sizes/font_size = 20
 text = "Pièces disponibles"
 
 [node name="PartsScroll" type="ScrollContainer" parent="Root/FramePanel/Margin/Content" unique_id=682910539]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
 [node name="PartsGridMargin" type="MarginContainer" parent="Root/FramePanel/Margin/Content/PartsScroll" unique_id=295496591]
 layout_mode = 2
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_bottom = 24
 
 [node name="PartsGrid" type="GridContainer" parent="Root/FramePanel/Margin/Content/PartsScroll/PartsGridMargin" unique_id=579697328]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 4
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 columns = 9
