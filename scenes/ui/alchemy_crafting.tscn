@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://2d3nlkqvdy3h" path="res://scripts/ui/alchemy_crafting.gd" id="1_craft"]
 [ext_resource type="StyleBox" path="res://resources/ui/panel_frame.tres" id="2_panel"]
 [ext_resource type="PackedScene" path="res://scenes/ui/mixture_preview.tscn" id="3_mixture"]
-[ext_resource type="Texture2D" uid="uid://d0pmnyijmswkx" path="res://assets/ui/mixture_vial.png" id="4_vial_tex"]
+[ext_resource type="Theme" path="res://resources/ui/scrollbar_theme.tres" id="4_scrollbar_theme"]
 
 [node name="AlchemyCrafting" type="CanvasLayer" unique_id=1014273235]
 layer = 5
@@ -16,6 +16,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("4_scrollbar_theme")
 
 [node name="Background" type="ColorRect" parent="Root" unique_id=1065422692]
 layout_mode = 1
@@ -63,24 +64,6 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.9, 0.78, 0.5, 1)
 theme_override_font_sizes/font_size = 28
 text = "Table d'alchimie"
-
-[node name="LoadedRow" type="HBoxContainer" parent="Root/FramePanel/Margin/Content/HeaderRow" unique_id=759727680]
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_constants/separation = 8
-
-[node name="LoadedVialIcon" type="TextureRect" parent="Root/FramePanel/Margin/Content/HeaderRow/LoadedRow" unique_id=1438668213]
-custom_minimum_size = Vector2(28, 28)
-layout_mode = 2
-size_flags_vertical = 4
-texture = ExtResource("4_vial_tex")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="LoadedLabel" type="Label" parent="Root/FramePanel/Margin/Content/HeaderRow/LoadedRow" unique_id=848022833]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.68, 0.65, 1)
-text = "Mixture chargée : aucune"
 
 [node name="HintLabel" type="Label" parent="Root/FramePanel/Margin/Content" unique_id=1358630265]
 layout_mode = 2

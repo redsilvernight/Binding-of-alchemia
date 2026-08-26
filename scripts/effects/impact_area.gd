@@ -23,7 +23,7 @@ func spawn_visual(tree: SceneTree, source_position: Vector2) -> void:
 	var vfx: Node2D = (load(AREA_VFX_SCENE) as PackedScene).instantiate()
 	tree.current_scene.add_child(vfx)
 	vfx.global_position = source_position
-	vfx.play(type_alchimie, radius, duration)
+	vfx.play(type_alchimie, radius, duration, damage)
 
 func to_dict() -> Dictionary:
 	return {"type": "area", "damage": damage, "radius": radius, "duration": duration, "type_alchimie": type_alchimie}

@@ -40,6 +40,7 @@ var _player: Node = null
 func _ready() -> void:
 	add_to_group("Game")
 	room.set_open_sides.call_deferred([])
+	RunManager.alchemy_lock_changed.connect(_on_alchemy_lock_changed)
 	_spawn_player()
 
 
@@ -51,6 +52,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _process(_delta: float) -> void:
 	if not is_instance_valid(_player):
 		return
+	_player.can_take_damage = false
 	var weapon: Weapon = _player.weapon
 	if weapon.current_mixture_ammo < weapon.mixture_max_capacity:
 		weapon.current_mixture_ammo = weapon.mixture_max_capacity
@@ -68,6 +70,14 @@ func _spawn_player() -> void:
 	player.can_take_damage = false
 	_player = player
 	_add_mixture_reset_button(player)
+
+
+func _on_alchemy_lock_changed(peer_id: int, used: bool) -> void:
+	if not used or not is_instance_valid(_player):
+		return
+	if peer_id != int(_player.name):
+		return
+	RunManager._rpc_set_alchemy_used.call_deferred(peer_id, false)
 
 
 func _add_mixture_reset_button(player: Node) -> void:

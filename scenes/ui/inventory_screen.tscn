@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/inventory_screen.gd" id="1_screen"]
 [ext_resource type="StyleBox" path="res://resources/ui/panel_frame.tres" id="2_panel"]
 [ext_resource type="Texture2D" path="res://assets/ui/weapon_frame.png" id="3_weapon_tex"]
 [ext_resource type="PackedScene" path="res://scenes/ui/weapon_socket.tscn" id="4_socket"]
 [ext_resource type="PackedScene" path="res://scenes/ui/mixture_preview.tscn" id="5_mixture"]
+[ext_resource type="Theme" path="res://resources/ui/scrollbar_theme.tres" id="6_scrollbar_theme"]
 
 [node name="InventoryScreen" type="CanvasLayer"]
 layer = 5
@@ -17,6 +18,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("6_scrollbar_theme")
 
 [node name="Background" type="ColorRect" parent="Root"]
 layout_mode = 1
@@ -46,13 +48,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 36
-theme_override_constants/margin_top = 28
+theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 36
-theme_override_constants/margin_bottom = 28
+theme_override_constants/margin_bottom = 20
 
 [node name="Content" type="VBoxContainer" parent="Root/FramePanel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 6
 
 [node name="HeaderRow" type="HBoxContainer" parent="Root/FramePanel/Margin/Content"]
 layout_mode = 2
@@ -83,12 +85,11 @@ custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="IngredientGrid" type="GridContainer" parent="Root/FramePanel/Margin/Content/IngredientScroll"]
+[node name="IngredientGrid" type="HFlowContainer" parent="Root/FramePanel/Margin/Content/IngredientScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
-columns = 8
 
 [node name="WeaponPartsTitle" type="Label" parent="Root/FramePanel/Margin/Content"]
 layout_mode = 2
@@ -100,12 +101,11 @@ custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="WeaponPartGrid" type="GridContainer" parent="Root/FramePanel/Margin/Content/WeaponPartScroll"]
+[node name="WeaponPartGrid" type="HFlowContainer" parent="Root/FramePanel/Margin/Content/WeaponPartScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
-columns = 8
 
 [node name="HSeparator2" type="HSeparator" parent="Root/FramePanel/Margin/Content"]
 layout_mode = 2
@@ -130,6 +130,7 @@ text = "Mixture actuelle"
 layout_mode = 2
 size_flags_vertical = 4
 empty_text = "Aucune mixture chargée."
+stats_position_below = true
 
 [node name="WeaponColumn" type="VBoxContainer" parent="Root/FramePanel/Margin/Content/BottomRow"]
 layout_mode = 2

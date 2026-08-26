@@ -6,8 +6,6 @@ const INGREDIENT_FALLBACK_ICON: Texture2D = preload("res://assets/test/mixture_b
 @export var item_chip_scene: PackedScene = preload("res://scenes/ui/item_chip.tscn")
 
 @onready var root: Control = $Root
-@onready var loaded_vial_icon: TextureRect = $Root/FramePanel/Margin/Content/HeaderRow/LoadedRow/LoadedVialIcon
-@onready var loaded_label: Label = $Root/FramePanel/Margin/Content/HeaderRow/LoadedRow/LoadedLabel
 @onready var cauldron_preview: MixturePreview = $Root/FramePanel/Margin/Content/CauldronPreview
 @onready var ingredients_grid: GridContainer = $Root/FramePanel/Margin/Content/IngredientsScroll/IngredientsGrid
 @onready var compose_button: Button = $Root/FramePanel/Margin/Content/ComposeRow/ComposeButton
@@ -31,7 +29,7 @@ func _ready() -> void:
 	_default_description_text = description_label.text
 	weapon = get_parent().weapon
 	_owner_peer_id = int(get_parent().name)
-	weapon.mixture_changed.connect(_refresh_loaded_summary)
+	weapon.mixture_changed.connect(_on_mixture_changed)
 	RunManager.alchemy_lock_changed.connect(_on_lock_changed)
 
 
@@ -47,8 +45,7 @@ func open() -> void:
 	_pending_paths.clear()
 	_clear_description()
 	_refresh_available()
-	cauldron_preview.display(_pending_paths, inventory)
-	_refresh_loaded_summary(weapon.mixture_ingredient_paths)
+	_refresh_cauldron_preview()
 	result_label.text = ""
 	_on_lock_changed(_owner_peer_id, RunManager.has_used_alchemy(_owner_peer_id))
 
@@ -73,31 +70,13 @@ func _on_inventory_changed(_ingredient: Ingredient, _new_quantity: int) -> void:
 		_refresh_available()
 
 
-func _refresh_loaded_summary(ingredient_paths: Array[String]) -> void:
-	if not root.visible:
-		return
-	if ingredient_paths.is_empty() or inventory == null:
-		loaded_vial_icon.modulate = MixturePreview.EMPTY_VIAL_COLOR
-		loaded_label.text = "Mixture chargée : aucune"
-		return
+func _on_mixture_changed(_ingredient_paths: Array[String]) -> void:
+	if root.visible:
+		_refresh_cauldron_preview()
 
-	var occurrences_by_type: Dictionary = {}
-	for path in ingredient_paths:
-		var ingredient: Ingredient = inventory.ingredient_resources.get(path)
-		if ingredient == null:
-			continue
-		occurrences_by_type[ingredient.type_alchimie] = occurrences_by_type.get(ingredient.type_alchimie, 0) + 1
 
-	var best_type = null
-	var best_count: int = -1
-	for type in occurrences_by_type.keys():
-		if occurrences_by_type[type] > best_count:
-			best_count = occurrences_by_type[type]
-			best_type = type
-	loaded_vial_icon.modulate = MixturePreview.TYPE_COLORS.get(best_type, MixturePreview.EMPTY_VIAL_COLOR)
-
-	var count: int = ingredient_paths.size()
-	loaded_label.text = "Mixture chargée : %d ingrédient%s" % [count, "s" if count > 1 else ""]
+func _refresh_cauldron_preview() -> void:
+	cauldron_preview.display(_pending_paths, inventory, weapon.mixture_ingredient_paths)
 
 
 func _add_to_pending(ingredient: Resource) -> void:
@@ -118,7 +97,7 @@ func _add_to_pending(ingredient: Resource) -> void:
 		return
 	_pending_paths.append(key)
 	_refresh_available()
-	cauldron_preview.display(_pending_paths, inventory)
+	_refresh_cauldron_preview()
 
 
 func _remove_from_pending(ingredient: Resource) -> void:
@@ -130,7 +109,7 @@ func _remove_from_pending(ingredient: Resource) -> void:
 		return
 	_pending_paths.remove_at(index)
 	_refresh_available()
-	cauldron_preview.display(_pending_paths, inventory)
+	_refresh_cauldron_preview()
 
 
 func _refresh_available() -> void:
@@ -166,7 +145,7 @@ func _on_compose_pressed() -> void:
 	get_parent().request_craft_mixture.rpc_id(1, _pending_paths.duplicate())
 	_pending_paths.clear()
 	_refresh_available()
-	cauldron_preview.display(_pending_paths, inventory)
+	_refresh_cauldron_preview()
 	close()
 
 

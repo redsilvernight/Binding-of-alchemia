@@ -8,8 +8,8 @@ const WEAPON_PART_FALLBACK_ICON: Texture2D = preload("res://assets/test/water_bu
 
 @onready var root: Control = $Root
 @onready var currency_label: Label = $Root/FramePanel/Margin/Content/HeaderRow/CurrencyLabel
-@onready var ingredient_grid: GridContainer = $Root/FramePanel/Margin/Content/IngredientScroll/IngredientGrid
-@onready var weapon_part_grid: GridContainer = $Root/FramePanel/Margin/Content/WeaponPartScroll/WeaponPartGrid
+@onready var ingredient_grid: Container = $Root/FramePanel/Margin/Content/IngredientScroll/IngredientGrid
+@onready var weapon_part_grid: Container = $Root/FramePanel/Margin/Content/WeaponPartScroll/WeaponPartGrid
 @onready var mixture_preview: MixturePreview = $Root/FramePanel/Margin/Content/BottomRow/MixtureColumn/MixturePreview
 @onready var socket_water: Control = $Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponFrame/SocketWaterBarrel
 @onready var socket_mixture: Control = $Root/FramePanel/Margin/Content/BottomRow/WeaponColumn/WeaponFrame/SocketMixtureBarrel
@@ -45,7 +45,7 @@ func bind_weapon(p_weapon: Weapon) -> void:
 	weapon.part_equipped.connect(_on_part_equipped)
 	weapon.mixture_changed.connect(_on_mixture_changed)
 	_refresh_weapon_sockets()
-	mixture_preview.display(weapon.mixture_ingredient_paths, inventory)
+	_refresh_mixture_preview(weapon.mixture_ingredient_paths)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -74,7 +74,14 @@ func _on_part_equipped(_piece: Resource) -> void:
 
 
 func _on_mixture_changed(ingredient_paths: Array[String]) -> void:
+	_refresh_mixture_preview(ingredient_paths)
+
+
+func _refresh_mixture_preview(ingredient_paths: Array[String]) -> void:
 	mixture_preview.display(ingredient_paths, inventory)
+	var mixture: Mixture = MixturePreview.resolve_mixture(ingredient_paths, inventory)
+	mixture_preview.stats_scroll.visible = mixture != null
+	MixturePreview.populate_delta_stats_grid(mixture_preview.stats_grid, mixture, mixture)
 
 
 func _refresh_ingredients() -> void:

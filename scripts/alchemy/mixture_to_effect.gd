@@ -1,7 +1,7 @@
 class_name MixtureToEffect
 extends RefCounted
 
-const ZONE_SCALE: float = 60.0
+const ZONE_SCALE: float = 100.0
 
 static func convertir(mixture: Mixture) -> ImpactEffect:
 	var effets: Array[ImpactEffect] = []
