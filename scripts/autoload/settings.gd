@@ -2,12 +2,22 @@ extends Node
 
 const SETTINGS_PATH: String = "user://settings.json"
 
+const JOYPAD_FILTERED_ACTIONS: Array[String] = [
+	"move_left", "move_right", "move_up", "move_down",
+	"fire_water", "fire_mixture", "dash",
+	"aim_left", "aim_right", "aim_up", "aim_down",
+	"interact", "spectate_next", "toggle_inventory", "pause",
+]
+
 var master_volume: float = 1.0
 var music_volume: float = 1.0
 var sfx_volume: float = 1.0
 var fullscreen: bool = false
 signal dynamic_lighting_changed(enabled: bool)
 var dynamic_lighting: bool = true
+
+signal controller_device_changed(device_id: int)
+var controller_device_id: int = -1
 
 var _master_bus_index: int = AudioServer.get_bus_index("Master")
 var _music_bus_index: int = AudioServer.get_bus_index("Music")
@@ -50,6 +60,21 @@ func set_dynamic_lighting(enabled: bool) -> void:
 	dynamic_lighting = enabled
 	dynamic_lighting_changed.emit(enabled)
 	_save()
+
+
+func set_controller_device(device_id: int) -> void:
+	controller_device_id = device_id
+	_apply_controller_device_filter()
+	controller_device_changed.emit(device_id)
+
+
+func _apply_controller_device_filter() -> void:
+	for action in JOYPAD_FILTERED_ACTIONS:
+		if not InputMap.has_action(action):
+			continue
+		for event in InputMap.action_get_events(action):
+			if event is InputEventJoypadButton or event is InputEventJoypadMotion:
+				event.device = controller_device_id
 
 
 func _apply_master_volume() -> void:

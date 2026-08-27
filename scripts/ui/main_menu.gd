@@ -13,6 +13,7 @@ extends Control
 @onready var _sfx_volume_slider: HSlider = $OptionsPanel/OptionsVBox/SfxVolumeSlider
 @onready var _fullscreen_check: CheckButton = $OptionsPanel/OptionsVBox/FullscreenCheck
 @onready var _dynamic_lighting_check: CheckButton = $OptionsPanel/OptionsVBox/DynamicLightingCheck
+@onready var _controller_device_option: OptionButton = $OptionsPanel/OptionsVBox/ControllerDeviceOption
 @onready var _back_button: Button = $OptionsPanel/OptionsVBox/Back
 
 @onready var _profile_panel: Control = $ProfilePanel
@@ -36,6 +37,7 @@ func _ready() -> void:
 	_sfx_volume_slider.value_changed.connect(_on_sfx_volume_changed)
 	_fullscreen_check.toggled.connect(_on_fullscreen_toggled)
 	_dynamic_lighting_check.toggled.connect(_on_dynamic_lighting_toggled)
+	_controller_device_option.item_selected.connect(_on_controller_device_selected)
 	_back_button.pressed.connect(_on_back_pressed)
 
 	for i in _profile_buttons.size():
@@ -69,6 +71,7 @@ func _on_options_pressed() -> void:
 	_sfx_volume_slider.value = Settings.sfx_volume
 	_fullscreen_check.button_pressed = Settings.fullscreen
 	_dynamic_lighting_check.button_pressed = Settings.dynamic_lighting
+	_refresh_controller_device_options()
 	_options_panel.visible = true
 
 
@@ -94,6 +97,24 @@ func _on_fullscreen_toggled(enabled: bool) -> void:
 
 func _on_dynamic_lighting_toggled(enabled: bool) -> void:
 	Settings.set_dynamic_lighting(enabled)
+
+
+func _refresh_controller_device_options() -> void:
+	_controller_device_option.clear()
+	_controller_device_option.add_item("Toutes les manettes")
+	_controller_device_option.set_item_metadata(0, -1)
+	var selected_index := 0
+	for device_id in Input.get_connected_joypads():
+		var item_index: int = _controller_device_option.item_count
+		_controller_device_option.add_item("Manette %d — %s" % [device_id + 1, Input.get_joy_name(device_id)])
+		_controller_device_option.set_item_metadata(item_index, device_id)
+		if device_id == Settings.controller_device_id:
+			selected_index = item_index
+	_controller_device_option.select(selected_index)
+
+
+func _on_controller_device_selected(index: int) -> void:
+	Settings.set_controller_device(_controller_device_option.get_item_metadata(index))
 
 
 func _on_back_pressed() -> void:

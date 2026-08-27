@@ -109,6 +109,13 @@ text = "Plein écran"
 layout_mode = 2
 text = "Éclairage dynamique"
 
+[node name="ControllerDeviceLabel" type="Label" parent="OptionsPanel/OptionsVBox"]
+layout_mode = 2
+text = "Manette (multijoueur local)"
+
+[node name="ControllerDeviceOption" type="OptionButton" parent="OptionsPanel/OptionsVBox"]
+layout_mode = 2
+
 [node name="Back" type="Button" parent="OptionsPanel/OptionsVBox"]
 layout_mode = 2
 text = "Retour"
