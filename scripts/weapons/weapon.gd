@@ -124,7 +124,7 @@ func _recalculate_stats() -> void:
 		push_warning("Weapon: aucun barrel_water équipé, le tir eau est désactivé.")
 	if barrel_mixture:
 		mixture_trajectory = barrel_mixture.trajectory
-		mixture_impact_effect = barrel_mixture.impact_effect
+		mixture_impact_effect = _resolve_mixture_impact_effect()
 	else:
 		mixture_impact_effect = null
 
@@ -136,6 +136,14 @@ func _recalculate_stats() -> void:
 	else:
 		current_mixture_ammo = min(current_mixture_ammo, mixture_max_capacity)
 	ammo_changed.emit(current_mixture_ammo, mixture_max_capacity)
+
+func _resolve_mixture_impact_effect() -> ImpactEffect:
+	if mixture_ingredient_paths.is_empty():
+		return barrel_mixture.impact_effect
+	var ingredients: Array[Ingredient] = []
+	for path in mixture_ingredient_paths:
+		ingredients.append(load(path) as Ingredient)
+	return MixtureToEffect.convertir(AlchemyResolver.resoudre(ingredients))
 
 func can_fire_mixture_locally() -> bool:
 	return can_fire_mixture and tank != null and current_mixture_ammo >= tank.mixture_cost_per_shot

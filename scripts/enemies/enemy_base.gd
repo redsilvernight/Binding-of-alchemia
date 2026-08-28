@@ -16,6 +16,9 @@ var _ambient_timer: float = 0.0
 
 var nav_agent: NavigationAgent2D
 
+var speed_multiplier: float = 1.0
+var _slow_timer: Timer
+
 func _ready() -> void:
 	super()
 	nav_agent = NavigationAgent2D.new()
@@ -54,13 +57,25 @@ func _setup_shadow() -> void:
 	occluder.position = Vector2(0, radius_y * 1.4)
 	add_child(occluder)
 
+func move(direction: Vector2, speed: float) -> void:
+	super(direction, speed * speed_multiplier)
+
 func move_toward_position(target_position: Vector2, speed: float) -> void:
 	nav_agent.target_position = target_position
 	if nav_agent.is_navigation_finished():
 		move(Vector2.ZERO, 0.0)
 		return
 	var next_point: Vector2 = nav_agent.get_next_path_position()
-	nav_agent.set_velocity(global_position.direction_to(next_point) * speed)
+	nav_agent.set_velocity(global_position.direction_to(next_point) * speed * speed_multiplier)
+
+func apply_slow(multiplier: float, duration: float) -> void:
+	speed_multiplier = multiplier
+	if _slow_timer == null:
+		_slow_timer = Timer.new()
+		_slow_timer.one_shot = true
+		add_child(_slow_timer)
+		_slow_timer.timeout.connect(func() -> void: speed_multiplier = 1.0)
+	_slow_timer.start(duration)
 
 func _on_nav_velocity_computed(safe_velocity: Vector2) -> void:
 	velocity = safe_velocity
