@@ -61,6 +61,12 @@ func _input(event: InputEvent) -> void:
 			return
 		root.visible = not root.visible
 		AudioManager.play_sfx("ui_toggle")
+		if root.visible:
+			stats_toggle_button.grab_focus()
+		get_viewport().set_input_as_handled()
+	elif root.visible and event.is_action_pressed("ui_cancel"):
+		root.visible = false
+		AudioManager.play_sfx("ui_toggle")
 		get_viewport().set_input_as_handled()
 
 

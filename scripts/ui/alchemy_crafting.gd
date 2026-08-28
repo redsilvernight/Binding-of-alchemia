@@ -7,6 +7,7 @@ const INGREDIENT_FALLBACK_ICON: Texture2D = preload("res://assets/test/mixture_b
 
 @onready var root: Control = $Root
 @onready var cauldron_preview: MixturePreview = $Root/FramePanel/Margin/Content/CauldronPreview
+@onready var ingredients_scroll: ScrollContainer = $Root/FramePanel/Margin/Content/IngredientsScroll
 @onready var ingredients_grid: GridContainer = $Root/FramePanel/Margin/Content/IngredientsScroll/IngredientsGrid
 @onready var compose_button: Button = $Root/FramePanel/Margin/Content/ComposeRow/ComposeButton
 @onready var result_label: Label = $Root/FramePanel/Margin/Content/ComposeRow/ResultLabel
@@ -21,6 +22,7 @@ var _default_description_text: String
 
 func _ready() -> void:
 	root.visible = false
+	ingredients_scroll.follow_focus = true
 	compose_button.pressed.connect(_on_compose_pressed)
 	cauldron_preview.item_dropped.connect(_add_to_pending)
 	cauldron_preview.item_activated.connect(_remove_from_pending)
@@ -37,6 +39,12 @@ func bind_inventory(p_inventory: Inventory) -> void:
 	inventory = p_inventory
 	inventory.ingredient_added.connect(_on_inventory_changed)
 	inventory.ingredient_removed.connect(_on_inventory_changed)
+
+
+func _input(event: InputEvent) -> void:
+	if root.visible and event.is_action_pressed("ui_cancel"):
+		close()
+		get_viewport().set_input_as_handled()
 
 
 func open() -> void:
@@ -130,6 +138,18 @@ func _refresh_available() -> void:
 		chip.activated.connect(_add_to_pending)
 		chip.selected.connect(_show_description)
 		chip.deselected.connect(_clear_description)
+
+	if root.visible:
+		call_deferred("_focus_default")
+
+
+func _focus_default() -> void:
+	if not root.visible:
+		return
+	if ingredients_grid.get_child_count() > 0:
+		(ingredients_grid.get_child(0) as Control).grab_focus()
+	else:
+		compose_button.grab_focus()
 
 
 func _on_compose_pressed() -> void:

@@ -26,6 +26,7 @@ func show_summary(players: Array, final_currency: int) -> void:
 		_add_player_row(player)
 
 	root.visible = true
+	replay_button.grab_focus()
 
 
 func _add_player_row(player: Node) -> void:

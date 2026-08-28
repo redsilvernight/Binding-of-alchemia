@@ -28,6 +28,8 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
 		_request_toggle_pause()
+	elif root.visible and event.is_action_pressed("ui_cancel"):
+		_request_toggle_pause()
 
 
 func _request_toggle_pause() -> void:
@@ -43,6 +45,7 @@ func _on_pause_changed(paused: bool) -> void:
 		_fullscreen_check.button_pressed = Settings.fullscreen
 		_dynamic_lighting_check.button_pressed = Settings.dynamic_lighting
 		_refresh_controller_device_options()
+		_resume_button.grab_focus()
 	AudioManager.play_sfx("ui_toggle")
 
 

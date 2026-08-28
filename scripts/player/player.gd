@@ -144,7 +144,7 @@ func _physics_process(delta: float) -> void:
 	if _dash_cooldown_left > 0.0:
 		_dash_cooldown_left -= delta
 	var aim_direction: Vector2 = _get_aim_direction()
-	var input_direction: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	var input_direction: Vector2 = Vector2.ZERO if _is_ui_open() else Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var facing_direction: Vector2 = _get_facing_direction(aim_direction, input_direction)
 	_update_facing(facing_direction, input_direction.length() > 0.0)
 	if _dash_time_left <= 0.0 and _dash_cooldown_left <= 0.0 and _combat_enabled and not _is_ui_open() and Input.is_action_just_pressed("dash"):

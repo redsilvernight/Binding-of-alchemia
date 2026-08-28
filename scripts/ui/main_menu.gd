@@ -55,6 +55,16 @@ func _ready() -> void:
 	_options_panel.visible = false
 	_profile_panel.visible = false
 	_update_profile_label()
+	_play_button.grab_focus()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not event.is_action_pressed("ui_cancel"):
+		return
+	if _profile_panel.visible:
+		_on_profile_back_pressed()
+	elif _options_panel.visible:
+		_on_back_pressed()
 
 
 func _on_play_pressed() -> void:
@@ -73,6 +83,7 @@ func _on_options_pressed() -> void:
 	_dynamic_lighting_check.button_pressed = Settings.dynamic_lighting
 	_refresh_controller_device_options()
 	_options_panel.visible = true
+	_volume_slider.grab_focus()
 
 
 func _on_quit_pressed() -> void:
@@ -119,6 +130,7 @@ func _on_controller_device_selected(index: int) -> void:
 
 func _on_back_pressed() -> void:
 	_options_panel.visible = false
+	_options_button.grab_focus()
 
 
 func _on_change_profile_pressed() -> void:
@@ -126,16 +138,19 @@ func _on_change_profile_pressed() -> void:
 		var preview: Dictionary = SaveManager.get_profile_preview(i)
 		_profile_buttons[i].text = "Profil %d — %d pièces" % [i + 1, preview["currency"]]
 	_profile_panel.visible = true
+	_profile_buttons[0].grab_focus()
 
 
 func _on_profile_selected(index: int) -> void:
 	SaveManager.set_active_profile(index)
 	_update_profile_label()
 	_profile_panel.visible = false
+	_change_profile_button.grab_focus()
 
 
 func _on_profile_back_pressed() -> void:
 	_profile_panel.visible = false
+	_change_profile_button.grab_focus()
 
 
 func _update_profile_label() -> void:

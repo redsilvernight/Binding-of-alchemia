@@ -6,6 +6,7 @@ const WEAPON_PART_FALLBACK_ICON: Texture2D = preload("res://assets/test/water_bu
 @export var item_chip_scene: PackedScene = preload("res://scenes/ui/item_chip.tscn")
 
 @onready var root: Control = $Root
+@onready var parts_scroll: ScrollContainer = $Root/FramePanel/Margin/Content/PartsScroll
 @onready var parts_grid: GridContainer = $Root/FramePanel/Margin/Content/PartsScroll/PartsGridMargin/PartsGrid
 @onready var socket_water: Control = $Root/FramePanel/Margin/Content/WeaponRow/WeaponFrame/SocketWaterBarrel
 @onready var socket_mixture: Control = $Root/FramePanel/Margin/Content/WeaponRow/WeaponFrame/SocketMixtureBarrel
@@ -21,6 +22,7 @@ var _default_description_text: String
 
 func _ready() -> void:
 	root.visible = false
+	parts_scroll.follow_focus = true
 	weapon = get_parent().weapon
 	weapon.part_equipped.connect(_on_part_equipped)
 	_default_description_text = description_label.text
@@ -44,13 +46,19 @@ func bind_inventory(p_inventory: Inventory) -> void:
 	inventory.weapon_part_removed.connect(_on_weapon_parts_changed)
 
 
+func _input(event: InputEvent) -> void:
+	if root.visible and event.is_action_pressed("ui_cancel"):
+		close()
+		get_viewport().set_input_as_handled()
+
+
 func open() -> void:
 	AudioManager.play_sfx("station_open")
+	root.visible = true
 	_refresh_parts_grid()
 	_refresh_sockets()
 	_clear_description()
 	_refresh_stats_preview()
-	root.visible = true
 
 
 func close() -> void:
@@ -91,6 +99,16 @@ func _refresh_parts_grid() -> void:
 		chip.activated.connect(_request_equip)
 		chip.selected.connect(_show_description)
 		chip.deselected.connect(_clear_description)
+
+	if root.visible:
+		call_deferred("_focus_first_chip")
+
+
+func _focus_first_chip() -> void:
+	if not root.visible:
+		return
+	if parts_grid.get_child_count() > 0:
+		(parts_grid.get_child(0) as Control).grab_focus()
 
 
 func _refresh_sockets() -> void:

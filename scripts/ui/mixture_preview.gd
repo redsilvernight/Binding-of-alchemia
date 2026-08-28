@@ -42,6 +42,7 @@ const DUREE_BAR_MAX: float = 15.0
 @onready var _column: VBoxContainer = $Column
 @onready var row: HBoxContainer = $Column/Row
 @onready var vial_icon: TextureRect = $Column/Row/VialFrame/VialIcon
+@onready var scroll: ScrollContainer = $Column/Row/Scroll
 @onready var grid: Container = $Column/Row/Scroll/Grid
 @onready var empty_label: Label = $Column/Row/EmptyLabel
 @onready var stats_scroll: ScrollContainer = $Column/StatsScroll
@@ -51,6 +52,7 @@ const DUREE_BAR_MAX: float = 15.0
 func _ready() -> void:
 	if not stats_position_below:
 		stats_scroll.reparent(row)
+	scroll.follow_focus = true
 	_column.minimum_size_changed.connect(update_minimum_size)
 	empty_label.text = empty_text
 	display([], null)

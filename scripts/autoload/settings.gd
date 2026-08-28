@@ -7,6 +7,7 @@ const JOYPAD_FILTERED_ACTIONS: Array[String] = [
 	"fire_water", "fire_mixture", "dash",
 	"aim_left", "aim_right", "aim_up", "aim_down",
 	"interact", "spectate_next", "toggle_inventory", "pause",
+	"ui_up", "ui_down", "ui_left", "ui_right", "ui_accept", "ui_cancel",
 ]
 
 var master_volume: float = 1.0
@@ -30,6 +31,7 @@ func _ready() -> void:
 	_apply_music_volume()
 	_apply_sfx_volume()
 	_apply_fullscreen()
+	_apply_controller_device_filter()
 
 
 func set_master_volume(value: float) -> void:
