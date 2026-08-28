@@ -14,8 +14,14 @@ var _last_facing_direction: Vector2 = Vector2.DOWN
 var state_machine: EnemyStateMachine
 var _phase: int = 1
 
+const LIFEPOINT_GROWTH_PER_FLOOR: float = 0.10
+const DAMAGE_GROWTH_PER_FLOOR: float = 0.05
+
 func _ready() -> void:
-	max_lifepoint = boss_max_lifepoint
+	var floor_bonus: int = RunManager.current_floor - 1
+	max_lifepoint = boss_max_lifepoint * (1.0 + LIFEPOINT_GROWTH_PER_FLOOR * floor_bonus)
+	contact_damage *= 1.0 + DAMAGE_GROWTH_PER_FLOOR * floor_bonus
+	projectile_damage *= 1.0 + DAMAGE_GROWTH_PER_FLOOR * floor_bonus
 	super()
 	add_to_group("Boss")
 	state_machine = EnemyStateMachine.new(EnemyStateIdle.new(self, EnemyStateChase.new(self)))

@@ -40,7 +40,6 @@ const WEAPON_PART_SPAWN_TABLE_PATH: String = "res://resources/spawn_tables/weapo
 const INGREDIENT_CARRIER_RATIO_CAP: float = 0.5
 const ROOM_SPAWN_MARGIN: float = 80.0
 const ENEMY_EXTRA_ROLL_FLOORS: int = 2
-const ENEMY_EXTRA_ROLL_CAP: int = 4
 
 const POOL_COUNT: int = 3
 const PROP_SPAWN_TABLE_PATHS: Array[String] = [
@@ -144,7 +143,7 @@ func notify_scene_ready() -> void:
 func _generate_dungeon() -> void:
 	var floor_level: int = RunManager.current_floor
 	var room_count: int = _room_count_for_floor(floor_level)
-	var dungeon_layout: Array[Dictionary] = DungeonGenerator.generate(room_count, ROOM_TEMPLATE_PATHS, SPECIAL_ROOM_TEMPLATE_PATHS, BOSS_ROOM_TEMPLATE_PATH, TREASURE_ROOM_TEMPLATE_PATH)
+	var dungeon_layout: Array[Dictionary] = DungeonGenerator.generate(room_count, ROOM_TEMPLATE_PATHS, _special_room_template_for_floor(floor_level), BOSS_ROOM_TEMPLATE_PATH, TREASURE_ROOM_TEMPLATE_PATH)
 	var pool_index: int = _pool_index_for_floor(floor_level)
 	var prop_table: SpawnTable = load(PROP_SPAWN_TABLE_PATHS[pool_index]) as SpawnTable
 	var room_tile_set: TileSet = load(ROOM_TILESET_PATHS[pool_index]) as TileSet
@@ -432,7 +431,13 @@ func _room_count_for_floor(floor_level: int) -> int:
 
 
 func _extra_enemy_rolls_for_floor(floor_level: int) -> int:
-	return mini((floor_level - 1) / ENEMY_EXTRA_ROLL_FLOORS, ENEMY_EXTRA_ROLL_CAP)
+	return (floor_level - 1) / ENEMY_EXTRA_ROLL_FLOORS
+
+
+func _special_room_template_for_floor(floor_level: int) -> Array[String]:
+	var index: int = (floor_level - 1) % SPECIAL_ROOM_TEMPLATE_PATHS.size()
+	var result: Array[String] = [SPECIAL_ROOM_TEMPLATE_PATHS[index]]
+	return result
 
 
 func _pool_index_for_floor(floor_level: int) -> int:
