@@ -44,9 +44,27 @@ func _ready() -> void:
 	_spawn_player()
 
 
+const BOUNCE_TEST_COUNT: int = 1
+const PULL_TEST_RADIUS: float = 260.0
+const PULL_TEST_DURATION: float = 1.2
+const PULL_TEST_STRENGTH: float = 260.0
+
+var _bounce_test_enabled: bool = false
+var _pull_test_enabled: bool = false
+
+
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_SPACE:
-		_spawn_one_enemy()
+	if not (event is InputEventKey and event.pressed and not event.echo):
+		return
+	match event.keycode:
+		KEY_SPACE:
+			_spawn_one_enemy()
+		KEY_B:
+			_bounce_test_enabled = not _bounce_test_enabled
+			print("[Phase M] rebond sur tir mixture: ", _bounce_test_enabled)
+		KEY_P:
+			_pull_test_enabled = not _pull_test_enabled
+			print("[Phase M] attraction sur tir eau: ", _pull_test_enabled)
 
 
 func _process(_delta: float) -> void:
@@ -135,14 +153,26 @@ func _spawn_bullet_from_data(data: Dictionary) -> Node:
 	bullet.shooter_id = data.get("shooter_id", 0)
 	if scene_path == Weapon.MIXTURE_BULLET_SCENE:
 		bullet.impact_sfx_key = "impact_mixture"
+		if _bounce_test_enabled:
+			bullet.set_bounce(BOUNCE_TEST_COUNT)
 	elif scene_path == "res://scenes/enemies/enemy_projectile.tscn":
 		AudioManager.play_sfx("enemy_attack_ranged")
 	if data.has("impact_effect_data"):
 		var effect: ImpactEffect = ImpactEffect.from_dict(data["impact_effect_data"])
 		bullet.set_impact_effect(effect)
+	elif _pull_test_enabled and scene_path == Weapon.WATER_BULLET_SCENE:
+		bullet.set_impact_effect(_make_test_pull())
 	projectiles_container.add_child(bullet)
 	bullet.launch.call_deferred(data["from_position"], data["direction"])
 	return bullet
+
+
+func _make_test_pull() -> ImpactPull:
+	var pull := ImpactPull.new()
+	pull.radius = PULL_TEST_RADIUS
+	pull.duration = PULL_TEST_DURATION
+	pull.pull_strength = PULL_TEST_STRENGTH
+	return pull
 
 
 func request_enemy_projectile(data: Dictionary) -> void:

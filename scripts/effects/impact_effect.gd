@@ -28,6 +28,12 @@ static func from_dict(data: Dictionary) -> ImpactEffect:
 			var e := ImpactHeal.new()
 			e.amount = data.get("amount", 0.0)
 			return e
+		"pull":
+			var e := ImpactPull.new()
+			e.radius = data.get("radius", 0.0)
+			e.duration = data.get("duration", 0.0)
+			e.pull_strength = data.get("pull_strength", 0.0)
+			return e
 		"composite":
 			var e := ImpactComposite.new()
 			var sous_effets: Array[ImpactEffect] = []

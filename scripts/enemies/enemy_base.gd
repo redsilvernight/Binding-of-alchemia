@@ -77,6 +77,29 @@ func apply_slow(multiplier: float, duration: float) -> void:
 		_slow_timer.timeout.connect(func() -> void: speed_multiplier = 1.0)
 	_slow_timer.start(duration)
 
+var _pull_target_position: Vector2 = Vector2.ZERO
+var _pull_strength: float = 0.0
+var _pull_timer: Timer
+
+func apply_pull(target_position: Vector2, strength: float, duration: float) -> void:
+	_pull_target_position = target_position
+	_pull_strength = strength
+	if _pull_timer == null:
+		_pull_timer = Timer.new()
+		_pull_timer.one_shot = true
+		add_child(_pull_timer)
+	_pull_timer.start(duration)
+
+func is_being_pulled() -> bool:
+	return _pull_timer != null and _pull_timer.time_left > 0.0
+
+func _process_pull(_delta: float) -> bool:
+	if not is_being_pulled():
+		return false
+	velocity = global_position.direction_to(_pull_target_position) * _pull_strength
+	move_and_slide()
+	return true
+
 func _on_nav_velocity_computed(safe_velocity: Vector2) -> void:
 	velocity = safe_velocity
 	move_and_slide()

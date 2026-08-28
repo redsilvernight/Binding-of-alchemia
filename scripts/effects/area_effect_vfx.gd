@@ -30,6 +30,40 @@ func play(type_alchimie: Ingredient.TypeAlchimie, radius: float, duration: float
 			queue_free()
 
 
+func play_pull(radius: float, duration: float) -> void:
+	var linger: float = maxf(duration, 0.6)
+	_play_zone_ring(radius, Color(0.6, 0.4, 0.95, 0.35), linger)
+	_spawn_converging_particles(radius, linger)
+	_free_after(linger + 0.4)
+
+
+func _spawn_converging_particles(spawn_radius: float, linger: float) -> void:
+	var timer := Timer.new()
+	timer.wait_time = 0.15
+	timer.one_shot = false
+	add_child(timer)
+	timer.timeout.connect(func() -> void:
+		for i in range(2):
+			var sprite := Sprite2D.new()
+			sprite.texture = _get_smoke_texture()
+			sprite.modulate = Color(0.65, 0.45, 1.0, 0.0)
+			sprite.scale = Vector2.ONE * 0.4
+			var angle: float = randf() * TAU
+			var start: Vector2 = Vector2.RIGHT.rotated(angle) * spawn_radius
+			sprite.position = start
+			add_child(sprite)
+
+			var tween := create_tween()
+			tween.set_parallel(true)
+			tween.tween_property(sprite, "position", Vector2.ZERO, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+			tween.tween_property(sprite, "modulate:a", 0.55, 0.15)
+			tween.chain().tween_property(sprite, "modulate:a", 0.0, 0.2)
+			tween.chain().tween_callback(sprite.queue_free)
+	)
+	timer.start()
+	get_tree().create_timer(linger, false).timeout.connect(timer.queue_free)
+
+
 func _free_after(seconds: float) -> void:
 	get_tree().create_timer(seconds, false).timeout.connect(queue_free)
 

@@ -22,7 +22,8 @@ func _physics_process(delta: float) -> void:
 		return
 	if is_dead:
 		return
-	state_machine.physics_process(delta)
+	if not _process_pull(delta):
+		state_machine.physics_process(delta)
 	_update_facing(velocity)
 
 func _update_facing(direction: Vector2) -> void:
