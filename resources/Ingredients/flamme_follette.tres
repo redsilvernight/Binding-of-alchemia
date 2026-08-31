@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Ingredient" format=3]
+
+[ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_follette"]
+[ext_resource type="Texture2D" path="res://assets/icons/ingredients/flamme_follette.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_follette")
+icon = ExtResource("2_icon")
+nom = "Flamme Follette"
+description = "Petite flamme capricieuse qui s'accroche à sa cible et refuse de s'éteindre."
+type_alchimie = 0
+degats_base = 3.0
+duree_base = 5.0
+zone_base = 0.5
+metadata/_custom_type_script = "uid://bja0da4fhu872"

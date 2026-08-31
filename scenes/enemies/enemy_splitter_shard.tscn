@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://dq3n9k2r5xkfr"]
+
+[ext_resource type="Script" path="res://scripts/mobs/ennemi_test.gd" id="1"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/enemy_splitter.tres" id="2"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_shard"]
+radius = 88.0
+height = 200.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_legs_shard"]
+radius = 20.0
+height = 46.0
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath("Sprite2D:animation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[node name="EnemySplitterShard" type="CharacterBody2D"]
+scale = Vector2(0.32, 0.32)
+collision_layer = 2
+collision_mask = 93
+script = ExtResource("1")
+speed = 140.0
+damage = 5.0
+currency_reward = 4
+max_lifepoint = 12.0
+ambient_sfx_key = "cry_melee_splitter_shard"
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(4, 4)
+modulate = Color(0.78, 0.62, 0.98, 0.9)
+sprite_frames = ExtResource("2")
+animation = &"walk-south"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-2, -2)
+shape = SubResource("CapsuleShape2D_legs_shard")
+
+[node name="CollisionArea" type="Area2D" parent="."]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea"]
+position = Vector2(-2, -2)
+shape = SubResource("CapsuleShape2D_shard")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_1")
+
+[connection signal="area_entered" from="CollisionArea" to="." method="_on_collision_area_area_entered"]
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 128
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(-2, -2)
+shape = SubResource("CapsuleShape2D_shard")

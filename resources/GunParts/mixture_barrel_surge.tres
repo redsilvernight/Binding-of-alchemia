@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="GunBarrelMixture" format=3]
+
+[ext_resource type="Script" uid="uid://djakeanr5q30h" path="res://scripts/weapons/resources/GunBarrelMixture.gd" id="1_surge"]
+[ext_resource type="Texture2D" path="res://assets/icons/weapon_parts/mixture_barrel_surge.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_surge")
+icon = ExtResource("2_icon")
+nom = "Canon à Mixture à Vagues"
+description = "Canon qui libère la mixture par vagues rapprochées et rapides."
+fire_rate = 1.7
+damage_multiplier = 1.3
+projectile_speed = 310.0
+metadata/_custom_type_script = "uid://djakeanr5q30h"

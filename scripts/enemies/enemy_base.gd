@@ -6,6 +6,7 @@ var active: bool = false
 @export var currency_reward: int = 5
 
 var carries_ingredient_path: String = ""
+var origin_room: Room = null
 
 const AMBIENT_MIN_INTERVAL: float = 4.0
 const AMBIENT_MAX_INTERVAL: float = 10.0

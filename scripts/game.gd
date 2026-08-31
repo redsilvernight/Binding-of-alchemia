@@ -159,7 +159,7 @@ func _generate_dungeon() -> void:
 		player_spawner.spawn(peer_id)
 
 	var enemy_table: SpawnTable = load(ENEMY_SPAWN_TABLE_PATH) as SpawnTable
-	for entry in enemy_table.entries:
+	for entry in enemy_table.available_entries(floor_level):
 		_load_scene(entry.item_path)
 	var extra_enemy_rolls: int = _extra_enemy_rolls_for_floor(floor_level)
 	var floor_enemies: Array[Node] = []
@@ -167,9 +167,9 @@ func _generate_dungeon() -> void:
 		if room_data["is_special"] or room_data["is_start"] or room_data["is_boss"] or room_data["is_treasure"]:
 			continue
 		var room: Room = room_nodes[room_data["grid_position"]]
-		var enemy_paths: Array[String] = enemy_table.pick_many()
+		var enemy_paths: Array[String] = enemy_table.pick_many(floor_level)
 		for i in extra_enemy_rolls:
-			var extra_path: String = enemy_table.pick_one()
+			var extra_path: String = enemy_table.pick_one(floor_level)
 			if extra_path != "":
 				enemy_paths.append(extra_path)
 		for enemy_scene_path in enemy_paths:
@@ -178,6 +178,7 @@ func _generate_dungeon() -> void:
 				"position": _random_position_in_room(room_data),
 			})
 			room.register_enemy(enemy)
+			enemy.origin_room = room
 			floor_enemies.append(enemy)
 
 	var ingredient_table: SpawnTable = load(INGREDIENT_SPAWN_TABLE_PATH) as SpawnTable
@@ -289,6 +290,19 @@ func request_currency_drop(position: Vector2, amount: int) -> void:
 			"currency_amount": LootRoller.CURRENCY_PER_COIN,
 			"position": coin_position,
 		})
+
+func request_enemy_split(scene_path: String, origin_position: Vector2, count: int, spawn_radius: float, room: Room) -> void:
+	if not multiplayer.is_server():
+		return
+	for i in count:
+		var offset: Vector2 = Vector2.RIGHT.rotated(TAU * i / count) * spawn_radius
+		var shard: Node = enemy_spawner.spawn({
+			"scene_path": scene_path,
+			"position": origin_position + offset,
+		})
+		shard.origin_room = room
+		if room != null:
+			room.register_enemy(shard)
 
 func request_open_chest(contents: Dictionary) -> void:
 	if not multiplayer.is_server():

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="GunBarrelWater" format=3]
+
+[ext_resource type="Script" uid="uid://bhrpkdbq7loqu" path="res://scripts/weapons/resources/GunBarrelWater.gd" id="1_geyser"]
+[ext_resource type="Texture2D" path="res://assets/icons/weapon_parts/water_barel_geyser.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_geyser")
+icon = ExtResource("2_icon")
+nom = "Canon à Eau Geyser"
+description = "Canon qui projette d'épais jets d'eau bouillonnante, lents mais lourds."
+fire_rate = 0.6
+base_damage = 7.0
+projectile_speed = 260.0
+metadata/_custom_type_script = "uid://bhrpkdbq7loqu"

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Ingredient" format=3]
+
+[ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_statique"]
+[ext_resource type="Texture2D" path="res://assets/icons/ingredients/statique_residuelle.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_statique")
+icon = ExtResource("2_icon")
+nom = "Statique Résiduelle"
+description = "Charge électrique diffuse qui persiste et picote longuement la cible."
+type_alchimie = 3
+degats_base = 3.0
+duree_base = 3.5
+zone_base = 1.0
+metadata/_custom_type_script = "uid://bja0da4fhu872"

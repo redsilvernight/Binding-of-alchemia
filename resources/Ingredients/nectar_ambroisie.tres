@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Ingredient" format=3]
+
+[ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_nectar"]
+[ext_resource type="Texture2D" path="res://assets/icons/ingredients/nectar_ambroisie.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_nectar")
+icon = ExtResource("2_icon")
+nom = "Nectar d'Ambroisie"
+description = "Nectar divin dont les bienfaits se distillent lentement dans le temps."
+type_alchimie = 4
+degats_base = -3.0
+duree_base = 6.0
+metadata/_custom_type_script = "uid://bja0da4fhu872"

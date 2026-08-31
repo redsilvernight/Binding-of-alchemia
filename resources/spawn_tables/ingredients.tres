@@ -191,8 +191,73 @@ script = ExtResource("2_entry")
 item_path = "res://resources/Ingredients/charge_sismique.tres"
 weight = 1.0
 
+[sub_resource type="Resource" id="Resource_tison_ardent"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/tison_ardent.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_coulee_de_lave"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/coulee_de_lave.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_flamme_follette"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/flamme_follette.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_gel_eternel"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/gel_eternel.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_tempete_polaire"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/tempete_polaire.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_spore_pourpre"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/spore_pourpre.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_crachat_acide"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/crachat_acide.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_arc_voltaique"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/arc_voltaique.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_statique_residuelle"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/statique_residuelle.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_essence_vitale"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/essence_vitale.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_nectar_ambroisie"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/nectar_ambroisie.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_grenade_artisanale"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/grenade_artisanale.tres"
+weight = 1.0
+
+[sub_resource type="Resource" id="Resource_poudre_instable"]
+script = ExtResource("2_entry")
+item_path = "res://resources/Ingredients/poudre_instable.tres"
+weight = 1.0
+
 [resource]
 script = ExtResource("1_table")
-entries = Array[ExtResource("2_entry")]([SubResource("Resource_braise"), SubResource("Resource_cristal_givre"), SubResource("Resource_bave_toxique"), SubResource("Resource_cendre_ardente"), SubResource("Resource_racine_apaisante"), SubResource("Resource_sang_hydre"), SubResource("Resource_eclair_zeus"), SubResource("Resource_poudre_fulminante"), SubResource("Resource_baril_poudre"), SubResource("Resource_eclat_meteore"), SubResource("Resource_larme_banquise"), SubResource("Resource_poussiere_diamant_gele"), SubResource("Resource_nerf_foudre"), SubResource("Resource_resine_conductrice"), SubResource("Resource_pollen_curatif"), SubResource("Resource_seve_de_vie"), SubResource("Resource_huile_enflammee"), SubResource("Resource_spore_corrosive"), SubResource("Resource_ecorce_brulante"), SubResource("Resource_brume_polaire"), SubResource("Resource_venin_necrosant"), SubResource("Resource_orage_captif"), SubResource("Resource_baume_regenerant"), SubResource("Resource_noyau_instable"), SubResource("Resource_cendre_vive"), SubResource("Resource_eclat_cryogene"), SubResource("Resource_magma_rampant"), SubResource("Resource_souffle_hivernal"), SubResource("Resource_moisissure_noire"), SubResource("Resource_dard_viperin"), SubResource("Resource_griffe_orage"), SubResource("Resource_etincelle_vive"), SubResource("Resource_rosee_bienfaisante"), SubResource("Resource_coeur_phenix"), SubResource("Resource_eclat_shrapnel"), SubResource("Resource_charge_sismique")])
+entries = Array[ExtResource("2_entry")]([SubResource("Resource_braise"), SubResource("Resource_cristal_givre"), SubResource("Resource_bave_toxique"), SubResource("Resource_cendre_ardente"), SubResource("Resource_racine_apaisante"), SubResource("Resource_sang_hydre"), SubResource("Resource_eclair_zeus"), SubResource("Resource_poudre_fulminante"), SubResource("Resource_baril_poudre"), SubResource("Resource_eclat_meteore"), SubResource("Resource_larme_banquise"), SubResource("Resource_poussiere_diamant_gele"), SubResource("Resource_nerf_foudre"), SubResource("Resource_resine_conductrice"), SubResource("Resource_pollen_curatif"), SubResource("Resource_seve_de_vie"), SubResource("Resource_huile_enflammee"), SubResource("Resource_spore_corrosive"), SubResource("Resource_ecorce_brulante"), SubResource("Resource_brume_polaire"), SubResource("Resource_venin_necrosant"), SubResource("Resource_orage_captif"), SubResource("Resource_baume_regenerant"), SubResource("Resource_noyau_instable"), SubResource("Resource_cendre_vive"), SubResource("Resource_eclat_cryogene"), SubResource("Resource_magma_rampant"), SubResource("Resource_souffle_hivernal"), SubResource("Resource_moisissure_noire"), SubResource("Resource_dard_viperin"), SubResource("Resource_griffe_orage"), SubResource("Resource_etincelle_vive"), SubResource("Resource_rosee_bienfaisante"), SubResource("Resource_coeur_phenix"), SubResource("Resource_eclat_shrapnel"), SubResource("Resource_charge_sismique"), SubResource("Resource_tison_ardent"), SubResource("Resource_coulee_de_lave"), SubResource("Resource_flamme_follette"), SubResource("Resource_gel_eternel"), SubResource("Resource_tempete_polaire"), SubResource("Resource_spore_pourpre"), SubResource("Resource_crachat_acide"), SubResource("Resource_arc_voltaique"), SubResource("Resource_statique_residuelle"), SubResource("Resource_essence_vitale"), SubResource("Resource_nectar_ambroisie"), SubResource("Resource_grenade_artisanale"), SubResource("Resource_poudre_instable")])
 min_count = 4
 max_count = 6

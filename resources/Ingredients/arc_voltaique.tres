@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Ingredient" format=3]
+
+[ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_arc"]
+[ext_resource type="Texture2D" path="res://assets/icons/ingredients/arc_voltaique.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_arc")
+icon = ExtResource("2_icon")
+nom = "Arc Voltaïque"
+description = "Décharge foudroyante et instantanée, sans égard pour ce qu'elle traverse."
+type_alchimie = 3
+degats_base = 10.0
+duree_base = 0.5
+zone_base = 1.0
+metadata/_custom_type_script = "uid://bja0da4fhu872"
