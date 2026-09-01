@@ -7,8 +7,9 @@
 script = ExtResource("1_needle")
 icon = ExtResource("2_icon")
 nom = "Canon à Eau Aiguille"
-description = "Canon fin qui crache un jet rapide et régulier, perçant comme une aiguille."
+description = "Canon fin qui crache un jet rapide et régulier, perçant comme une aiguille. Le jet ajuste sa trajectoire pour suivre la cible la plus proche."
 fire_rate = 1.6
 base_damage = 3.6
 projectile_speed = 420.0
+trajectory = 2
 metadata/_custom_type_script = "uid://bhrpkdbq7loqu"

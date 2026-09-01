@@ -7,8 +7,9 @@
 script = ExtResource("1_movld")
 icon = ExtResource("2_icon")
 nom = "Canon à Mixture Surcharge"
-description = "Canon poussé à son maximum qui multiplie considérablement les dégâts pour une cadence très lente."
+description = "Canon poussé à son maximum qui multiplie considérablement les dégâts pour une cadence très lente. Les projectiles surchargés retombent en arc avec tout leur poids."
 fire_rate = 0.45
 damage_multiplier = 5.5
 projectile_speed = 220.0
+trajectory = 1
 metadata/_custom_type_script = "uid://djakeanr5q30h"

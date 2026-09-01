@@ -7,8 +7,9 @@
 script = ExtResource("1_geyser")
 icon = ExtResource("2_icon")
 nom = "Canon à Eau Geyser"
-description = "Canon qui projette d'épais jets d'eau bouillonnante, lents mais lourds."
+description = "Canon qui projette d'épais jets d'eau bouillonnante, lents mais lourds. Les jets retombent en arc, comme un vrai geyser."
 fire_rate = 0.6
 base_damage = 7.0
 projectile_speed = 260.0
+trajectory = 1
 metadata/_custom_type_script = "uid://bhrpkdbq7loqu"

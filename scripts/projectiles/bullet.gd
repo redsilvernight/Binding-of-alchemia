@@ -13,13 +13,16 @@ var shooter_id: int = 0
 var impact_sfx_key: String = "impact_water"
 
 var _arc_time: float = 0.0
-var _arc_height: float = 40.0
-var _arc_duration: float = 0.6
+var _arc_height: float = 90.0
+var _arc_duration: float = 1.1
 var _arc_direction: Vector2 = Vector2.RIGHT
 var _arc_start_position: Vector2 = Vector2.ZERO
+var _arc_landed: bool = false
+var _arc_vertical_dir: Vector2 = Vector2.UP
 
 var _homing_target: Node2D = null
 var _homing_turn_speed: float = 5.0
+const HOMING_ACQUIRE_RANGE: float = 500.0
 
 const SPAWN_WALL_GRACE_TIME: float = 0.15
 var _time_since_launch: float = 0.0
@@ -52,11 +55,30 @@ func launch(from_position: Vector2, aim_direction: Vector2) -> void:
 	global_position = from_position
 	_arc_start_position = from_position
 	_arc_direction = aim_direction.normalized()
+	_arc_vertical_dir = _arc_bulge_direction(_arc_direction)
 	velocity = _arc_direction * _base_speed
 	rotation = velocity.angle()
+	if trajectory == TrajectoryType.HOMING:
+		_acquire_homing_target()
 	if multiplayer.is_server():
 		var timer := get_tree().create_timer(lifetime, false)
 		timer.timeout.connect(queue_free)
+
+func _arc_bulge_direction(direction: Vector2) -> Vector2:
+	return Vector2.UP if direction.y <= 0.0 else Vector2.DOWN
+
+func _acquire_homing_target() -> void:
+	var target_group: String = "Enemies" if shooter_id > 0 else "Players"
+	var closest: Node2D = null
+	var closest_distance: float = HOMING_ACQUIRE_RANGE * HOMING_ACQUIRE_RANGE
+	for node in get_tree().get_nodes_in_group(target_group):
+		if node.is_dead:
+			continue
+		var distance: float = global_position.distance_squared_to(node.global_position)
+		if distance < closest_distance:
+			closest_distance = distance
+			closest = node
+	set_homing_target(closest)
 
 func _physics_process(delta: float) -> void:
 	_time_since_launch += delta
@@ -72,13 +94,26 @@ func _process_linear(delta: float) -> void:
 	global_position += velocity * delta
 
 func _process_arc(delta: float) -> void:
+	if _arc_landed:
+		return
 	_arc_time += delta
 	var t: float = clamp(_arc_time / _arc_duration, 0.0, 1.0)
-	var forward_distance: float = _base_speed * _arc_time
+	var forward_distance: float = _base_speed * _arc_duration * t
 	var offset: Vector2 = _arc_direction * forward_distance
-	var height_offset: float = -4.0 * _arc_height * t * (1.0 - t)
-	var perpendicular: Vector2 = _arc_direction.rotated(-PI / 2.0)
-	global_position = _arc_start_position + offset + perpendicular * height_offset
+	var height_offset: float = 4.0 * _arc_height * t * (1.0 - t)
+	global_position = _arc_start_position + offset + _arc_vertical_dir * height_offset
+	var height_rate: float = 4.0 * _arc_height * (1.0 - 2.0 * t) / _arc_duration
+	var tangent: Vector2 = _arc_direction * _base_speed + _arc_vertical_dir * height_rate
+	if tangent.length_squared() > 0.0:
+		rotation = tangent.angle()
+	if t >= 1.0:
+		_land_arc()
+
+func _land_arc() -> void:
+	_arc_landed = true
+	_trigger_impact_effect(self)
+	if multiplayer.is_server():
+		queue_free()
 
 func _process_homing(delta: float) -> void:
 	if is_instance_valid(_homing_target):
@@ -168,4 +203,5 @@ func _bounce_off(normal: Vector2) -> void:
 	_arc_time = 0.0
 	_arc_start_position = global_position
 	_arc_direction = velocity.normalized()
+	_arc_vertical_dir = _arc_bulge_direction(_arc_direction)
 	_homing_target = null

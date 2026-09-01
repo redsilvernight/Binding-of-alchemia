@@ -7,8 +7,9 @@
 script = ExtResource("1_wheavy")
 icon = ExtResource("2_icon")
 nom = "Canon à Eau Lourd"
-description = "Canon robuste qui propulse un jet d'eau puissant mais plus lent."
+description = "Canon robuste qui propulse un jet d'eau puissant mais plus lent. Le jet décrit un arc avant de retomber sur la cible."
 fire_rate = 1.0
 base_damage = 8.0
 projectile_speed = 250.0
+trajectory = 1
 metadata/_custom_type_script = "uid://bhrpkdbq7loqu"

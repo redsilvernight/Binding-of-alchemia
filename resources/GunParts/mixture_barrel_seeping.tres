@@ -7,8 +7,9 @@
 script = ExtResource("1_seeping")
 icon = ExtResource("2_icon")
 nom = "Canon à Mixture Suintant"
-description = "Canon qui laisse suinter la mixture en jets réguliers et soutenus."
+description = "Canon qui laisse suinter la mixture en jets réguliers et soutenus. La mixture s'égoutte en suivant une trajectoire en arc."
 fire_rate = 0.9
 damage_multiplier = 2.0
 projectile_speed = 260.0
+trajectory = 1
 metadata/_custom_type_script = "uid://djakeanr5q30h"

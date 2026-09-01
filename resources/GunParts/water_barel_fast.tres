@@ -7,8 +7,9 @@
 script = ExtResource("1_pwkuf")
 icon = ExtResource("2_icon")
 nom = "Canon à Eau Véloce"
-description = "Canon très réactif qui privilégie la cadence de tir à la puissance."
+description = "Canon très réactif qui privilégie la cadence de tir à la puissance. Trajectoire rectiligne."
 fire_rate = 2.0
 base_damage = 3.0
 projectile_speed = 400.0
+trajectory = 0
 metadata/_custom_type_script = "uid://bhrpkdbq7loqu"

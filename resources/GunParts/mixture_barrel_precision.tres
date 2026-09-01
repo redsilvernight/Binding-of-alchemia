@@ -7,8 +7,9 @@
 script = ExtResource("1_mprec")
 icon = ExtResource("2_icon")
 nom = "Canon à Mixture de Précision"
-description = "Canon calibré pour un bon compromis entre cadence, puissance et vitesse."
+description = "Canon calibré pour un bon compromis entre cadence, puissance et vitesse. Trajectoire rectiligne, pour ne jamais dévier de la cible visée."
 fire_rate = 1.2
 damage_multiplier = 2.2
 projectile_speed = 300.0
+trajectory = 0
 metadata/_custom_type_script = "uid://djakeanr5q30h"

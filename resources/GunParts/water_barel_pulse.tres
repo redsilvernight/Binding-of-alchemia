@@ -7,8 +7,9 @@
 script = ExtResource("1_wpuls")
 icon = ExtResource("2_icon")
 nom = "Canon à Eau Pulsé"
-description = "Canon qui libère l'eau par impulsions régulières et mesurées."
+description = "Canon qui libère l'eau par impulsions régulières et mesurées. Chaque impulsion recherche automatiquement la cible la plus proche."
 fire_rate = 0.8
 base_damage = 4.0
 projectile_speed = 320.0
+trajectory = 2
 metadata/_custom_type_script = "uid://bhrpkdbq7loqu"

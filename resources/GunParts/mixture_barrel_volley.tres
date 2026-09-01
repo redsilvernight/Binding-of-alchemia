@@ -7,8 +7,9 @@
 script = ExtResource("1_mvoll")
 icon = ExtResource("2_icon")
 nom = "Canon à Mixture Volée"
-description = "Canon conçu pour arroser une zone à cadence soutenue."
+description = "Canon conçu pour arroser une zone à cadence soutenue. Chaque projectile de la volée traque sa propre cible."
 fire_rate = 1.5
 damage_multiplier = 1.2
 projectile_speed = 280.0
+trajectory = 2
 metadata/_custom_type_script = "uid://djakeanr5q30h"

@@ -7,8 +7,9 @@
 script = ExtResource("1_wtorr")
 icon = ExtResource("2_icon")
 nom = "Canon à Eau Torrent"
-description = "Canon qui déverse un flot d'eau continu à bonne cadence."
+description = "Canon qui déverse un flot d'eau continu à bonne cadence. Le flot retombe en arc, comme une cascade."
 fire_rate = 1.4
 base_damage = 4.5
 projectile_speed = 280.0
+trajectory = 1
 metadata/_custom_type_script = "uid://bhrpkdbq7loqu"
