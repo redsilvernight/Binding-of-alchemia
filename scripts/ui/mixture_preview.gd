@@ -196,9 +196,14 @@ static func _add_delta_stat_row(grid_to_fill: GridContainer, type: Ingredient.Ty
 		return
 
 	if type == Ingredient.TypeAlchimie.ATTRACTION:
+		var current_radius: float = current_effet.zone * MixtureToEffect.ZONE_SCALE
+		var combined_radius: float = combined_effet.zone * MixtureToEffect.ZONE_SCALE
 		var pull_label := Label.new()
 		pull_label.add_theme_font_size_override("font_size", 12)
-		pull_label.text = "Attire sur %.1f" % (current_effet.zone * MixtureToEffect.ZONE_SCALE) + "px pendant %.1fs" % current_effet.duree
+		pull_label.text = (
+			"Attire sur %.0f" % current_radius + StatBar.delta_suffix(current_radius, combined_radius, "%.0f")
+			+ "px, %.1fs" % current_effet.duree + StatBar.delta_suffix(current_effet.duree, combined_effet.duree, "%.1f")
+		)
 		grid_to_fill.add_child(pull_label)
 		grid_to_fill.add_child(Control.new())
 		grid_to_fill.add_child(Control.new())
