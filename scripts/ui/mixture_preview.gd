@@ -17,6 +17,8 @@ const TYPE_COLORS: Dictionary = {
 	Ingredient.TypeAlchimie.ELECTRIQUE: Color(0.95, 0.85, 0.15),
 	Ingredient.TypeAlchimie.SOIN: Color(0.45, 0.9, 0.6),
 	Ingredient.TypeAlchimie.EXPLOSIF: Color(0.55, 0.12, 0.1),
+	Ingredient.TypeAlchimie.REBOND: Color(0.3, 0.85, 0.75),
+	Ingredient.TypeAlchimie.ATTRACTION: Color(0.3, 0.08, 0.4),
 }
 
 const TYPE_LABELS: Dictionary = {
@@ -26,6 +28,8 @@ const TYPE_LABELS: Dictionary = {
 	Ingredient.TypeAlchimie.ELECTRIQUE: "Élec.",
 	Ingredient.TypeAlchimie.SOIN: "Soin",
 	Ingredient.TypeAlchimie.EXPLOSIF: "Explo.",
+	Ingredient.TypeAlchimie.REBOND: "Rebond",
+	Ingredient.TypeAlchimie.ATTRACTION: "Attraction",
 }
 
 # Bornes de normalisation des jauges — pas des maximums absolus, juste une echelle
@@ -178,6 +182,24 @@ static func _add_delta_stat_row(grid_to_fill: GridContainer, type: Ingredient.Ty
 		heal_label.add_theme_font_size_override("font_size", 12)
 		heal_label.text = "+%.0f soin" % current_effet.degats + StatBar.delta_suffix(current_effet.degats, combined_effet.degats, "%.0f")
 		grid_to_fill.add_child(heal_label)
+		grid_to_fill.add_child(Control.new())
+		grid_to_fill.add_child(Control.new())
+		return
+
+	if type == Ingredient.TypeAlchimie.REBOND:
+		var bounce_label := Label.new()
+		bounce_label.add_theme_font_size_override("font_size", 12)
+		bounce_label.text = "+%d rebond(s)" % roundi(current_effet.degats) + StatBar.delta_suffix(current_effet.degats, combined_effet.degats, "%.0f")
+		grid_to_fill.add_child(bounce_label)
+		grid_to_fill.add_child(Control.new())
+		grid_to_fill.add_child(Control.new())
+		return
+
+	if type == Ingredient.TypeAlchimie.ATTRACTION:
+		var pull_label := Label.new()
+		pull_label.add_theme_font_size_override("font_size", 12)
+		pull_label.text = "Attire sur %.1f" % (current_effet.zone * MixtureToEffect.ZONE_SCALE) + "px pendant %.1fs" % current_effet.duree
+		grid_to_fill.add_child(pull_label)
 		grid_to_fill.add_child(Control.new())
 		grid_to_fill.add_child(Control.new())
 		return

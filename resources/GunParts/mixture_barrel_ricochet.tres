@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="GunBarrelMixture" format=3]
+
+[ext_resource type="Script" uid="uid://djakeanr5q30h" path="res://scripts/weapons/resources/GunBarrelMixture.gd" id="1_ricochet"]
+
+[resource]
+script = ExtResource("1_ricochet")
+nom = "Canon à Mixture Ricochet"
+description = "Canon renforcé dont la mixture est projetée sous une forme durcie qui rebondit sur les surfaces et les ennemis touchés, indépendamment de tout ingrédient."
+fire_rate = 1.1
+damage_multiplier = 1.4
+projectile_speed = 270.0
+trajectory = 0
+bounce_count = 2
+metadata/_custom_type_script = "uid://djakeanr5q30h"

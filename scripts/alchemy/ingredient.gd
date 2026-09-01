@@ -7,7 +7,9 @@ enum TypeAlchimie {
 	POISON,
 	ELECTRIQUE,
 	SOIN,
-	EXPLOSIF
+	EXPLOSIF,
+	REBOND,
+	ATTRACTION
 }
 
 @export var nom: String = ""

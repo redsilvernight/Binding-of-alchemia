@@ -422,6 +422,8 @@ func request_craft_mixture(ingredient_paths: Array[String]) -> void:
 	var mixture: Mixture = AlchemyResolver.resoudre(full_recipe)
 	var effect: ImpactEffect = MixtureToEffect.convertir(mixture)
 	weapon.mixture_impact_effect = effect
+	var barrel_bounce_count: int = weapon.barrel_mixture.bounce_count if weapon.barrel_mixture else 0
+	weapon.mixture_bounce_count = barrel_bounce_count + MixtureToEffect.extraire_bounce_count(mixture)
 	weapon.set_mixture_ingredients_networked(combined_ingredient_paths)
 	RunManager.mark_alchemy_used(sender_id)
 	print("Mixture appliquée pour %s: %s" % [name, effect])

@@ -15,6 +15,9 @@ const UNLOCKABLES: Array[Dictionary] = [
 	{"item_path": "res://resources/Ingredients/orage_captif.tres", "display_name": "Orage Captif", "cost": 110},
 	{"item_path": "res://resources/Ingredients/noyau_instable.tres", "display_name": "Noyau Instable", "cost": 110},
 	{"item_path": "res://resources/Ingredients/braise.tres", "display_name": "Braise", "cost": 90},
+	{"item_path": "res://resources/Ingredients/bille_rebondissante.tres", "display_name": "Bille Rebondissante", "cost": 130},
+	{"item_path": "res://resources/Ingredients/noyau_gravitationnel.tres", "display_name": "Noyau Gravitationnel", "cost": 140},
+	{"item_path": "res://resources/GunParts/mixture_barrel_ricochet.tres", "display_name": "Canon à Mixture Ricochet", "cost": 130},
 ]
 const SHOP_POOL_SIZE: int = 3
 

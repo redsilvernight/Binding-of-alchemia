@@ -33,6 +33,7 @@ var mixture_cooldown_accum: float = INF
 var water_trajectory: Bullet.TrajectoryType = Bullet.TrajectoryType.LINEAR
 var mixture_trajectory: Bullet.TrajectoryType = Bullet.TrajectoryType.LINEAR
 var mixture_impact_effect: ImpactEffect = null
+var mixture_bounce_count: int = 0
 var mixture_ingredient_paths: Array[String] = []
 
 func _ready() -> void:
@@ -124,9 +125,16 @@ func _recalculate_stats() -> void:
 		push_warning("Weapon: aucun barrel_water équipé, le tir eau est désactivé.")
 	if barrel_mixture:
 		mixture_trajectory = barrel_mixture.trajectory
-		mixture_impact_effect = _resolve_mixture_impact_effect()
+		var mixture: Mixture = _resolve_active_mixture()
+		if mixture != null:
+			mixture_impact_effect = MixtureToEffect.convertir(mixture)
+			mixture_bounce_count = barrel_mixture.bounce_count + MixtureToEffect.extraire_bounce_count(mixture)
+		else:
+			mixture_impact_effect = barrel_mixture.impact_effect
+			mixture_bounce_count = barrel_mixture.bounce_count
 	else:
 		mixture_impact_effect = null
+		mixture_bounce_count = 0
 
 	can_fire_water = water_fire_rate > 0
 	can_fire_mixture = mixture_fire_rate > 0 and tank != null
@@ -137,13 +145,13 @@ func _recalculate_stats() -> void:
 		current_mixture_ammo = min(current_mixture_ammo, mixture_max_capacity)
 	ammo_changed.emit(current_mixture_ammo, mixture_max_capacity)
 
-func _resolve_mixture_impact_effect() -> ImpactEffect:
+func _resolve_active_mixture() -> Mixture:
 	if mixture_ingredient_paths.is_empty():
-		return barrel_mixture.impact_effect
+		return null
 	var ingredients: Array[Ingredient] = []
 	for path in mixture_ingredient_paths:
 		ingredients.append(load(path) as Ingredient)
-	return MixtureToEffect.convertir(AlchemyResolver.resoudre(ingredients))
+	return AlchemyResolver.resoudre(ingredients)
 
 func can_fire_mixture_locally() -> bool:
 	return can_fire_mixture and tank != null and current_mixture_ammo >= tank.mixture_cost_per_shot
@@ -189,7 +197,7 @@ func try_fire_mixture(direction: Vector2) -> bool:
 	time_since_last_mixture_fire = 0.0
 	_broadcast_ammo()
 
-	_fire_bullet(mixture_damage_multiplier, mixture_projectile_speed, direction, mixture_trajectory, mixture_impact_effect, MIXTURE_BULLET_SCENE)
+	_fire_bullet(mixture_damage_multiplier, mixture_projectile_speed, direction, mixture_trajectory, mixture_impact_effect, MIXTURE_BULLET_SCENE, mixture_bounce_count)
 	return true
 
 func _broadcast_water_cooldown_reset() -> void:
@@ -224,7 +232,7 @@ func _update_ammo(current: float, max_ammo: float) -> void:
 	mixture_max_capacity = max_ammo
 	ammo_changed.emit(current_mixture_ammo, mixture_max_capacity)
 
-func _fire_bullet(damage: float, speed: float, direction: Vector2, trajectory: Bullet.TrajectoryType, effect: ImpactEffect, scene_path: String) -> void:
+func _fire_bullet(damage: float, speed: float, direction: Vector2, trajectory: Bullet.TrajectoryType, effect: ImpactEffect, scene_path: String, bounce_count: int = 0) -> void:
 	var shooter_id: int = 0
 	var parent_node := get_parent()
 	if parent_node != null and parent_node.name.is_valid_int():
@@ -241,4 +249,6 @@ func _fire_bullet(damage: float, speed: float, direction: Vector2, trajectory: B
 	}
 	if effect != null:
 		data["impact_effect_data"] = effect.to_dict()
+	if bounce_count > 0:
+		data["bounce_count"] = bounce_count
 	projectile_requested.emit(data)

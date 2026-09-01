@@ -108,6 +108,7 @@ func _add_mixture_reset_button(player: Node) -> void:
 	content.add_child(reset_button)
 	reset_button.pressed.connect(func() -> void:
 		player.weapon.mixture_impact_effect = null
+		player.weapon.mixture_bounce_count = player.weapon.barrel_mixture.bounce_count if player.weapon.barrel_mixture else 0
 		var empty_paths: Array[String] = []
 		player.weapon.set_mixture_ingredients_networked(empty_paths)
 		screen.result_label.text = "Mixture réinitialisée."
@@ -153,8 +154,10 @@ func _spawn_bullet_from_data(data: Dictionary) -> Node:
 	bullet.shooter_id = data.get("shooter_id", 0)
 	if scene_path == Weapon.MIXTURE_BULLET_SCENE:
 		bullet.impact_sfx_key = "impact_mixture"
+		var bounce_count: int = data.get("bounce_count", 0)
 		if _bounce_test_enabled:
-			bullet.set_bounce(BOUNCE_TEST_COUNT)
+			bounce_count = maxi(bounce_count, BOUNCE_TEST_COUNT)
+		bullet.set_bounce(bounce_count)
 	elif scene_path == "res://scenes/enemies/enemy_projectile.tscn":
 		AudioManager.play_sfx("enemy_attack_ranged")
 	if data.has("impact_effect_data"):
