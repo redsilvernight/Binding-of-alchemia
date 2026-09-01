@@ -18,7 +18,7 @@ size = Vector2(40, 960)
 radius = 80.0
 
 [sub_resource type="RectangleShape2D" id="RoomTriggerShape"]
-size = Vector2(928, 576)
+size = Vector2(1216, 832)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_weapon_station"]
 polygon = PackedVector2Array(7.0, -44.0, 46.0, -26.0, 44.0, 22.0, 36.0, 22.0, 35.0, 3.0, 34.0, 17.0, 25.0, 31.0, 3.0, 30.0, 4.0, 25.0, 12.0, 20.0, 11.0, 15.0, -7.0, 24.0, -9.0, 47.0, -12.0, 49.0, -17.0, 47.0, -18.0, 25.0, -20.0, 37.0, -25.0, 40.0, -33.0, 39.0, -36.0, 33.0, -44.0, 33.0, -47.0, 6.0, -17.0, -9.0, -14.0, -14.0, -6.0, -15.0, -2.0, -21.0, 3.0, -19.0, 6.0, -43.0)

@@ -13,6 +13,9 @@ const AMBIENT_MAX_INTERVAL: float = 10.0
 const AMBIENT_RANGE: float = 1400.0
 @export var ambient_sfx_key: String = "mob_ambient_1"
 
+const REVEAL_VFX_SCENE: PackedScene = preload("res://scenes/effects/enemy_reveal_vfx.tscn")
+const REVEAL_SFX_VOLUME_DB: float = 5.0
+
 var _ambient_timer: float = 0.0
 
 var nav_agent: NavigationAgent2D
@@ -22,6 +25,7 @@ var _slow_timer: Timer
 
 func _ready() -> void:
 	super()
+	visible = false
 	nav_agent = NavigationAgent2D.new()
 	nav_agent.path_desired_distance = 8.0
 	nav_agent.target_desired_distance = 8.0
@@ -126,6 +130,16 @@ func _maybe_play_ambient_sound() -> void:
 
 func _get_hit_sfx_key() -> String:
 	return "hit_enemy"
+
+@rpc("any_peer", "call_local", "reliable")
+func _rpc_reveal() -> void:
+	visible = true
+	var vfx: Node2D = REVEAL_VFX_SCENE.instantiate()
+	var sprite: Node2D = get_node_or_null("Sprite2D")
+	if sprite != null:
+		vfx.scale = sprite.scale
+	add_child(vfx)
+	AudioManager.play_sfx(ambient_sfx_key, REVEAL_SFX_VOLUME_DB)
 
 const HIT_BLINK_ALPHA: float = 0.25
 const HIT_BLINK_STEP_DURATION: float = 0.06

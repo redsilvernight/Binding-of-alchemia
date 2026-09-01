@@ -12,7 +12,7 @@ size = Vector2(1344, 40)
 size = Vector2(40, 960)
 
 [sub_resource type="RectangleShape2D" id="RoomTriggerShape"]
-size = Vector2(928, 576)
+size = Vector2(1216, 832)
 
 [node name="BossRoom" type="Node2D"]
 script = ExtResource("1_room")

@@ -24,13 +24,14 @@ func _ready() -> void:
 	add_child(_music_player)
 
 
-func play_sfx(key: String) -> void:
+func play_sfx(key: String, volume_db: float = 0.0) -> void:
 	var stream: AudioStream = _load_sfx(key)
 	if stream == null:
 		return
 	var player: AudioStreamPlayer = _sfx_pool[_next_sfx_player]
 	_next_sfx_player = (_next_sfx_player + 1) % _sfx_pool.size()
 	player.stream = stream
+	player.volume_db = volume_db
 	player.play()
 
 

@@ -24,6 +24,10 @@ const ROOM_HEIGHT_PX: int = 960
 const DOOR_TILES: int = 5
 const TILE_SIZE_PX: float = 64.0
 
+const ENEMY_REVEAL_DOOR_DELAY: float = 0.35
+const ENEMY_REVEAL_STAGGER: float = 0.12
+const ENEMY_ACTIVATION_DELAY: float = 1.0
+
 @onready var _trigger: Area2D = $RoomTrigger
 @onready var _floor: TileMapLayer = get_node_or_null("Floor")
 @onready var _door_by_side: Dictionary = {
@@ -192,17 +196,21 @@ func _on_trigger_body_entered(body: Node2D) -> void:
 	if not multiplayer.is_server():
 		return
 	player_entered.emit(body)
+	if not _locked and not _alive_enemies.is_empty():
+		_rpc_set_locked.rpc(true)
 	_activate_enemies_delayed()
-	if _locked or _alive_enemies.is_empty():
-		return
-	_rpc_set_locked.rpc(true)
 
 
 func _activate_enemies_delayed() -> void:
 	if _enemies_activation_scheduled or _alive_enemies.is_empty():
 		return
 	_enemies_activation_scheduled = true
-	await get_tree().create_timer(1.0, false).timeout
+	await get_tree().create_timer(ENEMY_REVEAL_DOOR_DELAY, false).timeout
+	for enemy in _alive_enemies:
+		if is_instance_valid(enemy):
+			enemy.rpc("_rpc_reveal")
+		await get_tree().create_timer(ENEMY_REVEAL_STAGGER, false).timeout
+	await get_tree().create_timer(ENEMY_ACTIVATION_DELAY, false).timeout
 	for enemy in _alive_enemies:
 		if is_instance_valid(enemy):
 			enemy.active = true

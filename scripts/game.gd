@@ -40,6 +40,9 @@ const WEAPON_PART_SPAWN_TABLE_PATH: String = "res://resources/spawn_tables/weapo
 const INGREDIENT_CARRIER_RATIO_CAP: float = 0.5
 const ROOM_SPAWN_MARGIN: float = 80.0
 const ENEMY_EXTRA_ROLL_FLOORS: int = 2
+const DOOR_SPAWN_EXCLUSION_DEPTH: float = 192.0
+const DOOR_SPAWN_EXCLUSION_LATERAL_PADDING: float = 64.0
+const DOOR_SPAWN_EXCLUSION_MAX_ATTEMPTS: int = 20
 
 const POOL_COUNT: int = 3
 const PROP_SPAWN_TABLE_PATHS: Array[String] = [
@@ -267,10 +270,37 @@ func _room_world_rect(room_data: Dictionary) -> Rect2:
 
 func _random_position_in_room(room_data: Dictionary) -> Vector2:
 	var rect: Rect2 = _room_world_rect(room_data)
-	return Vector2(
-		rect.position.x + randf_range(ROOM_SPAWN_MARGIN, rect.size.x - ROOM_SPAWN_MARGIN),
-		rect.position.y + randf_range(ROOM_SPAWN_MARGIN, rect.size.y - ROOM_SPAWN_MARGIN)
-	)
+	var exclusion_zones: Array[Rect2] = _door_spawn_exclusion_zones(room_data)
+	var position: Vector2 = Vector2.ZERO
+	for attempt in DOOR_SPAWN_EXCLUSION_MAX_ATTEMPTS:
+		position = Vector2(
+			rect.position.x + randf_range(ROOM_SPAWN_MARGIN, rect.size.x - ROOM_SPAWN_MARGIN),
+			rect.position.y + randf_range(ROOM_SPAWN_MARGIN, rect.size.y - ROOM_SPAWN_MARGIN)
+		)
+		var blocked: bool = false
+		for zone in exclusion_zones:
+			if zone.has_point(position):
+				blocked = true
+				break
+		if not blocked:
+			break
+	return position
+
+func _door_spawn_exclusion_zones(room_data: Dictionary) -> Array[Rect2]:
+	var rect: Rect2 = _room_world_rect(room_data)
+	var half_width: float = Room.DOOR_TILES * Room.TILE_SIZE_PX / 2.0 + DOOR_SPAWN_EXCLUSION_LATERAL_PADDING
+	var zones: Array[Rect2] = []
+	for side in room_data["open_sides"]:
+		match side:
+			"north":
+				zones.append(Rect2(rect.position.x + rect.size.x / 2.0 - half_width, rect.position.y, half_width * 2.0, DOOR_SPAWN_EXCLUSION_DEPTH))
+			"south":
+				zones.append(Rect2(rect.position.x + rect.size.x / 2.0 - half_width, rect.position.y + rect.size.y - DOOR_SPAWN_EXCLUSION_DEPTH, half_width * 2.0, DOOR_SPAWN_EXCLUSION_DEPTH))
+			"west":
+				zones.append(Rect2(rect.position.x, rect.position.y + rect.size.y / 2.0 - half_width, DOOR_SPAWN_EXCLUSION_DEPTH, half_width * 2.0))
+			"east":
+				zones.append(Rect2(rect.position.x + rect.size.x - DOOR_SPAWN_EXCLUSION_DEPTH, rect.position.y + rect.size.y / 2.0 - half_width, DOOR_SPAWN_EXCLUSION_DEPTH, half_width * 2.0))
+	return zones
 
 
 func request_enemy_drop(position: Vector2, item_resource_path: String) -> void:
