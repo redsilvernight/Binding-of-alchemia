@@ -77,7 +77,6 @@ func leave_to_main_menu() -> void:
 func _on_connection_failed() -> void:
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
-	print("connexion fail")
 
 func _switch_to_game() -> void:
 	get_tree().change_scene_to_file("res://scenes/game.tscn")
@@ -92,11 +91,28 @@ func _authenticate() -> bool:
 	return await _auth_done
 
 
+func _fetch_public_ipv4() -> String:
+	var http := HTTPRequest.new()
+	add_child(http)
+	var err := http.request("https://api.ipify.org")
+	if err != OK:
+		http.queue_free()
+		return ""
+	var result: Array = await http.request_completed
+	http.queue_free()
+	var response_code: int = result[1]
+	var body: PackedByteArray = result[3]
+	if response_code != 200:
+		return ""
+	return body.get_string_from_utf8().strip_edges()
+
+
 func _register_session() -> void:
 	if not await _authenticate():
 		session_error.emit("Authentification GameBoarder impossible.")
 		return
-	GameBoarder.session.create(HOST_PORT, MAX_PLAYERS, "", func(status: int, response: Dictionary):
+	var public_ipv4 := await _fetch_public_ipv4()
+	GameBoarder.session.create(HOST_PORT, MAX_PLAYERS, public_ipv4, func(status: int, response: Dictionary):
 		if (status == 200 or status == 201) and response.has("code"):
 			_session_create_done.emit({"code": response.code})
 		else:

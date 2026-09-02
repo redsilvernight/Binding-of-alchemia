@@ -1,9 +1,12 @@
 extends Control
 
+const DISCORD_INVITE_URL := "https://discord.gg/DFMnKzJA4"
+
 @onready var _play_button: Button = $Panel/MenuVBox/Play
 @onready var _multiplayer_button: Button = $Panel/MenuVBox/Multiplayer
 @onready var _options_button: Button = $Panel/MenuVBox/Options
 @onready var _change_profile_button: Button = $Panel/MenuVBox/ChangeProfile
+@onready var _discord_button: Button = $Panel/MenuVBox/Discord
 @onready var _quit_button: Button = $Panel/MenuVBox/Quit
 @onready var _profile_label: Label = $Panel/MenuVBox/ProfileLabel
 
@@ -30,6 +33,7 @@ func _ready() -> void:
 	_multiplayer_button.pressed.connect(_on_multiplayer_pressed)
 	_options_button.pressed.connect(_on_options_pressed)
 	_change_profile_button.pressed.connect(_on_change_profile_pressed)
+	_discord_button.pressed.connect(_on_discord_pressed)
 	_quit_button.pressed.connect(_on_quit_pressed)
 
 	_volume_slider.value_changed.connect(_on_volume_changed)
@@ -46,7 +50,7 @@ func _ready() -> void:
 
 	var clickable_buttons: Array[Button] = [
 		_play_button, _multiplayer_button, _options_button, _change_profile_button,
-		_quit_button, _back_button, _profile_back_button,
+		_discord_button, _quit_button, _back_button, _profile_back_button,
 	]
 	clickable_buttons.append_array(_profile_buttons)
 	for button in clickable_buttons:
@@ -56,6 +60,10 @@ func _ready() -> void:
 	_profile_panel.visible = false
 	_update_profile_label()
 	_play_button.grab_focus()
+
+	if OS.has_feature("web"):
+		_multiplayer_button.disabled = true
+		_multiplayer_button.tooltip_text = "Indisponible sur navigateur — télécharge la version Windows pour jouer en multijoueur."
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -84,6 +92,10 @@ func _on_options_pressed() -> void:
 	_refresh_controller_device_options()
 	_options_panel.visible = true
 	_volume_slider.grab_focus()
+
+
+func _on_discord_pressed() -> void:
+	OS.shell_open(DISCORD_INVITE_URL)
 
 
 func _on_quit_pressed() -> void:

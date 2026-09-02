@@ -70,7 +70,6 @@ func _ready() -> void:
 		var mixture_bar = hud.get_node("VialPouch/VBoxBar").get_node("MixtureBar")
 		weapon.ammo_changed.connect(mixture_bar._on_ammo_changed)
 		mixture_bar._on_ammo_changed(weapon.mixture_max_capacity, weapon.current_mixture_ammo)
-		hud.get_node("VialPouch").bind_player(self)
 		instance_hud.emit(hud)
 		var inventory_screen_instance = inventory_screen_scene.instantiate()
 		add_child(inventory_screen_instance)

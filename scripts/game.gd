@@ -333,6 +333,8 @@ func request_enemy_split(scene_path: String, origin_position: Vector2, count: in
 		shard.origin_room = room
 		if room != null:
 			room.register_enemy(shard)
+		shard.rpc("_rpc_reveal")
+		shard.active = true
 
 func request_open_chest(contents: Dictionary) -> void:
 	if not multiplayer.is_server():

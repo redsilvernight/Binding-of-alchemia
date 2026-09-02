@@ -47,3 +47,7 @@ temp/
 
 # Docs générées, pas du contenu de jeu
 *.xlsx
+
+# Pipeline TikTok/Instagram, pas du contenu de jeu
+addons/tiktok_rush_capture/
+tiktok-pipeline-out/

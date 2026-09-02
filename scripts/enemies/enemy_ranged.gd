@@ -5,6 +5,8 @@ extends EnemyBase
 @export var attack_range: float = 450.0
 @export var fire_cooldown: float = 1.5
 @export var projectile_speed: float = 320.0
+@export var strafe_speed: float = 70.0
+@export var retreat_step: float = 140.0
 @export var attack_sfx_key: String = "enemy_attack_ranged"
 @export var projectile_scene_path: String = "res://scenes/enemies/enemy_projectile.tscn"
 var target: Node2D = null

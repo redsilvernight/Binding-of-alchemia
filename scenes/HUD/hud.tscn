@@ -11,7 +11,8 @@
 [ext_resource type="Texture2D" uid="uid://b06c05npimb2f" path="res://assets/ui/vial_pouch.png" id="9_pouch"]
 [ext_resource type="StyleBox" uid="uid://j1g1pkr08g4s" path="res://resources/ui/vial_strap.tres" id="10_strap"]
 [ext_resource type="StyleBox" path="res://resources/ui/vial_strap_buckle.tres" id="11_buckle"]
-[ext_resource type="Script" uid="uid://chf6s0yr7xavt" path="res://scripts/HUD/vial_pouch.gd" id="12_vialpouch"]
+[ext_resource type="StyleBox" path="res://resources/ui/hud_tag_frame.tres" id="13_tagframe"]
+[ext_resource type="Script" path="res://scripts/HUD/hud_occlusion_dimmer.gd" id="14_occlusion"]
 
 [node name="HUD" type="CanvasLayer" unique_id=39818824]
 
@@ -22,7 +23,9 @@ offset_left = 21.0
 offset_top = 18.0
 offset_right = 246.0
 offset_bottom = 154.591
-script = ExtResource("12_vialpouch")
+
+[node name="OcclusionDimmer" type="Node" parent="VialPouch"]
+script = ExtResource("14_occlusion")
 
 [node name="PouchBG" type="TextureRect" parent="VialPouch" unique_id=1490781335]
 layout_mode = 1
@@ -119,27 +122,43 @@ mouse_filter = 2
 theme_override_styles/panel = ExtResource("11_buckle")
 
 [node name="Minimap" parent="." unique_id=1829734706 instance=ExtResource("3_minimap")]
+offset_top = 36.0
+offset_bottom = 186.0
 
 [node name="FloorLabel" type="Label" parent="." unique_id=1465333629]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -220.0
-offset_top = 2.0
+offset_left = -170.0
+offset_top = 4.0
 offset_right = -20.0
-offset_bottom = 18.0
+offset_bottom = 30.0
 grow_horizontal = 0
-horizontal_alignment = 2
+theme_override_colors/font_color = Color(0.9, 0.78, 0.5, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = ExtResource("13_tagframe")
+horizontal_alignment = 1
+vertical_alignment = 1
 script = ExtResource("4_floorlabel")
+
+[node name="OcclusionDimmer" type="Node" parent="FloorLabel"]
+script = ExtResource("14_occlusion")
 
 [node name="SessionCodeLabel" type="Label" parent="." unique_id=196310118]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -220.0
-offset_top = 22.0
+offset_left = -170.0
+offset_top = 192.0
 offset_right = -20.0
-offset_bottom = 38.0
+offset_bottom = 218.0
 grow_horizontal = 0
-horizontal_alignment = 2
+theme_override_colors/font_color = Color(0.9, 0.78, 0.5, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = ExtResource("13_tagframe")
+horizontal_alignment = 1
+vertical_alignment = 1
 script = ExtResource("5_sessioncode")
+
+[node name="OcclusionDimmer" type="Node" parent="SessionCodeLabel"]
+script = ExtResource("14_occlusion")

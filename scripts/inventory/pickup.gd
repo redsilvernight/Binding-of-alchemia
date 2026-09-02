@@ -14,6 +14,7 @@ const BLINK_INTERVAL: float = 0.15
 
 
 func _ready() -> void:
+	add_to_group("Loot")
 	monitoring = false
 	body_entered.connect(_on_body_entered)
 	_apply_icon()

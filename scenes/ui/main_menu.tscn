@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://d2iu2w4nq2bdp"]
 
-[ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_menu"]
+[ext_resource type="Script" uid="uid://dxed1y25b456o" path="res://scripts/ui/main_menu.gd" id="1_menu"]
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=567587726]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_menu")
 
-[node name="Panel" type="PanelContainer" parent="."]
+[node name="Panel" type="PanelContainer" parent="." unique_id=1932502793]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,7 +19,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MenuVBox" type="VBoxContainer" parent="Panel"]
+[node name="MenuVBox" type="VBoxContainer" parent="Panel" unique_id=2032030504]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -27,32 +27,36 @@ size_flags_vertical = 4
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="ProfileLabel" type="Label" parent="Panel/MenuVBox"]
+[node name="ProfileLabel" type="Label" parent="Panel/MenuVBox" unique_id=424689897]
 layout_mode = 2
-horizontal_alignment = 1
 text = "Profil actif : Profil 1"
+horizontal_alignment = 1
 
-[node name="Play" type="Button" parent="Panel/MenuVBox"]
+[node name="Play" type="Button" parent="Panel/MenuVBox" unique_id=1318826788]
 layout_mode = 2
 text = "Jouer"
 
-[node name="Multiplayer" type="Button" parent="Panel/MenuVBox"]
+[node name="Multiplayer" type="Button" parent="Panel/MenuVBox" unique_id=1199398506]
 layout_mode = 2
 text = "Multijoueur"
 
-[node name="Options" type="Button" parent="Panel/MenuVBox"]
+[node name="Options" type="Button" parent="Panel/MenuVBox" unique_id=1953037018]
 layout_mode = 2
 text = "Paramètres"
 
-[node name="ChangeProfile" type="Button" parent="Panel/MenuVBox"]
+[node name="ChangeProfile" type="Button" parent="Panel/MenuVBox" unique_id=261183671]
 layout_mode = 2
 text = "Changer de profil"
 
-[node name="Quit" type="Button" parent="Panel/MenuVBox"]
+[node name="Discord" type="Button" parent="Panel/MenuVBox" unique_id=1598775455]
+layout_mode = 2
+text = "Rejoindre le Discord"
+
+[node name="Quit" type="Button" parent="Panel/MenuVBox" unique_id=1589651216]
 layout_mode = 2
 text = "Quitter"
 
-[node name="OptionsPanel" type="PanelContainer" parent="."]
+[node name="OptionsPanel" type="PanelContainer" parent="." unique_id=293449535]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -60,7 +64,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="OptionsVBox" type="VBoxContainer" parent="OptionsPanel"]
+[node name="OptionsVBox" type="VBoxContainer" parent="OptionsPanel" unique_id=416571039]
 custom_minimum_size = Vector2(320, 0)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -68,59 +72,56 @@ size_flags_vertical = 4
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="VolumeLabel" type="Label" parent="OptionsPanel/OptionsVBox"]
+[node name="VolumeLabel" type="Label" parent="OptionsPanel/OptionsVBox" unique_id=620916109]
 layout_mode = 2
 text = "Volume général"
 
-[node name="VolumeSlider" type="HSlider" parent="OptionsPanel/OptionsVBox"]
+[node name="VolumeSlider" type="HSlider" parent="OptionsPanel/OptionsVBox" unique_id=1568949169]
 layout_mode = 2
-min_value = 0.0
 max_value = 1.0
 step = 0.01
 value = 1.0
 
-[node name="MusicVolumeLabel" type="Label" parent="OptionsPanel/OptionsVBox"]
+[node name="MusicVolumeLabel" type="Label" parent="OptionsPanel/OptionsVBox" unique_id=828596621]
 layout_mode = 2
 text = "Musique"
 
-[node name="MusicVolumeSlider" type="HSlider" parent="OptionsPanel/OptionsVBox"]
+[node name="MusicVolumeSlider" type="HSlider" parent="OptionsPanel/OptionsVBox" unique_id=1105262679]
 layout_mode = 2
-min_value = 0.0
 max_value = 1.0
 step = 0.01
 value = 1.0
 
-[node name="SfxVolumeLabel" type="Label" parent="OptionsPanel/OptionsVBox"]
+[node name="SfxVolumeLabel" type="Label" parent="OptionsPanel/OptionsVBox" unique_id=967673648]
 layout_mode = 2
 text = "Effets sonores"
 
-[node name="SfxVolumeSlider" type="HSlider" parent="OptionsPanel/OptionsVBox"]
+[node name="SfxVolumeSlider" type="HSlider" parent="OptionsPanel/OptionsVBox" unique_id=623258374]
 layout_mode = 2
-min_value = 0.0
 max_value = 1.0
 step = 0.01
 value = 1.0
 
-[node name="FullscreenCheck" type="CheckButton" parent="OptionsPanel/OptionsVBox"]
+[node name="FullscreenCheck" type="CheckButton" parent="OptionsPanel/OptionsVBox" unique_id=704421367]
 layout_mode = 2
 text = "Plein écran"
 
-[node name="DynamicLightingCheck" type="CheckButton" parent="OptionsPanel/OptionsVBox"]
+[node name="DynamicLightingCheck" type="CheckButton" parent="OptionsPanel/OptionsVBox" unique_id=903766311]
 layout_mode = 2
 text = "Éclairage dynamique"
 
-[node name="ControllerDeviceLabel" type="Label" parent="OptionsPanel/OptionsVBox"]
+[node name="ControllerDeviceLabel" type="Label" parent="OptionsPanel/OptionsVBox" unique_id=553516320]
 layout_mode = 2
 text = "Manette (multijoueur local)"
 
-[node name="ControllerDeviceOption" type="OptionButton" parent="OptionsPanel/OptionsVBox"]
+[node name="ControllerDeviceOption" type="OptionButton" parent="OptionsPanel/OptionsVBox" unique_id=1304997989]
 layout_mode = 2
 
-[node name="Back" type="Button" parent="OptionsPanel/OptionsVBox"]
+[node name="Back" type="Button" parent="OptionsPanel/OptionsVBox" unique_id=537205293]
 layout_mode = 2
 text = "Retour"
 
-[node name="ProfilePanel" type="PanelContainer" parent="."]
+[node name="ProfilePanel" type="PanelContainer" parent="." unique_id=1592893296]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -128,7 +129,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ProfileVBox" type="VBoxContainer" parent="ProfilePanel"]
+[node name="ProfileVBox" type="VBoxContainer" parent="ProfilePanel" unique_id=1404535639]
 custom_minimum_size = Vector2(320, 0)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -136,23 +137,23 @@ size_flags_vertical = 4
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="Title" type="Label" parent="ProfilePanel/ProfileVBox"]
+[node name="Title" type="Label" parent="ProfilePanel/ProfileVBox" unique_id=542103254]
 layout_mode = 2
-horizontal_alignment = 1
 text = "Choisir un profil"
+horizontal_alignment = 1
 
-[node name="Profile0" type="Button" parent="ProfilePanel/ProfileVBox"]
+[node name="Profile0" type="Button" parent="ProfilePanel/ProfileVBox" unique_id=637040543]
 layout_mode = 2
 text = "Profil 1"
 
-[node name="Profile1" type="Button" parent="ProfilePanel/ProfileVBox"]
+[node name="Profile1" type="Button" parent="ProfilePanel/ProfileVBox" unique_id=413778193]
 layout_mode = 2
 text = "Profil 2"
 
-[node name="Profile2" type="Button" parent="ProfilePanel/ProfileVBox"]
+[node name="Profile2" type="Button" parent="ProfilePanel/ProfileVBox" unique_id=552854752]
 layout_mode = 2
 text = "Profil 3"
 
-[node name="Back" type="Button" parent="ProfilePanel/ProfileVBox"]
+[node name="Back" type="Button" parent="ProfilePanel/ProfileVBox" unique_id=1059130394]
 layout_mode = 2
 text = "Retour"

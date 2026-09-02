@@ -18,28 +18,37 @@ func available_entries(floor_level: int = 1) -> Array[SpawnTableEntry]:
 	return available
 
 
-func pick_one(floor_level: int = 1) -> String:
+func _pick_entry(floor_level: int = 1) -> SpawnTableEntry:
 	var available: Array[SpawnTableEntry] = available_entries(floor_level)
 	var total_weight: float = 0.0
 	for entry in available:
 		total_weight += entry.weight
 	if total_weight <= 0.0:
-		return ""
+		return null
 	var roll: float = randf_range(0.0, total_weight)
 	var cumulative: float = 0.0
 	for entry in available:
 		cumulative += entry.weight
 		if roll <= cumulative:
-			return entry.item_path
-	return available[-1].item_path
+			return entry
+	return available[-1]
+
+
+func pick_one(floor_level: int = 1) -> String:
+	var entry: SpawnTableEntry = _pick_entry(floor_level)
+	if entry == null:
+		return ""
+	return entry.item_path
 
 
 func pick_many(floor_level: int = 1) -> Array[String]:
 	var results: Array[String] = []
 	for i in randi_range(min_count, max_count):
-		var path: String = pick_one(floor_level)
-		if path != "":
-			results.append(path)
+		var entry: SpawnTableEntry = _pick_entry(floor_level)
+		if entry == null:
+			continue
+		for j in randi_range(entry.spawn_count_min, entry.spawn_count_max):
+			results.append(entry.item_path)
 	return results
 
 

@@ -195,6 +195,7 @@ func _spawn_one_enemy() -> void:
 	var enemy: Node = (load(scene_path) as PackedScene).instantiate()
 	enemy.position = _random_position_in_room()
 	enemies_container.add_child(enemy)
+	enemy.rpc("_rpc_reveal")
 	enemy.active = true
 
 

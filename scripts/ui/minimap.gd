@@ -10,9 +10,6 @@ const COLOR_PANEL_FILL: Color = Color(0.15, 0.11, 0.08, 0.72)
 const COLOR_PANEL_BORDER: Color = Color(0.72, 0.53, 0.24, 0.8)
 const COLOR_RIVET: Color = Color(0.32, 0.2, 0.11, 0.9)
 
-const DIMMED_ALPHA: float = 0.35
-const FADE_DURATION: float = 0.25
-
 const COLOR_UNVISITED_ADJACENT: Color = Color(0.85, 0.78, 0.6, 0.35)
 const COLOR_VISITED: Color = Color(0.6, 0.5, 0.35, 0.85)
 const COLOR_CORRIDOR: Color = Color(0.5, 0.41, 0.28, 0.7)
@@ -31,8 +28,6 @@ var _game: Node = null
 var _local_player: Node2D = null
 var _current_room: Vector2i = Vector2i.ZERO
 var _pulse_time: float = 0.0
-var _fade_tween: Tween
-var _dimmed: bool = false
 
 
 func _ready() -> void:
@@ -53,19 +48,6 @@ func _process(delta: float) -> void:
 		_current_room = room
 	_pulse_time += delta
 	queue_redraw()
-	_update_player_dim()
-
-
-func _update_player_dim() -> void:
-	var screen_position: Vector2 = get_viewport().get_canvas_transform() * _local_player.global_position
-	var should_dim: bool = get_global_rect().has_point(screen_position)
-	if should_dim == _dimmed:
-		return
-	_dimmed = should_dim
-	if _fade_tween:
-		_fade_tween.kill()
-	_fade_tween = create_tween()
-	_fade_tween.tween_property(self, "modulate:a", DIMMED_ALPHA if _dimmed else 1.0, FADE_DURATION)
 
 
 func _find_local_player() -> Node2D:

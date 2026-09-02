@@ -7,24 +7,43 @@ extends EnemyBase
 @export var fire_cooldown: float = 1.0
 @export var projectile_damage: float = 10.0
 @export var projectile_speed: float = 340.0
+@export var strafe_speed: float = 70.0
+@export var retreat_step: float = 140.0
+@export var melee_lunge_range: float = 260.0
+@export var melee_telegraph_duration: float = 0.5
+@export var melee_lunge_duration: float = 0.35
+@export var melee_lunge_speed: float = 420.0
+@export var melee_cooldown_duration: float = 0.6
 var target: Node2D = null
 @onready var sprite: AnimatedSprite2D = $Sprite2D
 var _last_facing_direction: Vector2 = Vector2.DOWN
 
 var state_machine: EnemyStateMachine
 var _phase: int = 1
+var _shot_index: int = 0
 
 const LIFEPOINT_GROWTH_PER_FLOOR: float = 0.10
 const DAMAGE_GROWTH_PER_FLOOR: float = 0.05
+const FIRE_COOLDOWN_REDUCTION_PER_FLOOR: float = 0.03
+const MIN_FIRE_COOLDOWN_MULTIPLIER: float = 0.5
+const PHASE3_HEALTH_THRESHOLD: float = 0.2
+const PHASE3_FIRE_COOLDOWN_MULTIPLIER: float = 0.6
+const RANGED_TRAJECTORY_PATTERN: Array[Bullet.TrajectoryType] = [
+	Bullet.TrajectoryType.LINEAR,
+	Bullet.TrajectoryType.LINEAR,
+	Bullet.TrajectoryType.ARC,
+	Bullet.TrajectoryType.HOMING,
+]
 
 func _ready() -> void:
 	var floor_bonus: int = RunManager.current_floor - 1
 	max_lifepoint = boss_max_lifepoint * (1.0 + LIFEPOINT_GROWTH_PER_FLOOR * floor_bonus)
 	contact_damage *= 1.0 + DAMAGE_GROWTH_PER_FLOOR * floor_bonus
 	projectile_damage *= 1.0 + DAMAGE_GROWTH_PER_FLOOR * floor_bonus
+	fire_cooldown *= max(MIN_FIRE_COOLDOWN_MULTIPLIER, 1.0 - FIRE_COOLDOWN_REDUCTION_PER_FLOOR * floor_bonus)
 	super()
 	add_to_group("Boss")
-	state_machine = EnemyStateMachine.new(EnemyStateIdle.new(self, EnemyStateChase.new(self)))
+	state_machine = EnemyStateMachine.new(EnemyStateIdle.new(self, EnemyStateBossMelee.new(self)))
 	sprite.play()
 	health_changed.connect(_on_health_changed)
 	died.connect(_on_death_animation)
@@ -55,7 +74,7 @@ func _update_target() -> void:
 func _on_collision_area_area_entered(area: Area2D) -> void:
 	if is_dead:
 		return
-	if _phase != 1:
+	if _phase != 1 and _phase != 3:
 		return
 	var body: Node2D = area.get_parent()
 	if body.is_in_group("Players"):
@@ -65,18 +84,26 @@ func _on_collision_area_area_entered(area: Area2D) -> void:
 			sprite.play(StringName("attack-melee-" + FacingDirection.label_for(direction)))
 			AudioManager.play_sfx("enemy_attack_melee")
 
+func play_telegraph_animation(direction: Vector2) -> void:
+	if direction.length() < 0.001:
+		return
+	_last_facing_direction = direction
+	sprite.play(StringName("attack-melee-" + FacingDirection.label_for(direction)))
+
 func fire_at(p_target: Node2D) -> void:
 	var game: Node = get_tree().get_first_node_in_group("Game")
 	if game == null:
 		return
 	var fire_direction := global_position.direction_to(p_target.global_position)
 	sprite.play(StringName("attack-ranged-" + FacingDirection.label_for(fire_direction)))
+	var trajectory: Bullet.TrajectoryType = RANGED_TRAJECTORY_PATTERN[_shot_index % RANGED_TRAJECTORY_PATTERN.size()]
+	_shot_index += 1
 	game.request_enemy_projectile({
 		"scene_path": "res://scenes/enemies/enemy_projectile_boss.tscn",
 		"damage": projectile_damage,
 		"speed": projectile_speed,
 		"lifetime": 2.0,
-		"trajectory": Bullet.TrajectoryType.LINEAR,
+		"trajectory": trajectory,
 		"from_position": global_position,
 		"direction": global_position.direction_to(p_target.global_position),
 		"attack_sfx_key": "boss_attack_ranged",
@@ -84,18 +111,26 @@ func fire_at(p_target: Node2D) -> void:
 
 func take_damage(degat: float) -> void:
 	super(degat)
-	if not multiplayer.is_server():
+	if not multiplayer.is_server() or is_dead:
 		return
-	if _phase == 1 and not is_dead and lifepoint <= max_lifepoint / 2.0:
+	if _phase == 1 and lifepoint <= max_lifepoint / 2.0:
 		_phase = 2
 		state_machine.transition_to(EnemyStateRangedAttack.new(self))
 		_rpc_notify_phase.rpc(2)
+	elif _phase == 2 and lifepoint <= max_lifepoint * PHASE3_HEALTH_THRESHOLD:
+		_phase = 3
+		fire_cooldown *= PHASE3_FIRE_COOLDOWN_MULTIPLIER
+		_rpc_notify_phase.rpc(3)
 
 @rpc("any_peer", "call_local", "reliable")
 func _rpc_notify_phase(phase: int) -> void:
-	if phase == 2:
-		modulate = Color(1.0, 0.55, 0.55)
-		AudioManager.play_sfx("boss_phase")
+	match phase:
+		2:
+			modulate = Color(1.0, 0.55, 0.55)
+			AudioManager.play_sfx("boss_phase")
+		3:
+			modulate = Color(1.0, 0.2, 0.2)
+			AudioManager.play_sfx("boss_phase")
 
 func _on_health_changed(_max_lifepoint: float, lifepoint: float) -> void:
 	if lifepoint <= 0:

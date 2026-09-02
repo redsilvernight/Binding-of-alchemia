@@ -28,6 +28,8 @@ min_floor = 5
 script = ExtResource("2_entry")
 item_path = "res://scenes/enemies/enemy_melee_swarm.tscn"
 weight = 1.0
+spawn_count_min = 3
+spawn_count_max = 5
 
 [sub_resource type="Resource" id="Resource_enemy_ranged_sniper"]
 script = ExtResource("2_entry")
