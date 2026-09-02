@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="Ingredient" format=3]
 
 [ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_gravi"]
+[ext_resource type="Texture2D" path="res://assets/icons/ingredients/noyau_gravitationnel.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_gravi")
+icon = ExtResource("2_icon")
 nom = "Noyau Gravitationnel"
 description = "Noyau alchimique instable qui, à l'impact, ouvre une brève poche d'attraction attirant les ennemis proches vers son centre."
 type_alchimie = 7

@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="Ingredient" format=3]
 
 [ext_resource type="Script" uid="uid://bja0da4fhu872" path="res://scripts/alchemy/ingredient.gd" id="1_bille"]
+[ext_resource type="Texture2D" path="res://assets/icons/ingredients/bille_rebondissante.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_bille")
+icon = ExtResource("2_icon")
 nom = "Bille Rebondissante"
 description = "Bille alchimique élastique qui fait ricocher les projectiles sur les surfaces et les ennemis touchés."
 type_alchimie = 6
