@@ -47,6 +47,10 @@ After implementing: summarize the files changed, explain important architectural
 
 For non-trivial bugs, use the `debugging` skill instead of repeating that process here.
 
+## Testing
+
+**Dispatch the `godot-tester` subagent after every feature implementation, before reporting the task as done — no waiting to be asked.** It validates code quality, graphical rendering and robustness (see `.claude/agents/godot-tester.md`) in an isolated context, so its exploration and log output doesn't bloat the main session. Read its report and either fix what it flags or state explicitly in the completion summary what it could not verify. For a genuinely trivial one-line change where a full dispatch would clearly cost more than it saves, use the `testing` skill inline instead and say so explicitly — this is not a loophole to skip verification, only to avoid paying dispatch overhead for something that doesn't need isolation.
+
 ## Graphify
 
 This project uses Graphify for architectural analysis.
