@@ -24,6 +24,9 @@ var mixture_projectile_speed: float
 var mixture_max_capacity: float
 var mixture_regen_rate: float
 var _range: float
+var dash_duration_modifier: float = 1.0
+var dash_speed_modifier: float = 1.0
+var dash_cooldown_modifier: float = 1.0
 var current_mixture_ammo: float = 0.0
 var time_since_last_mixture_fire: float = 0.0
 var can_fire_water: bool = false
@@ -118,6 +121,9 @@ func _recalculate_stats() -> void:
 	mixture_max_capacity = stats.mixture_max_capacity
 	mixture_regen_rate = stats.mixture_regen_rate
 	_range = stats.range_value
+	dash_duration_modifier = stats.dash_duration_modifier
+	dash_speed_modifier = stats.dash_speed_modifier
+	dash_cooldown_modifier = stats.dash_cooldown_modifier
 
 	if barrel_water:
 		water_trajectory = barrel_water.trajectory

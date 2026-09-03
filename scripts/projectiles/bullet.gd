@@ -152,12 +152,23 @@ func _trigger_impact_effect(target: Node) -> void:
 	AudioManager.play_sfx(impact_sfx_key)
 	if impact_effect != null:
 		impact_effect.spawn_visual(get_tree(), global_position)
+	if target.has_method("take_damage"):
+		_notify_local_shooter_hit(target)
 	if not multiplayer.is_server():
 		return
 	if target.has_method("take_damage"):
 		target.take_damage(damage)
 	if impact_effect != null:
 		impact_effect.apply(target, global_position, shooter_id)
+
+func _notify_local_shooter_hit(target: Node) -> void:
+	if shooter_id <= 0:
+		return
+	for player in get_tree().get_nodes_in_group("Players"):
+		var is_matching_shooter: bool = player.name.is_valid_int() and int(player.name) == shooter_id
+		if player.is_multiplayer_authority() and is_matching_shooter:
+			player.on_hit_dealt(damage, target.max_lifepoint)
+			return
 
 func _try_bounce(hit_target: Node) -> bool:
 	if bounces_remaining <= 0:

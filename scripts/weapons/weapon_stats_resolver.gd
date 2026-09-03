@@ -26,6 +26,9 @@ static func resoudre(barrel_water: GunBarrelWater, barrel_mixture: GunBarrelMixt
 		speed_modifier = core.projectile_speed_modifier
 		stats.range_value = core.range_modifier
 		core_damage = core.base_damage
+		stats.dash_duration_modifier = core.dash_duration_modifier
+		stats.dash_speed_modifier = core.dash_speed_modifier
+		stats.dash_cooldown_modifier = core.dash_cooldown_modifier
 
 	stats.water_damage += core_damage
 	stats.mixture_damage_multiplier += core_damage

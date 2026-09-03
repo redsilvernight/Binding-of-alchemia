@@ -3,6 +3,11 @@ extends RefCounted
 
 
 const CAMERA_ZOOM_MARGIN: float = 1.05
+const IMPACT_SHAKE_DAMAGE_REFERENCE: float = 18.0
+const IMPACT_SHAKE_MIN_AMOUNT: float = 2.0
+const IMPACT_SHAKE_MAX_AMOUNT: float = 9.0
+const IMPACT_SHAKE_MIN_DURATION: float = 0.06
+const IMPACT_SHAKE_MAX_DURATION: float = 0.28
 
 var _camera: Camera2D
 
@@ -36,3 +41,9 @@ func shake(amount: float, duration: float) -> void:
 		var jitter := Vector2(randf_range(-amount, amount), randf_range(-amount, amount)) * falloff
 		_shake_tween.tween_property(_camera, "offset", jitter, 0.03)
 	_shake_tween.tween_property(_camera, "offset", Vector2.ZERO, 0.03)
+
+func shake_for_damage(damage: float) -> void:
+	var ratio: float = clamp(damage / IMPACT_SHAKE_DAMAGE_REFERENCE, 0.0, 1.0)
+	var amount: float = lerp(IMPACT_SHAKE_MIN_AMOUNT, IMPACT_SHAKE_MAX_AMOUNT, ratio)
+	var duration: float = lerp(IMPACT_SHAKE_MIN_DURATION, IMPACT_SHAKE_MAX_DURATION, ratio)
+	shake(amount, duration)

@@ -47,9 +47,11 @@ var _dash_trail_timer: float = 0.0
 var _remote_dash_trail_time_left: float = 0.0
 var _camera_controller: PlayerCameraController
 var _spectator: PlayerSpectator
+var _last_known_lifepoint: float = 0.0
 
 func _ready() -> void:
 	super()
+	_last_known_lifepoint = max_lifepoint
 	add_to_group("Players")
 	_camera_controller = PlayerCameraController.new(player_camera)
 	_spectator = PlayerSpectator.new(self, player_camera)
@@ -59,6 +61,7 @@ func _ready() -> void:
 	weapon.projectile_requested.connect(_on_projectile_requested)
 	died.connect(_on_died)
 	health_changed.connect(_on_health_changed)
+	healed.connect(_on_healed)
 	sprite.play()
 	sprite.animation_finished.connect(_on_sprite_animation_finished)
 	sprite.animation_changed.connect(_on_sprite_animation_changed)
@@ -172,7 +175,7 @@ func _physics_process(delta: float) -> void:
 		if _dash_trail_timer <= 0.0:
 			_dash_trail_timer = DASH_TRAIL_INTERVAL
 			_spawn_dash_trail()
-		move(_dash_direction, speed * DASH_SPEED_MULTIPLIER)
+		move(_dash_direction, speed * DASH_SPEED_MULTIPLIER * weapon.dash_speed_modifier)
 	else:
 		move(input_direction, speed)
 	if _dungeon_camera_mode:
@@ -183,8 +186,8 @@ func _start_dash(input_direction: Vector2, facing_direction: Vector2) -> void:
 	if direction.length() < 0.001:
 		return
 	_dash_direction = direction.normalized()
-	_dash_time_left = DASH_DURATION
-	_dash_cooldown_left = DASH_COOLDOWN
+	_dash_time_left = DASH_DURATION * weapon.dash_duration_modifier
+	_dash_cooldown_left = DASH_COOLDOWN * weapon.dash_cooldown_modifier
 	_dash_trail_timer = 0.0
 	_camera_controller.shake(4.0, 0.12)
 	_rpc_start_dash_trail.rpc()
@@ -192,7 +195,7 @@ func _start_dash(input_direction: Vector2, facing_direction: Vector2) -> void:
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_start_dash_trail() -> void:
-	_remote_dash_trail_time_left = DASH_DURATION
+	_remote_dash_trail_time_left = DASH_DURATION * weapon.dash_duration_modifier
 	_dash_trail_timer = 0.0
 
 func _spawn_dash_trail() -> void:
@@ -463,10 +466,20 @@ func _on_died() -> void:
 		player_camera.position_smoothing_speed = 2.5
 
 func _on_health_changed(_max_lifepoint: float, lifepoint: float) -> void:
+	var damage_taken: float = maxf(_last_known_lifepoint - lifepoint, 0.0)
+	_last_known_lifepoint = lifepoint
 	if lifepoint <= 0:
 		return
 	if is_multiplayer_authority():
-		_camera_controller.shake(7.0, 0.25)
+		_camera_controller.shake_for_damage(damage_taken)
+		HitStop.trigger_for_damage(damage_taken, max_lifepoint)
 	if sprite.animation.begins_with("attack"):
 		return
 	sprite.play(StringName("hit-" + FacingDirection.label_for(last_aim_direction)))
+
+func on_hit_dealt(damage: float, target_max_lifepoint: float) -> void:
+	_camera_controller.shake_for_damage(damage)
+	HitStop.trigger_for_damage(damage, target_max_lifepoint)
+
+func _on_healed(_max_lifepoint: float, lifepoint: float) -> void:
+	_last_known_lifepoint = lifepoint

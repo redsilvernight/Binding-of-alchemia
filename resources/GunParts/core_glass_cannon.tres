@@ -11,4 +11,7 @@ description = "Noyau fragile mais dévastateur, entièrement tourné vers les d�
 range_modifier = 0.0
 base_damage = 10.0
 projectile_speed_modifier = 1.0
+dash_duration_modifier = 1.4
+dash_speed_modifier = 1.15
+dash_cooldown_modifier = 1.3
 metadata/_custom_type_script = "uid://db7vhbef8vqw1"
