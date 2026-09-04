@@ -324,6 +324,9 @@ func request_currency_drop(position: Vector2, amount: int) -> void:
 func request_enemy_split(scene_path: String, origin_position: Vector2, count: int, spawn_radius: float, room: Room) -> void:
 	if not multiplayer.is_server():
 		return
+	_deferred_enemy_split.call_deferred(scene_path, origin_position, count, spawn_radius, room)
+
+func _deferred_enemy_split(scene_path: String, origin_position: Vector2, count: int, spawn_radius: float, room: Room) -> void:
 	for i in count:
 		var offset: Vector2 = Vector2.RIGHT.rotated(TAU * i / count) * spawn_radius
 		var shard: Node = enemy_spawner.spawn({
@@ -406,7 +409,7 @@ func _spawn_bullet(data: Dictionary) -> Node:
 	if scene_path == Weapon.MIXTURE_BULLET_SCENE:
 		bullet.impact_sfx_key = "impact_mixture"
 	elif scene_path.begins_with("res://scenes/enemies/enemy_projectile"):
-		AudioManager.play_sfx(data.get("attack_sfx_key", "enemy_attack_ranged"))
+		AudioManager.play_sfx_at(data.get("attack_sfx_key", "enemy_attack_ranged"), data["from_position"])
 	if data.has("impact_effect_data"):
 		var effect: ImpactEffect = ImpactEffect.from_dict(data["impact_effect_data"])
 		bullet.set_impact_effect(effect)
