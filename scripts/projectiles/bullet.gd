@@ -149,7 +149,7 @@ func _resolve_hit(target: Node) -> void:
 	queue_free()
 
 func _trigger_impact_effect(target: Node) -> void:
-	AudioManager.play_sfx(impact_sfx_key)
+	AudioManager.play_sfx_at(impact_sfx_key, global_position)
 	if impact_effect != null:
 		impact_effect.spawn_visual(get_tree(), global_position)
 	if target.has_method("take_damage"):

@@ -24,7 +24,7 @@ func set_state(effectively_open: bool) -> void:
 	_initialized = true
 	_open = effectively_open
 	if should_play_sound:
-		AudioManager.play_sfx("door_open" if effectively_open else "door_close")
+		AudioManager.play_sfx_at("door_open" if effectively_open else "door_close", global_position)
 	if _tween:
 		_tween.kill()
 	_tween = create_tween().set_parallel(true)

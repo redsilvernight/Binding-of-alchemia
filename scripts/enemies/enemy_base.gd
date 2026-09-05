@@ -126,7 +126,7 @@ func _maybe_play_ambient_sound() -> void:
 		return
 	if global_position.distance_to(player.global_position) > AMBIENT_RANGE:
 		return
-	AudioManager.play_sfx(ambient_sfx_key)
+	AudioManager.play_sfx_at(ambient_sfx_key, global_position)
 
 func _get_hit_sfx_key() -> String:
 	return "hit_enemy"
@@ -139,7 +139,7 @@ func _rpc_reveal() -> void:
 	if sprite != null:
 		vfx.scale = sprite.scale
 	add_child(vfx)
-	AudioManager.play_sfx(ambient_sfx_key, REVEAL_SFX_VOLUME_DB)
+	AudioManager.play_sfx_at(ambient_sfx_key, global_position, REVEAL_SFX_VOLUME_DB)
 
 const HIT_BLINK_ALPHA: float = 0.25
 const HIT_BLINK_STEP_DURATION: float = 0.06

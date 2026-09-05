@@ -53,7 +53,7 @@ func _on_collision_area_area_entered(area: Area2D) -> void:
 	var body: Node2D = area.get_parent()
 	if body.is_in_group("Players"):
 		body.take_damage(damage)
-		AudioManager.play_sfx("enemy_attack_melee")
+		AudioManager.play_sfx_at("enemy_attack_melee", global_position)
 
 func _on_health_changed(_max_lifepoint: float, lifepoint: float) -> void:
 	if lifepoint <= 0:

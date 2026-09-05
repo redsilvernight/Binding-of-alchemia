@@ -9,6 +9,7 @@ const DASH_COOLDOWN: float = 0.65
 const DASH_INVULN_DURATION: float = 0.22
 const DASH_TRAIL_INTERVAL: float = 0.03
 const DASH_TRAIL_FADE_DURATION: float = 0.18
+const LOW_HEALTH_RATIO: float = 0.3
 @export var hud_scene: PackedScene = preload("res://scenes/HUD/hud.tscn")
 @export var inventory_screen_scene: PackedScene = preload("res://scenes/ui/inventory_screen.tscn")
 @export var alchemy_crafting_scene: PackedScene = preload("res://scenes/ui/alchemy_crafting.tscn")
@@ -190,6 +191,7 @@ func _start_dash(input_direction: Vector2, facing_direction: Vector2) -> void:
 	_dash_cooldown_left = DASH_COOLDOWN * weapon.dash_cooldown_modifier
 	_dash_trail_timer = 0.0
 	_camera_controller.shake(4.0, 0.12)
+	AudioManager.play_sfx("dash")
 	_rpc_start_dash_trail.rpc()
 	request_dash.rpc_id(1)
 
@@ -197,6 +199,7 @@ func _start_dash(input_direction: Vector2, facing_direction: Vector2) -> void:
 func _rpc_start_dash_trail() -> void:
 	_remote_dash_trail_time_left = DASH_DURATION * weapon.dash_duration_modifier
 	_dash_trail_timer = 0.0
+	AudioManager.play_sfx_at("dash", global_position)
 
 func _spawn_dash_trail() -> void:
 	var frame_texture: Texture2D = sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
@@ -466,16 +469,26 @@ func _on_died() -> void:
 		player_camera.position_smoothing_speed = 2.5
 
 func _on_health_changed(_max_lifepoint: float, lifepoint: float) -> void:
-	var damage_taken: float = maxf(_last_known_lifepoint - lifepoint, 0.0)
+	var previous_lifepoint: float = _last_known_lifepoint
+	var damage_taken: float = maxf(previous_lifepoint - lifepoint, 0.0)
 	_last_known_lifepoint = lifepoint
 	if lifepoint <= 0:
 		return
 	if is_multiplayer_authority():
 		_camera_controller.shake_for_damage(damage_taken)
 		HitStop.trigger_for_damage(damage_taken, max_lifepoint)
+		_maybe_warn_low_health(previous_lifepoint, lifepoint)
 	if sprite.animation.begins_with("attack"):
 		return
 	sprite.play(StringName("hit-" + FacingDirection.label_for(last_aim_direction)))
+
+func _maybe_warn_low_health(previous_lifepoint: float, lifepoint: float) -> void:
+	if max_lifepoint <= 0.0:
+		return
+	var previous_ratio: float = previous_lifepoint / max_lifepoint
+	var current_ratio: float = lifepoint / max_lifepoint
+	if current_ratio <= LOW_HEALTH_RATIO and previous_ratio > LOW_HEALTH_RATIO:
+		AudioManager.play_sfx("low_health")
 
 func on_hit_dealt(damage: float, target_max_lifepoint: float) -> void:
 	_camera_controller.shake_for_damage(damage)

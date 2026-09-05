@@ -61,6 +61,10 @@ func _ready() -> void:
 	_update_profile_label()
 	_play_button.grab_focus()
 
+	for button in clickable_buttons:
+		button.mouse_entered.connect(AudioManager.play_sfx.bind("ui_hover"))
+		button.focus_entered.connect(AudioManager.play_sfx.bind("ui_hover"))
+
 	if OS.has_feature("web"):
 		_multiplayer_button.disabled = true
 		_multiplayer_button.tooltip_text = "Indisponible sur navigateur — télécharge la version Windows pour jouer en multijoueur."

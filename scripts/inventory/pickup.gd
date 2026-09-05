@@ -53,7 +53,7 @@ func _apply_icon() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if not body.is_in_group("Players"):
 		return
-	AudioManager.play_sfx("pickup_currency" if item_type == "currency" else "pickup_ingredient")
+	AudioManager.play_sfx_at("pickup_currency" if item_type == "currency" else "pickup_ingredient", global_position)
 	if not multiplayer.is_server():
 		return
 

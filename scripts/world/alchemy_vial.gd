@@ -15,4 +15,4 @@ func set_broken(broken: bool) -> void:
 
 func break_effect() -> void:
 	set_broken(true)
-	AudioManager.play_sfx("vial_break")
+	AudioManager.play_sfx_at("vial_break", global_position)

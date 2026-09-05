@@ -23,6 +23,7 @@ var controller_device_id: int = -1
 var _master_bus_index: int = AudioServer.get_bus_index("Master")
 var _music_bus_index: int = AudioServer.get_bus_index("Music")
 var _sfx_bus_index: int = AudioServer.get_bus_index("SFX")
+var _ui_bus_index: int = AudioServer.get_bus_index("UI")
 
 
 func _ready() -> void:
@@ -88,7 +89,10 @@ func _apply_music_volume() -> void:
 
 
 func _apply_sfx_volume() -> void:
-	AudioServer.set_bus_volume_db(_sfx_bus_index, linear_to_db(sfx_volume))
+	var volume_db: float = linear_to_db(sfx_volume)
+	AudioServer.set_bus_volume_db(_sfx_bus_index, volume_db)
+	if _ui_bus_index >= 0:
+		AudioServer.set_bus_volume_db(_ui_bus_index, volume_db)
 
 
 func _apply_fullscreen() -> void:

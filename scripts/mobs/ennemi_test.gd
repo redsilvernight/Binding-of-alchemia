@@ -43,7 +43,7 @@ func _on_collision_area_area_entered(area: Area2D) -> void:
 	if body.is_in_group("Players"):
 		body.take_damage(damage)
 		_play_attack_animation(body.global_position - global_position)
-		AudioManager.play_sfx("enemy_attack_melee")
+		AudioManager.play_sfx_at("enemy_attack_melee", global_position)
 
 func _play_attack_animation(direction: Vector2) -> void:
 	if direction.length() < 0.001:

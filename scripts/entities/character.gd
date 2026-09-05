@@ -54,12 +54,12 @@ func _update_health(p_max_lifepoint: float, p_lifepoint: float) -> void:
 	lifepoint = p_lifepoint
 	health_changed.emit(max_lifepoint, lifepoint)
 	if lifepoint < previous_lifepoint:
-		AudioManager.play_sfx(_get_hit_sfx_key())
+		AudioManager.play_sfx_at(_get_hit_sfx_key(), global_position)
 		_flash_hit()
 	if lifepoint <= 0 and not is_dead:
 		is_dead = true
 		died.emit()
-		AudioManager.play_sfx(_get_death_sfx_key())
+		AudioManager.play_sfx_at(_get_death_sfx_key(), global_position)
 
 func kill() -> void:
 	if multiplayer.is_server():
