@@ -182,6 +182,10 @@ func register_enemy(enemy: Node) -> void:
 	enemy.tree_exiting.connect(_on_registered_enemy_removed.bind(enemy))
 
 
+func get_alive_enemies() -> Array[Node]:
+	return _alive_enemies
+
+
 func _on_registered_enemy_removed(enemy: Node) -> void:
 	_alive_enemies.erase(enemy)
 	if not multiplayer.is_server():
@@ -218,9 +222,12 @@ func _activate_enemies_delayed() -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func _rpc_set_locked(locked: bool) -> void:
+	var was_locked: bool = _locked
 	_locked = locked
 	_apply_walls()
 	if not locked:
+		if was_locked:
+			AudioManager.play_sfx("room_clear")
 		room_cleared.emit()
 
 
